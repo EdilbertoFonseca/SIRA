@@ -12,14 +12,11 @@ Created on: 08/01/2025.
 """
 
 import os
-import sys
 
 import globalVars
-import versionInfo
-from logHandler import log
 
 from .dbConfig import DatabaseConfig
-from .varsConfig import addonPath
+from .sqlLoader import sql
 
 ADDON_DATA_DIR = os.path.join(
 	globalVars.appArgs.configPath,
@@ -36,19 +33,6 @@ DEFAULT_DB_PATH = os.path.join(
 
 db = DatabaseConfig(DEFAULT_DB_PATH)
 db.load_config()
-
-libPath = os.path.join(addonPath, "lib")
-if libPath not in sys.path:
-	sys.path.insert(0, libPath)
-
-try:
-	if versionInfo.version_year < 2024:
-		import sqlite3 as sql
-	else:
-		import sqlite311 as sql
-except ImportError as e:
-	log.error("Error importing the module: {}".format(str(e)))
-	raise ImportError("The required library is absent: sqlite3 and sqlite311.")
 
 
 class ObjectExtensionRegistrationSystem(object):

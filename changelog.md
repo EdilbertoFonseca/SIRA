@@ -1,5 +1,12 @@
-- Moves database configuration logic to a new dbConfig.py module and refactors usage across the add-on for safer access.
+Adds many bundled `lib64` modules and helpers required by the SIRA plugin (including `csv`, `masked` package, `sqlite3` package with binary extensions and tests, various tools, and `wordwrap`).
 
--Updates the settings panel to support new options and improves configuration initialization.
+Also introduces `sqlLoader` and other support files under `addon/globalPlugins/SIRA`.
 
-- Adds Markdown table support in buildVars.py and improves uninstall logic to optionally clear configuration.
+Applies formatting fixes to the Portuguese readme (`addon/doc/pt_BR/readme.md`) and updates existing files:
+- `addon/globalPlugins/SIRA/model.py`
+- `addon/installTasks.py`
+- `buildVars.py`
+- `pyproject.toml`
+- top-level `readme.md`
+
+These changes bundle necessary runtime dependencies and polish documentation/metadata for the SIRA add-on.

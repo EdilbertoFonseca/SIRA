@@ -65,7 +65,7 @@ exclude = [
 	"__pycache__",
 	".venv",
 	"lib",
-	"buildVars.py",
+	"lib64",
 ]
 
 [tool.ruff.format]
