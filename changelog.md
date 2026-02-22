@@ -1,5 +1,5 @@
-- Moves database configuration logic to a new dbConfig.py module and refactors usage across the add-on for safer access.
+Adds a `lib64` tree containing bundled modules (CSV, SQLite3 with necessary binaries/tests, and various wx/tools utilities like `img2img`, `pywxrc`, `helpviewer`, etc.). Includes a new masked widget package (`masked`, `combobox`, `ctrl`, etc.).
 
--Updates the settings panel to support new options and improves configuration initialization.
+Also updates runtime dependencies and UI controls for the SIRA addon. Includes updates to `sqlLoader`, `model.py`, and `installTasks.py`.
 
-- Adds Markdown table support in buildVars.py and improves uninstall logic to optionally clear configuration.
+Applies minor documentation and localization fixes across Portuguese README, locale files, `buildVars`, `changelog`, and `pyproject.toml`. These changes ensure reliable execution of the SIRA global plugin by bundling required libraries and polishing documentation.
