@@ -16,7 +16,7 @@ from site_scons.site_tools.NVDATool.utils import _
 # Add-on information variables
 addon_info = AddonInfo(
 	# add-on Name/identifier, internal for NVDA
-	addon_name="sira",
+	addon_name="SIRA",
 	# Add-on summary/title, usually the user visible name of the add-on
 	# Translators: Summary/title for this add-on
 	# to be shown on installation and add-on information found in add-on store
@@ -25,7 +25,7 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_("""SIRA (an acronym in Portuguese for Sistema Interno de Ramais e Anotações) is an add-on designed to improve internal communication and the recording of essential information within the Health Department."""),
 	# version
-	addon_version="2025.4.1",
+	addon_version="2026.1.0",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
 	addon_changelog=_("""Moves database configuration logic to a new dbConfig.py module and refactors usage across the add-on for safer access.
@@ -65,7 +65,7 @@ Adds Markdown table support in buildVars.py and improves uninstall logic to opti
 # https://scons.org/doc/production/HTML/scons-user/apd.html
 pythonSources: list[str] = [
 	"addon/*.py",
-	"addon/globalPlugins/sira/*.py",
+	"addon/globalPlugins/SIRA/*.py",
 ]
 
 # Files that contain strings for translation. Usually your python sources

@@ -22,11 +22,13 @@ import wx
 from logHandler import log
 
 from . import controller as core
-from .varsConfig import addonPath, ADDON_NAME
+from .varsConfig import ADDON_PATH, is64, ADDON_NAME
 
 # Add the lib/ folder to sys.path (only once)
-libPath = os.path.join(addonPath, "lib")
-if libPath not in sys.path:
+libFolder = "lib64" if is64 else "lib"
+libPath = os.path.join(ADDON_PATH, libFolder)
+
+if os.path.isdir(libPath) and libPath not in sys.path:
 	sys.path.insert(0, libPath)
 
 try:

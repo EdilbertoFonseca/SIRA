@@ -12,14 +12,28 @@ Created on: 07/02/2025
 """
 
 import os
+import sys
 from datetime import datetime
 
 import addonHandler
 import gui
 import wx.adv
+from logHandler import log
 
-from .lib.maskedTextCtrl import MaskedTextCtrl
-from .varsConfig import mask_phone
+from .varsConfig import ADDON_PATH, is64, mask_phone, ADDON_NAME
+
+# Add the lib/ folder to sys.path (only once)
+libFolder = "lib64" if is64 else "lib"
+libPath = os.path.join(ADDON_PATH, libFolder)
+
+if os.path.isdir(libPath) and libPath not in sys.path:
+	sys.path.insert(0, libPath)
+
+try:
+	from maskedTextCtrl import MaskedTextCtrl
+except ImportError as e:
+	log.error(f"[{ADDON_NAME}] Error when importing internal library 'MaskedTextCtrl': {e}")
+	raise ImportError(_("Mandatory Library Absent: MaskedTextCtrl"))
 
 # Initializes the translation
 addonHandler.initTranslation()

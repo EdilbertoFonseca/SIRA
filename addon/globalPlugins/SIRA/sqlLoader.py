@@ -11,18 +11,15 @@ https://www.gnu.org/licenses/gpl-2.0.html
 Created on: 19/02/2026
 """
 
-import struct
 import os
 import sys
+
 from logHandler import log
 
-BASE_DIR = os.path.dirname(__file__)
-
-# Detect architecture
-is64 = struct.calcsize("P") * 8 == 64
+from .varsConfig import ADDON_PATH, is64
 
 libFolder = "lib64" if is64 else "lib"
-libPath = os.path.join(BASE_DIR, libFolder)
+libPath = os.path.join(ADDON_PATH, libFolder)
 
 if os.path.isdir(libPath) and libPath not in sys.path:
 	sys.path.insert(0, libPath)
@@ -39,7 +36,7 @@ try:
 	else:
 		# Python 3.7
 		try:
-			import sqlite3 as sql
+			import sqlite3 as sql  # noqa: F401
 			log.info("Loaded builtin sqlite3 (3.7).")
 		except ImportError:
 			raise

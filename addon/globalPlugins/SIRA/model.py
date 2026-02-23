@@ -12,20 +12,13 @@ Created on: 08/01/2025.
 """
 
 import os
-import sys
 
 import globalVars
-import versionInfo
-from logHandler import log
 
 from .dbConfig import DatabaseConfig
 from .sqlLoader import sql
-from .varsConfig import addonPath
 
-ADDON_DATA_DIR = os.path.join(
-	globalVars.appArgs.configPath,
-	"sira"
-)
+ADDON_DATA_DIR = os.path.join(globalVars.appArgs.configPath, "SIRA")
 
 if not os.path.isdir(ADDON_DATA_DIR):
 	os.makedirs(ADDON_DATA_DIR)

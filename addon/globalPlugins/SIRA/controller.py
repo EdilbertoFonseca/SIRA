@@ -15,28 +15,24 @@ import os
 import sys
 
 import addonHandler
-import versionInfo
 from logHandler import log
 
 from .model import ObjectExtensionRegistrationSystem, Section
-from .varsConfig import addonPath
+from .sqlLoader import sql
+from .varsConfig import ADDON_PATH, is64
 
 # Add the lib/ folder to sys.path (only once)
-libPath = os.path.join(addonPath, "lib")
-if libPath not in sys.path:
+libFolder = "lib64" if is64 else "lib"
+libPath = os.path.join(ADDON_PATH, libFolder)
+
+if os.path.isdir(libPath) and libPath not in sys.path:
 	sys.path.insert(0, libPath)
 
 try:
-	from .lib import csv
-
-	if versionInfo.version_year < 2024:
-		from .lib import sqlite3
-	else:
-		from .lib import sqlite311	 as sqlite3
+	import csv
 except ImportError as e:
 	log.error("Error importing the module: {}".format(str(e)))
-	raise ImportError(
-		"The required library is absent: csv, sqlite3 and sqlite311.")
+	raise ImportError("The required library is absent: csv.")
 
 # Initialize translation support
 addonHandler.initTranslation()
@@ -190,7 +186,7 @@ def delete(id):
 			log.info(f"Registro com ID {id} deletado com sucesso.")
 			return True
 
-	except sqlite3.Error as e:
+	except sql.Error as e:
 		log.error(f"Erro ao deletar registro (ID: {id}): {e.__class__.__name__} - {e}")
 		return False
 

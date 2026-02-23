@@ -12,6 +12,7 @@ Created on: 08/01/2025.
 """
 
 import os
+import struct
 
 import addonHandler
 import config
@@ -22,7 +23,10 @@ mask_time = "XX:XX"
 mask_phone = "(XX) XXXXX-XXXX"
 
 # Get the path to the root of the current add-on
-addonPath = os.path.dirname(__file__)
+ADDON_PATH = os.path.dirname(__file__)
+
+# Detect architecture
+is64 = struct.calcsize("P") * 8 == 64
 
 # Config# Get the add-on summary contained in the manifest.
 ADDON_SUMMARY = addonHandler.getCodeAddon().manifest["summary"]
