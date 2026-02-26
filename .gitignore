@@ -1,11 +1,43 @@
-addon/doc/*.css
-addon/doc/en/
-*_docHandler.py
-*.html
-manifest.ini
-*.mo
-*.pot
-*.py[co]
+# =========================
+# NVDA Addon Build Artifacts
+# =========================
+
 *.nvda-addon
 .sconsign.dblite
+build/
+dist/
+
+# Versioned JSON builds
 /[0-9]*.[0-9]*.[0-9]*.json
+
+# =========================
+# Python
+# =========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# =========================
+# Localization
+# =========================
+
+*.mo
+*.pot
+
+# =========================
+# Temporary / Editor
+# =========================
+
+.vscode/
+.idea/
+*.log
