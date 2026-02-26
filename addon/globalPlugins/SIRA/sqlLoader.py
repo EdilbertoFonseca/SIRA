@@ -28,15 +28,18 @@ try:
 	# Python 3.11+
 	if sys.version_info >= (3, 11):
 		try:
-			import sqlite311 as sql
+			import sqlite311 as sql  # pyright: ignore[reportUnusedImport] # noqa: F401
+
 			log.info("Loaded sqlite311 custom module.")
 		except ImportError:
-			import sqlite3 as sql
+			import sqlite3 as sql  # pyright: ignore[reportUnusedImport] # noqa: F401
+
 			log.warning("Fallback to builtin sqlite3 (3.11+).")
 	else:
 		# Python 3.7
 		try:
 			import sqlite3 as sql  # noqa: F401
+
 			log.info("Loaded builtin sqlite3 (3.7).")
 		except ImportError:
 			raise

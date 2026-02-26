@@ -258,9 +258,11 @@ class XmlResourceCompiler:
 
     """This class generates Python code from XML resource files (XRC)."""
 
-    def MakePythonModule(self, inputFiles, outputFilename,
-                         embedResources=False, generateGetText=False,
-                         assignVariables=True):
+    def MakePythonModule(
+        self, inputFiles, outputFilename,
+        embedResources=False, generateGetText=False,
+        assignVariables=True,
+    ):
 
         self.blocks = {}
         self.outputFilename = outputFilename
@@ -337,9 +339,11 @@ class XmlResourceCompiler:
         outputList = []
 
         resource = resourceDocument.firstChild
-        topWindows = [e for e in resource.childNodes
-                      if e.nodeType == e.ELEMENT_NODE and e.tagName == "object" \
-                      and not e.getAttribute('subclass')]
+        topWindows = [
+            e for e in resource.childNodes
+            if e.nodeType == e.ELEMENT_NODE and e.tagName == "object" \
+                      and not e.getAttribute('subclass')
+        ]
 
         # Generate a class for each top-window object (Frame, Panel, Dialog, etc.)
         for topWindow in topWindows:
@@ -675,8 +679,10 @@ class XmlResourceCompiler:
         parent = node.parentNode
         if parent.__class__ != minidom.Document and \
            parent.getAttribute("class") == "wxBitmapButton" and \
-           (node.nodeName == "focus" or node.nodeName == "disabled" or
-            node.nodeName == "selected"):
+           (
+               node.nodeName == "focus" or node.nodeName == "disabled" or
+               node.nodeName == "selected"
+           ):
             return True
 
         # wxBitmap or wxIcon toplevel resources:
@@ -703,9 +709,13 @@ class XmlResourceCompiler:
 
         for n in node.childNodes:
 
-            if (containsFilename and
-                (n.nodeType == minidom.Document.TEXT_NODE or
-                 n.nodeType == minidom.Document.CDATA_SECTION_NODE)):
+            if (
+                containsFilename and
+                (
+                    n.nodeType == minidom.Document.TEXT_NODE or
+                    n.nodeType == minidom.Document.CDATA_SECTION_NODE
+                )
+            ):
 
                 filename = n.nodeValue
                 memoryFilename = self.GetMemoryFilename(filename)
@@ -735,13 +745,17 @@ class XmlResourceCompiler:
         for child in parent.childNodes:
             if ((parent.nodeType == parent.ELEMENT_NODE) and
                 # parent is an element, i.e. has subnodes...
-                (child.nodeType == child.TEXT_NODE or
-                child.nodeType == child.CDATA_SECTION_NODE) and
+                (
+                    child.nodeType == child.TEXT_NODE or
+                    child.nodeType == child.CDATA_SECTION_NODE
+                ) and
                 # ...it is textnode...
                 (
                     parent.tagName == "label" or
-                    (parent.tagName == "value" and
-                                   not is_number(child.nodeValue)) or
+                    (
+                        parent.tagName == "value" and
+                        not is_number(child.nodeValue)
+                    ) or
                     parent.tagName == "help" or
                     parent.tagName == "longhelp" or
                     parent.tagName == "tooltip" or
@@ -878,9 +892,11 @@ def main(args=None):
     generatePython = False
 
     try:
-        opts, args = getopt.gnu_getopt(args,
-                                       "hpgevo:",
-                                       "help python gettext embed novar output=".split())
+        opts, args = getopt.gnu_getopt(
+            args,
+            "hpgevo:",
+            "help python gettext embed novar output=".split(),
+        )
     except getopt.GetoptError as exc:
         print("\nError : %s\n" % str(exc))
         print(__doc__)
@@ -926,9 +942,11 @@ def main(args=None):
         if generatePython:
             if not outputFilename:
                 outputFilename = os.path.splitext(args[0])[0] + "_xrc.py"
-            comp.MakePythonModule(inputFiles, outputFilename,
-                                  embedResources, generateGetText,
-                                  assignVariables)
+            comp.MakePythonModule(
+                inputFiles, outputFilename,
+                embedResources, generateGetText,
+                assignVariables,
+            )
 
         elif generateGetText:
             if not outputFilename:

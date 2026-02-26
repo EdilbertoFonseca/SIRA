@@ -74,13 +74,15 @@ from _csv import Dialect as _Dialect
 
 from io import StringIO
 
-__all__ = ["QUOTE_MINIMAL", "QUOTE_ALL", "QUOTE_NONNUMERIC", "QUOTE_NONE",
-           "QUOTE_STRINGS", "QUOTE_NOTNULL",
-           "Error", "Dialect", "excel", "excel_tab",
-           "field_size_limit", "reader", "writer",
-           "register_dialect", "get_dialect", "list_dialects", "Sniffer",
-           "unregister_dialect", "DictReader", "DictWriter",
-           "unix_dialect"]
+__all__ = [
+    "QUOTE_MINIMAL", "QUOTE_ALL", "QUOTE_NONNUMERIC", "QUOTE_NONE",
+    "QUOTE_STRINGS", "QUOTE_NOTNULL",
+    "Error", "Dialect", "excel", "excel_tab",
+    "field_size_limit", "reader", "writer",
+    "register_dialect", "get_dialect", "list_dialects", "Sniffer",
+    "unregister_dialect", "DictReader", "DictWriter",
+    "unix_dialect",
+]
 
 __version__ = "1.0"
 
@@ -143,8 +145,10 @@ register_dialect("unix", unix_dialect)
 
 
 class DictReader:
-    def __init__(self, f, fieldnames=None, restkey=None, restval=None,
-                 dialect="excel", *args, **kwds):
+    def __init__(
+        self, f, fieldnames=None, restkey=None, restval=None,
+        dialect="excel", *args, **kwds,
+    ):
         if fieldnames is not None and iter(fieldnames) is fieldnames:
             fieldnames = list(fieldnames)
         self._fieldnames = fieldnames   # list of keys for the dict
@@ -197,16 +201,20 @@ class DictReader:
 
 
 class DictWriter:
-    def __init__(self, f, fieldnames, restval="", extrasaction="raise",
-                 dialect="excel", *args, **kwds):
+    def __init__(
+        self, f, fieldnames, restval="", extrasaction="raise",
+        dialect="excel", *args, **kwds,
+    ):
         if fieldnames is not None and iter(fieldnames) is fieldnames:
             fieldnames = list(fieldnames)
         self.fieldnames = fieldnames    # list of keys for the dict
         self.restval = restval          # for writing short dicts
         extrasaction = extrasaction.lower()
         if extrasaction not in ("raise", "ignore"):
-            raise ValueError("extrasaction (%s) must be 'raise' or 'ignore'"
-                             % extrasaction)
+            raise ValueError(
+                "extrasaction (%s) must be 'raise' or 'ignore'"
+                % extrasaction,
+            )
         self.extrasaction = extrasaction
         self.writer = writer(f, dialect, *args, **kwds)
 
@@ -218,8 +226,10 @@ class DictWriter:
         if self.extrasaction == "raise":
             wrong_fields = rowdict.keys() - self.fieldnames
             if wrong_fields:
-                raise ValueError("dict contains fields not in fieldnames: "
-                                 + ", ".join([repr(x) for x in wrong_fields]))
+                raise ValueError(
+                    "dict contains fields not in fieldnames: "
+                    + ", ".join([repr(x) for x in wrong_fields]),
+                )
         return (rowdict.get(key, self.restval) for key in self.fieldnames)
 
     def writerow(self, rowdict):
@@ -249,8 +259,10 @@ class Sniffer:
         quotechar, doublequote, delimiter, skipinitialspace = \
                    self._guess_quote_and_delimiter(sample, delimiters)
         if not delimiter:
-            delimiter, skipinitialspace = self._guess_delimiter(sample,
-                                                                delimiters)
+            delimiter, skipinitialspace = self._guess_delimiter(
+                sample,
+                delimiters,
+            )
 
         if not delimiter:
             raise Error("Could not determine delimiter")
@@ -283,10 +295,12 @@ class Sniffer:
         """
 
         matches = []
-        for restr in (r'(?P<delim>[^\w\n"\'])(?P<space> ?)(?P<quote>["\']).*?(?P=quote)(?P=delim)', # ,".*?",
-                      r'(?:^|\n)(?P<quote>["\']).*?(?P=quote)(?P<delim>[^\w\n"\'])(?P<space> ?)',   #  ".*?",
-                      r'(?P<delim>[^\w\n"\'])(?P<space> ?)(?P<quote>["\']).*?(?P=quote)(?:$|\n)',   # ,".*?"
-                      r'(?:^|\n)(?P<quote>["\']).*?(?P=quote)(?:$|\n)'):                            #  ".*?" (no delim, no space)
+        for restr in (
+            r'(?P<delim>[^\w\n"\'])(?P<space> ?)(?P<quote>["\']).*?(?P=quote)(?P=delim)', # ,".*?",
+            r'(?:^|\n)(?P<quote>["\']).*?(?P=quote)(?P<delim>[^\w\n"\'])(?P<space> ?)',   #  ".*?",
+            r'(?P<delim>[^\w\n"\'])(?P<space> ?)(?P<quote>["\']).*?(?P=quote)(?:$|\n)',   # ,".*?"
+            r'(?:^|\n)(?P<quote>["\']).*?(?P=quote)(?:$|\n)',
+        ):                            #  ".*?" (no delim, no space)
             regexp = re.compile(restr, re.DOTALL | re.MULTILINE)
             matches = regexp.findall(data)
             if matches:
@@ -334,7 +348,8 @@ class Sniffer:
         # double quoted format
         dq_regexp = re.compile(
                                r"((%(delim)s)|^)\W*%(quote)s[^%(delim)s\n]*%(quote)s[^%(delim)s\n]*%(quote)s\W*((%(delim)s)|$)" % \
-                               {'delim':re.escape(delim), 'quote':quotechar}, re.MULTILINE)
+                               {'delim':re.escape(delim), 'quote':quotechar}, re.MULTILINE,
+        )
 
 
 
@@ -397,8 +412,10 @@ class Sniffer:
                     # adjust the mode - subtract the sum of all
                     # other frequencies
                     items.remove(modes[char])
-                    modes[char] = (modes[char][0], modes[char][1]
-                                   - sum(item[1] for item in items))
+                    modes[char] = (
+                        modes[char][0], modes[char][1]
+                        - sum(item[1] for item in items),
+                    )
                 else:
                     modes[char] = items[0]
 
@@ -419,8 +436,10 @@ class Sniffer:
 
             if len(delims) == 1:
                 delim = list(delims.keys())[0]
-                skipinitialspace = (data[0].count(delim) ==
-                                    data[0].count("%c " % delim))
+                skipinitialspace = (
+                    data[0].count(delim) ==
+                    data[0].count("%c " % delim)
+                )
                 return (delim, skipinitialspace)
 
             # analyze another chunkLength lines
@@ -434,8 +453,10 @@ class Sniffer:
         if len(delims) > 1:
             for d in self.preferred:
                 if d in delims.keys():
-                    skipinitialspace = (data[0].count(d) ==
-                                        data[0].count("%c " % d))
+                    skipinitialspace = (
+                        data[0].count(d) ==
+                        data[0].count("%c " % d)
+                    )
                     return (d, skipinitialspace)
 
         # nothing else indicates a preference, pick the character that
@@ -444,8 +465,10 @@ class Sniffer:
         items.sort()
         delim = items[-1][1]
 
-        skipinitialspace = (data[0].count(delim) ==
-                            data[0].count("%c " % delim))
+        skipinitialspace = (
+            data[0].count(delim) ==
+            data[0].count("%c " % delim)
+        )
         return (delim, skipinitialspace)
 
 

@@ -10,6 +10,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 """
 
 import os
+from typing import Any, cast
 
 import addonHandler
 import config
@@ -28,12 +29,13 @@ addonHandler.initTranslation()
 # Settings Panel
 # =========================
 
+
 class SIRASystemSettingsPanel(SettingsPanel):
 	# Translators: Title of the add-on settings panel
 	title = ADDON_SUMMARY
 
-	def makeSettings(self, settingsSizer):
-		settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
+	def makeSettings(self, sizer):
+		settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=sizer)
 
 		# Materialize configuration safely
 		conf = config.conf.get(ADDON_NAME)
@@ -42,7 +44,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 
 		# Initialize database config lazily
 		self.db_config = DatabaseConfig(
-			default_path=os.path.join(os.path.dirname(__file__), "database.db")
+			default_path=os.path.join(os.path.dirname(__file__), "database.db"),
 		)
 		self.db_config.load_config()
 
@@ -53,7 +55,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		phoneBoxSizer = wx.StaticBoxSizer(
 			wx.HORIZONTAL,
 			self,
-			label=_("Add mask for phone fields:")
+			label=_("Add mask for phone fields:"),
 		)
 		phoneBox = phoneBoxSizer.GetStaticBox()
 		phoneGroup = guiHelper.BoxSizerHelper(self, sizer=phoneBoxSizer)
@@ -75,38 +77,38 @@ class SIRASystemSettingsPanel(SettingsPanel):
 
 		self.removeConfigOnUninstall = wx.CheckBox(
 			self,
-			label=_("Remove all saved settings when uninstalling this add-on")
+			label=_("Remove all saved settings when uninstalling this add-on"),
 		)
 		self.removeConfigOnUninstall.SetValue(
-			bool(conf.get("removeConfigOnUninstall", False))
+			bool(conf.get("removeConfigOnUninstall", False)),
 		)
 		settingsSizerHelper.addItem(self.removeConfigOnUninstall)
 
 		self.resetRecords = wx.CheckBox(
 			self,
-			label=_("Show option to delete entire calendar")
+			label=_("Show option to delete entire calendar"),
 		)
 		self.resetRecords.SetValue(
-			bool(conf.get("resetRecords", True))
+			bool(conf.get("resetRecords", True)),
 		)
 		settingsSizerHelper.addItem(self.resetRecords)
 
 		self.importCSV = wx.CheckBox(
 			self,
-			label=_("Show import CSV file button")
+			label=_("Show import CSV file button"),
 		)
 		self.importCSV.SetValue(
-			bool(conf.get("importCSV", True))
-			)
+			bool(conf.get("importCSV", True)),
+		)
 		settingsSizerHelper.addItem(self.importCSV)
 
 		self.exportCSV = wx.CheckBox(
 			self,
-			label=_("Show export CSV file button")
+			label=_("Show export CSV file button"),
 		)
 		self.exportCSV.SetValue(
-			bool(conf.get("exportCSV", True))
-			)
+			bool(conf.get("exportCSV", True)),
+		)
 		settingsSizerHelper.addItem(self.exportCSV)
 
 		# =========================
@@ -116,7 +118,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		pathBoxSizer = wx.StaticBoxSizer(
 			wx.HORIZONTAL,
 			self,
-			label=_("Path of agenda files:")
+			label=_("Path of agenda files:"),
 		)
 		pathBox = pathBoxSizer.GetStaticBox()
 		pathGroup = guiHelper.BoxSizerHelper(self, sizer=pathBoxSizer)
@@ -124,18 +126,18 @@ class SIRASystemSettingsPanel(SettingsPanel):
 
 		self.pathList = [
 			self.db_config.first_database,
-			self.db_config.alt_database
+			self.db_config.alt_database,
 		]
 		self.pathNameCB = pathGroup.addLabeledControl(
 			"",
 			wx.Choice,
-			choices=self.pathList
+			choices=self.pathList,
 		)
 		self.pathNameCB.SetSelection(self.db_config.index_db)
 
 		changePathBtn = wx.Button(
 			pathBox,
-			label=_("&Select or add a directory")
+			label=_("&Select or add a directory"),
 		)
 		changePathBtn.Bind(wx.EVT_BUTTON, self.onSelectDirectory)
 
@@ -150,7 +152,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 			os.path.dirname(__file__),
 			"database.db",
 			wildcard=_("Database files (*.db)"),
-			style=wx.FD_SAVE
+			style=wx.FD_SAVE,
 		)
 
 		if dlg.ShowModal() == wx.ID_OK:
@@ -160,7 +162,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 
 			self.pathList = [
 				self.db_config.first_database,
-				self.db_config.alt_database
+				self.db_config.alt_database,
 			]
 			self.pathNameCB.Set(self.pathList)
 			self.pathNameCB.SetSelection(self.db_config.index_db)
@@ -173,8 +175,10 @@ class SIRASystemSettingsPanel(SettingsPanel):
 
 	def onSave(self):
 		conf = config.conf.get(ADDON_NAME)
-		if conf is None:
-			conf = config.conf[ADDON_NAME]
+		if ADDON_NAME not in config.conf:
+			config.conf[ADDON_NAME] = {}
+
+		conf = cast(dict[str, Any], config.conf[ADDON_NAME])
 
 		conf["formatCellPhone"] = self.textCellPhone.GetValue()
 		conf["formatLandline"] = self.textLandline.GetValue()

@@ -34,8 +34,10 @@ def convert(file, maskClr, outputDir, outputName, outType, outExt):
         if outputName:
             newname = outputName
         else:
-            newname = os.path.join(outputDir,
-                                   os.path.basename(os.path.splitext(file)[0]) + outExt)
+            newname = os.path.join(
+                outputDir,
+                os.path.basename(os.path.splitext(file)[0]) + outExt,
+            )
         if img.SaveFile(newname, outType):
             return 1, file + " converted to " + newname
         else:
@@ -79,7 +81,8 @@ def main(args, outType, outExt, doc):
         for file in glob.glob(arg):
             if not os.path.isfile(file):
                 continue
-            ok, msg = convert(file, maskClr, outputDir, outputName,
-                              outType, outExt)
+            ok, msg = convert(
+                file, maskClr, outputDir, outputName,
+                outType, outExt,
+            )
             print(msg)
-

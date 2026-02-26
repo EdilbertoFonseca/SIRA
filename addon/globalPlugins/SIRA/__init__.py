@@ -39,18 +39,20 @@ GITHUB_REPO = f"EdilbertoFonseca/{ADDON_NAME}"
 # Secure mode decorator
 # =========================
 
+
 def disableInSecureMode(decoratedCls):
 	if globalVars.appArgs.secure:
 		return globalPluginHandler.GlobalPlugin
 	return decoratedCls
 
+
 # =========================
 # Global Plugin
 # =========================
 
+
 @disableInSecureMode
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-
 	def __init__(self):
 		super().__init__()
 		log.info(f"{ADDON_NAME} {ADDON_VERSION} initializing")
@@ -67,7 +69,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.updateManager = UpdateManager(
 			reponame=GITHUB_REPO,
 			currentversion=ADDON_VERSION,
-			addonnameforfile=ADDON_NAME
+			addonnameforfile=ADDON_NAME,
 		)
 
 		self._registerSettingsPanel()
@@ -92,34 +94,34 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		self.menuList = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("&Lists of registered extensions...")
+			_("&Lists of registered extensions..."),
 		)
 		self.menuTransport = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("Message for &transport...")
+			_("Message for &transport..."),
 		)
 		self.menuMedical = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("Medical discharge &register...")
+			_("Medical discharge &register..."),
 		)
 		self.menuGeneral = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("&General message...")
+			_("&General message..."),
 		)
 
 		self.mainMenu.AppendSeparator()
 
 		self.menuUpdate = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("Check for &updates...")
+			_("Check for &updates..."),
 		)
 		self.menuSettings = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("&Settings...")
+			_("&Settings..."),
 		)
 		self.menuHelp = self.mainMenu.Append(
 			wx.ID_ANY,
-			_("&Help")
+			_("&Help"),
 		)
 
 		# Bindings (handlers dedicados, não scripts)
@@ -132,9 +134,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		icon.Bind(wx.EVT_MENU, self._onOpenSettings, self.menuSettings)
 		icon.Bind(wx.EVT_MENU, self._onHelp, self.menuHelp)
 
-		self.toolsMenu.AppendSubMenu(
+		self.menuItem = self.toolsMenu.AppendSubMenu(
 			self.mainMenu,
-			"&{}...".format(ADDON_SUMMARY)
+			"&{}...".format(ADDON_SUMMARY),
 		)
 
 	# =========================
@@ -150,46 +152,45 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def _onList(self, event):
 		wx.CallAfter(
 			self._popup,
-			SIRA(gui.mainFrame, _("Lists of registered extensions"))
+			SIRA(gui.mainFrame, _("Lists of registered extensions")),
 		)
 
 	def _onTransport(self, event):
 		wx.CallAfter(
 			self._popup,
-			MessageForTransport(gui.mainFrame, _("Message for transport"))
+			MessageForTransport(gui.mainFrame, _("Message for transport")),
 		)
 
 	def _onMedical(self, event):
 		wx.CallAfter(
 			self._popup,
-			MedicalDischarge(gui.mainFrame, _("Medical discharge register"))
+			MedicalDischarge(gui.mainFrame, _("Medical discharge register")),
 		)
 
 	def _onGeneral(self, event):
 		wx.CallAfter(
 			self._popup,
-			GeneralMessage(gui.mainFrame, _("General message"))
+			GeneralMessage(gui.mainFrame, _("General message")),
 		)
 
 	def _onCheckUpdates(self, event):
 		self.updateManager.checkforupdates(silent=False)
 
 	def _onOpenSettings(self, event):
-		wx.CallAfter(
-			getattr(
-				gui.mainFrame,
-				"popupSettingsDialog",
-				gui.mainFrame._popupSettingsDialog
-			),
-			gui.settingsDialogs.NVDASettingsDialog,
-			SIRASystemSettingsPanel
-		)
+		def _open_settings():
+			method = getattr(gui.mainFrame, "popupSettingsDialog", None)
+			if callable(method):
+				method(gui.settingsDialogs.NVDASettingsDialog, SIRASystemSettingsPanel)
+			else:
+				log.warning("popupSettingsDialog not available on mainFrame")
+
+		wx.CallAfter(_open_settings)
 
 	def _onHelp(self, event):
 		wx.LaunchDefaultBrowser(
 			addonHandler.Addon(
-				os.path.join(os.path.dirname(__file__), "..", "..")
-			).getDocFilePath()
+				os.path.join(os.path.dirname(__file__), "..", ".."),
+			).getDocFilePath(),
 		)
 
 	# =========================
@@ -199,9 +200,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		gesture="kb:Alt+numpad1",
 		description=_(
-			"{addon} - Opens the list of registered extensions."
+			"{addon} - Opens the list of registered extensions.",
 		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY
+		category=ADDON_SUMMARY,
 	)
 	def script_openList(self, gesture):
 		self._onList(None)
@@ -209,9 +210,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		gesture="kb:Alt+numpad2",
 		description=_(
-			"{addon} - Opens the message for transport dialog."
+			"{addon} - Opens the message for transport dialog.",
 		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY
+		category=ADDON_SUMMARY,
 	)
 	def script_openTransport(self, gesture):
 		self._onTransport(None)
@@ -219,9 +220,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		gesture="kb:Alt+numpad3",
 		description=_(
-			"{addon} - Opens the medical discharge register."
+			"{addon} - Opens the medical discharge register.",
 		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY
+		category=ADDON_SUMMARY,
 	)
 	def script_openMedical(self, gesture):
 		self._onMedical(None)
@@ -229,9 +230,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		gesture="kb:Alt+numpad4",
 		description=_(
-			"{addon} - Opens the general message dialog."
+			"{addon} - Opens the general message dialog.",
 		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY
+		category=ADDON_SUMMARY,
 	)
 	def script_openGeneral(self, gesture):
 		self._onGeneral(None)
@@ -239,9 +240,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		gesture="kb:Alt+numpad5",
 		description=_(
-				"{addon} - Check for updates."
+			"{addon} - Check for updates.",
 		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY
+		category=ADDON_SUMMARY,
 	)
 	def script_update(self, gesture):
 		self._onCheckUpdates(None)
@@ -255,12 +256,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		try:
 			gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(
-				SIRASystemSettingsPanel
+				SIRASystemSettingsPanel,
 			)
 		except ValueError:
 			pass
 
 		try:
-			self.toolsMenu.Remove(self.mainMenu)
+			self.toolsMenu.Remove(self.menuItem)
 		except Exception as e:
 			log.warning(f"Failed to remove menu: {e}")

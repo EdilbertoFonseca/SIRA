@@ -40,6 +40,7 @@ except ImportError as e:
 # Global Constants for Regex
 EMAIL_REGEX = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$"
 
+
 def validate_fields(data):
 	"""
 	Validates the fields of the contact form.
@@ -59,20 +60,23 @@ def validate_fields(data):
 		errors["landline"] = _("It is necessary to inform the landline!")
 	if not data.get("extension"):
 		errors["extension"] = _("It is necessary to inform the extension!")
-	
+
 	# Email validation is done only if the field is not empty.
 	if data.get("email") and not re.match(EMAIL_REGEX, data["email"]):
 		errors["email"] = _("Invalid email format!")
 
 	return errors
 
+
 # Initialize translation support
 addonHandler.initTranslation()
 
 
 class AddEditRecDialog(wx.Dialog):
+	def __init__(self, parent, row=None, title=None, addRecord=True):
+		if title is None:
+			title = _("Add")
 
-	def __init__(self, parent, row=None, title=_("Add"), addRecord=True):
 		self.title = title
 		WIDTH = 600
 		HEIGHT = 400
@@ -85,7 +89,7 @@ class AddEditRecDialog(wx.Dialog):
 		if conf is None:
 			conf = config.conf[ADDON_NAME]
 
-		self.formatLandline = conf.get("formatLandline") or "(##) ####-####" 
+		self.formatLandline = conf.get("formatLandline") or "(##) ####-####"
 		self.formatCellPhone = conf.get("formatCellPhone") or "(##) #####-####"
 		self.addRecord = addRecord
 		self.selectedRow = row
@@ -98,7 +102,7 @@ class AddEditRecDialog(wx.Dialog):
 		extension = row.extension if row else ""
 		cell = row.cell if row else ""
 		email = row.email if row else ""
-		
+
 		# Widget Creation
 		self.panel = wx.Panel(self)
 
@@ -106,7 +110,12 @@ class AddEditRecDialog(wx.Dialog):
 		self.textSecretary_office = wx.TextCtrl(self.panel, value=secretary_office, style=wx.TE_PROCESS_ENTER)
 
 		labelLandline = wx.StaticText(self.panel, label=_("Landline: "))
-		self.textLandline = TextCtrl(self.panel, value=landline, mask=self.formatLandline, style=wx.TE_PROCESS_ENTER)
+		self.textLandline = TextCtrl(
+			self.panel,
+			value=landline,
+			mask=self.formatLandline,
+			style=wx.TE_PROCESS_ENTER,
+		)
 
 		labelSector = wx.StaticText(self.panel, label=_("Sector: "))
 		self.textSector = wx.TextCtrl(self.panel, value=sector, style=wx.TE_PROCESS_ENTER)
@@ -177,11 +186,11 @@ class AddEditRecDialog(wx.Dialog):
 		self.textCell.SetFocus()
 
 	def onFocusCell(self, event):
-			self.textEmail.SetFocus()
+		self.textEmail.SetFocus()
 
 	def onFocusEmail(self, event):
 		self.buttonOk.SetFocus()
-	
+
 	def getData(self):
 		"""
 		Collect and validate the contact form data.
@@ -197,7 +206,7 @@ class AddEditRecDialog(wx.Dialog):
 			"responsible": self.textResponsible.GetValue().strip(),
 			"extension": self.textExtension.GetValue().strip(),
 			"cell": self.textCell.GetValue().strip(),
-			"email": self.textEmail.GetValue().strip()
+			"email": self.textEmail.GetValue().strip(),
 		}
 
 		errors = validate_fields(contactDict)
@@ -291,10 +300,12 @@ class AddEditRecDialog(wx.Dialog):
 		else:
 			self.onEdit()
 
-	def show_message(self, message, caption=_("Message"), style=wx.OK | wx.ICON_INFORMATION):
+	def show_message(self, message, caption=None, style=wx.OK | wx.ICON_INFORMATION):
 		"""
 		Displays a message to the user in a dialog box.
 		"""
+		if caption is None:
+			caption = _("Message")
 		gui.messageBox(message, caption, style)
 
 	def clear_form(self):

@@ -21,12 +21,11 @@ addonHandler.initTranslation()
 
 
 class ManageDuplicatesDialog(wx.Dialog):
-
 	def __init__(self, parent, duplicates):
 		super(ManageDuplicatesDialog, self).__init__(
 			parent,
 			title=_("Manage Duplicate Records"),
-			size=(700, 500)
+			size=(700, 500),
 		)
 		self.duplicates = duplicates
 		self.parent = parent
@@ -38,16 +37,16 @@ class ManageDuplicatesDialog(wx.Dialog):
 
 		description = wx.StaticText(
 			self.panel,
-			label=_("Found the following duplicate records. Select the ones you want to remove.")
+			label=_("Found the following duplicate records. Select the ones you want to remove."),
 		)
 		mainSizer.Add(description, 0, wx.ALL | wx.EXPAND, 10)
 
 		# Creation of the list to display records
-# WX.LC Report style allows columns.
+		# WX.LC Report style allows columns.
 		# We do not use Wx.lc Single Sel to allow multiple selections.
 		self.duplicateList = wx.ListCtrl(
 			self.panel,
-			style=wx.LC_REPORT
+			style=wx.LC_REPORT,
 		)
 		mainSizer.Add(self.duplicateList, 1, wx.ALL | wx.EXPAND, 10)
 
@@ -55,7 +54,7 @@ class ManageDuplicatesDialog(wx.Dialog):
 
 		# Action buttons
 		buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
-		
+
 		# Button to remove selected items
 		self.removeSelectedButton = wx.Button(self.panel, label=_("Remove Selected"))
 		self.removeSelectedButton.Bind(wx.EVT_BUTTON, self.onRemoveSelected)
@@ -75,7 +74,7 @@ class ManageDuplicatesDialog(wx.Dialog):
 		"""Fill in the list of duplicates with the data."""
 		self.duplicateList.ClearAll()
 		self.list_map.clear()
-		
+
 		columns = [
 			(_("ID"), 50),
 			(_("Secretary Office"), 120),
@@ -85,10 +84,10 @@ class ManageDuplicatesDialog(wx.Dialog):
 			(_("Responsible"), 120),
 			(_("Email"), 200),
 		]
-		
+
 		for i, (title, width) in enumerate(columns):
 			self.duplicateList.InsertColumn(i, title, width=width)
-		
+
 		for i, record in enumerate(self.duplicates):
 			index = self.duplicateList.InsertItem(self.duplicateList.GetItemCount(), str(record.id))
 			self.duplicateList.SetItem(index, 1, record.secretary_office)
@@ -109,7 +108,7 @@ class ManageDuplicatesDialog(wx.Dialog):
 			if item == -1:
 				break
 			selected_indices.append(item)
-		
+
 		if not selected_indices:
 			gui.messageBox(_("No records selected for removal."), _("Attention"))
 			return
@@ -117,7 +116,7 @@ class ManageDuplicatesDialog(wx.Dialog):
 		message = _("Are you sure you want to remove the selected duplicate records?")
 		caption = _("Confirm Deletion")
 		user_response = gui.messageBox(message, caption, style=wx.YES_NO | wx.ICON_QUESTION)
-		
+
 		if user_response == wx.YES:
 			deleted_count = 0
 			for index in selected_indices:
@@ -125,12 +124,12 @@ class ManageDuplicatesDialog(wx.Dialog):
 				if record_id:
 					if core.delete(record_id):
 						deleted_count += 1
-			
+
 			gui.messageBox(
 				_("%d selected records were removed.") % deleted_count,
-				_("Removal Complete")
+				_("Removal Complete"),
 			)
-			
+
 			# Update the list after removal
 			remaining_duplicates = core.find_duplicate_records()
 			if remaining_duplicates:

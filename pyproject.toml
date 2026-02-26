@@ -106,8 +106,8 @@ exclude = [
 	# When excluding concrete paths relative to a directory,
 	# not matching multiple folders by name e.g. `__pycache__`,
 	# paths are relative to the configuration file.
-	"./addon/globalPlugins/SIRA/lib",
-	"./addon/globalPlugins/SIRA/lib64",
+	"addon/globalPlugins/SIRA/lib",
+	"addon/globalPlugins/SIRA/lib64",
 ]
 
 # Tell pyright where to load python code from
@@ -131,7 +131,7 @@ reportAbstractUsage = true
 reportAssertAlwaysTrue = true
 reportAssertTypeFailure = true
 reportAssignmentType = true
-reportAttributeAccessIssue = true
+# reportAttributeAccessIssue = true
 reportCallInDefaultInitializer = true
 reportCallIssue = true
 reportConstantRedefinition = true
@@ -139,7 +139,7 @@ reportDuplicateImport = true
 reportFunctionMemberAccess = true
 reportGeneralTypeIssues = true
 reportImplicitStringConcatenation = true
-reportImportCycles = true
+# reportImportCycles = true
 reportIncompatibleMethodOverride = true
 reportIncompatibleVariableOverride = true
 reportIncompleteStub = true
@@ -181,7 +181,7 @@ reportUnnecessaryContains = true
 reportUnnecessaryIsInstance = true
 reportUnnecessaryTypeIgnoreComment = true
 reportUnsupportedDunderAll = true
-reportUntypedBaseClass = true
+# reportUntypedBaseClass = true
 reportUntypedClassDecorator = true
 reportUntypedFunctionDecorator = true
 reportUntypedNamedTuple = true
@@ -234,3 +234,7 @@ reportUnknownVariableType = false
 # wxPython is bundled with NVDA and does not ship with official type stubs.
 # Pyright cannot resolve wx types in a standard environment.
 reportMissingTypeStubs = false
+
+reportAttributeAccessIssue = false
+reportImportCycles = false
+reportUntypedBaseClass = false

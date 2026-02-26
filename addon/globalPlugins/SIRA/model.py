@@ -18,14 +18,14 @@ import globalVars
 from .dbConfig import DatabaseConfig
 from .sqlLoader import sql
 
-ADDON_DATA_DIR = os.path.join(globalVars.appArgs.configPath, "SIRA") # pyright: ignore[reportCallIssue]
+ADDON_DATA_DIR = os.path.join(globalVars.appArgs.configPath, "SIRA")  # pyright: ignore[reportCallIssue]
 
 if not os.path.isdir(ADDON_DATA_DIR):
 	os.makedirs(ADDON_DATA_DIR)
 
 DEFAULT_DB_PATH = os.path.join(
 	ADDON_DATA_DIR,
-	"database.db"
+	"database.db",
 )
 
 db = DatabaseConfig(DEFAULT_DB_PATH)
@@ -33,8 +33,17 @@ db.load_config()
 
 
 class ObjectExtensionRegistrationSystem(object):
-
-	def __init__(self, id='', secretary_office='', landline='', sector='', responsible='', extension='', cell='', email=''):
+	def __init__(
+		self,
+		id="",
+		secretary_office="",
+		landline="",
+		sector="",
+		responsible="",
+		extension="",
+		cell="",
+		email="",
+	):
 		"""
 		Initializes a new contact with the provided details.
 
@@ -65,13 +74,15 @@ class ObjectExtensionRegistrationSystem(object):
 		Returns:
 			str: A formatted string with the contact's secretary, sector, landline, responsible, extension, cell, and email.
 		"""
-		return (f'SecretaryOffice: {self.secretary_office}, '
-				f'Landline: {self.landline}, '
-				f'Sector: {self.sector}, '
-				f'Responsible: {self.responsible}, '
-				f'Extension: {self.extension}, '
-				f'Cell: {self.cell}, '
-				f'Email: {self.email}')
+		return (
+			f"SecretaryOffice: {self.secretary_office}, "
+			f"Landline: {self.landline}, "
+			f"Sector: {self.sector}, "
+			f"Responsible: {self.responsible}, "
+			f"Extension: {self.extension}, "
+			f"Cell: {self.cell}, "
+			f"Email: {self.email}"
+		)
 
 
 class Section:
@@ -82,7 +93,7 @@ class Section:
 	def __enter__(self):
 		"""Método de entrada para o gerenciador de contexto."""
 		self.connect = sql.connect(db.get_current_database_path())
-		self.connect.row_factory = self.dict_factory # Adicionado aqui para consistência
+		self.connect.row_factory = self.dict_factory  # Adicionado aqui para consistência
 		self.cursor = self.connect.cursor()
 		self.connected = True
 		return self

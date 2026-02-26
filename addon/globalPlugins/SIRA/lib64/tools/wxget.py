@@ -70,7 +70,7 @@ def get_save_path(url, dest_dir, force=False):
     if not force:
         with wx.FileDialog(
             None, message="Save As ...", defaultDir=dest_dir,
-            defaultFile=filename, style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+            defaultFile=filename, style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
         ) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 dest_dir, filename = os.path.split(dlg.GetPath())
@@ -123,8 +123,10 @@ def download_urllib(url, filename):
         message = "Downloading: {0}\nBytes: {1}\n".format(url, file_size)
         dstyle = wx.PD_APP_MODAL | wx.PD_CAN_ABORT | wx.PD_AUTO_HIDE
         if file_size:
-            progress = wx.ProgressDialog('Downloading', message,
-                                         maximum=1+file_size//block_sz, style=dstyle)
+            progress = wx.ProgressDialog(
+                'Downloading', message,
+                maximum=1+file_size//block_sz, style=dstyle,
+            )
         else:
             progress = wx.ProgressDialog('Downloading', message, style=dstyle)
 
@@ -142,8 +144,10 @@ def download_urllib(url, filename):
             status = "{0:16}".format(file_size_dl)
             if file_size:
                 status += "   [{0:6.2f}%]".format(file_size_dl * 100 / file_size)
-            (keep_going, dummy_skip) = progress.Update(file_size_dl // block_sz,
-                                                       message+status)
+            (keep_going, dummy_skip) = progress.Update(
+                file_size_dl // block_sz,
+                message+status,
+            )
             wx.MilliSleep(80)  # Give the GUI some update time
         progress.Destroy()
 
@@ -156,8 +160,10 @@ def download_pip(url, filename, force=False, trusted=False):
     if len(download_dir) == 0:
         download_dir = '.'
     print("Trying to use pip to download From:\n  ", url, 'To:\n  ', filename)
-    cmds = ['pip', 'download', url, '--dest', download_dir, "--no-deps",
-            '--exists-action', 'i']
+    cmds = [
+        'pip', 'download', url, '--dest', download_dir, "--no-deps",
+        '--exists-action', 'i',
+    ]
     if force:
         cmds.append('--no-cache-dir')
     if trusted:
@@ -202,11 +208,14 @@ def download_file(url, dest=None, force=False, trusted=False):
                 "-" * 52,
                 "You should be able to bybass this by using a browser to download:",
                 "\t%s\nfrom:\t%s\nthen copying the download file to:\n\t%s" % (
-                    split_url[-1], '/'.join(split_url[:-1]), filename),
-                ])
+                    split_url[-1], '/'.join(split_url[:-1]), filename,
+                ),
+            ])
             print(msg, '\n')
-            wx.MessageBox(msg, caption='WDOWNLOAD ERROR!',
-                          style=wx.OK|wx.CENTRE|wx.ICON_ERROR)
+            wx.MessageBox(
+                msg, caption='WDOWNLOAD ERROR!',
+                style=wx.OK|wx.CENTRE|wx.ICON_ERROR,
+            )
             return "FAILURE or Abort!"
 
     return filename
@@ -236,8 +245,10 @@ def main(args=sys.argv):
         url = args[1]
     else:
         print(__doc__)
-        yes_no = wx.MessageBox(__doc__+"\n\nRUN TEST?", "wxget",
-                               wx.YES_NO|wx.CENTER)
+        yes_no = wx.MessageBox(
+            __doc__+"\n\nRUN TEST?", "wxget",
+            wx.YES_NO|wx.CENTER,
+        )
         if yes_no == wx.YES:
             print("Testing with wxDemo")
             url = get_docs_demo_url()

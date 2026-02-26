@@ -36,6 +36,7 @@ ADDON_VERSION = addonHandler.getCodeAddon().manifest["version"]
 _addon = addonHandler.getCodeAddon()
 ADDON_NAME = _addon.name
 
+
 def initConfiguration():
 	"""
 	Initializes the configuration specification for the Contacts Manager for NVDA add-on.

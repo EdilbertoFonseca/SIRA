@@ -49,7 +49,7 @@ class MaskedTextCtrl(wx.TextCtrl):
 		allowed_keys = {
 			wx.WXK_BACK, wx.WXK_DELETE, wx.WXK_LEFT, wx.WXK_RIGHT,
 			wx.WXK_HOME, wx.WXK_END, wx.WXK_NUMPAD_ENTER, wx.WXK_RETURN,
-			wx.WXK_TAB
+			wx.WXK_TAB,
 		}
 
 		if key_code in allowed_keys:

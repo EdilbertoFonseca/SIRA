@@ -1,3 +1,5 @@
+# Changelog
+
 - Replace `addonPath` with `ADDONPATH` and add `is64` detection to select `lib` or `lib64` directories.
 
 - Update imports across SIRA plugins to load internal libs from the correct folder and log/raise clearer errors when mandatory internal modules are missing.

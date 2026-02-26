@@ -10,7 +10,7 @@ https://www.gnu.org/licenses/gpl-2.0.html
 
 Created on: 30/11/2022.
 """
- 
+
 import os
 
 import addonHandler
@@ -49,7 +49,7 @@ class SIRA(wx.Dialog):
 		# Title of Extension Registration System dialog.
 		self.title = title
 
-		WIDTH =800
+		WIDTH = 800
 		HEIGHT = 400
 
 		try:
@@ -58,7 +58,11 @@ class SIRA(wx.Dialog):
 			self.contactResults = []
 
 		super(SIRA, self).__init__(
-			parent, title=title, size=(WIDTH, HEIGHT), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+			parent,
+			title=title,
+			size=(WIDTH, HEIGHT),
+			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
+		)
 		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
 
 		# Creating the screen objects.
@@ -72,14 +76,22 @@ class SIRA(wx.Dialog):
 		# Selected line viewing field
 		self.visualizationField = wx.TextCtrl(
 			panel,
-			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.BORDER_STATIC
+			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.BORDER_STATIC,
 		)
 
 		# Translators: Search field label.
 		labelSearch = wx.StaticText(panel, label=_("Search for: "))
 
 		# List of combobox choices option.
-		listOfOptions = [_("Secretary office"), _("Landline"), _("Sector"), _("Responsible"), _("Extension"), _("Cell phone"), _("Email")]
+		listOfOptions = [
+			_("Secretary office"),
+			_("Landline"),
+			_("Sector"),
+			_("Responsible"),
+			_("Extension"),
+			_("Cell phone"),
+			_("Email"),
+		]
 		self.comboboxOptions = wx.ComboBox(panel, value=_("Secretary office"), choices=listOfOptions)
 
 		self.search = wx.SearchCtrl(panel, -1, size=(250, 25))
@@ -142,7 +154,6 @@ class SIRA(wx.Dialog):
 		self.buttonResetRecords.Bind(wx.EVT_BUTTON, self.onReset, self.buttonResetRecords)
 		self.buttonExit.Bind(wx.EVT_BUTTON, self.onClose, self.buttonExit)
 
-
 	def _create_columns(self):
 		columns = [
 			(_("Secretary office"), 150),
@@ -166,7 +177,7 @@ class SIRA(wx.Dialog):
 		for record in self.contactResults:
 			index = self.contactList.InsertItem(
 				self.contactList.GetItemCount(),
-				record.secretary_office
+				record.secretary_office,
 			)
 
 			record_values = (
@@ -175,7 +186,7 @@ class SIRA(wx.Dialog):
 				record.responsible,
 				record.extension,
 				record.cell,
-				record.email
+				record.email,
 			)
 
 			for colIndex, value in enumerate(record_values, start=1):
@@ -203,7 +214,7 @@ class SIRA(wx.Dialog):
 			gui.mainFrame,
 			selectedRow,
 			title=_("To edit"),
-			addRecord=False
+			addRecord=False,
 		)
 		gui.mainFrame.prePopup
 		dlg.CentreOnScreen()
@@ -275,8 +286,12 @@ class SIRA(wx.Dialog):
 	def onToImport(self, event):
 		"""Import csv file to the List of extensions."""
 		dlg = wx.FileDialog(
-			self, _("import csv file"),
-			os.getcwd(), "", "*.csv", wx.FD_OPEN
+			self,
+			_("import csv file"),
+			os.getcwd(),
+			"",
+			"*.csv",
+			wx.FD_OPEN,
 		)
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
@@ -286,7 +301,7 @@ class SIRA(wx.Dialog):
 				self._refresh_and_focus()
 			except Exception as e:
 				msg = _(
-					"""It was not possible to import the file! {}""".format(str(e))
+					"""It was not possible to import the file! {}""".format(str(e)),
 				)
 
 				# Translators: Message displayed to the user in case of errors when importing the CSV file
@@ -302,7 +317,7 @@ class SIRA(wx.Dialog):
 			os.getcwd(),
 			_("List of extensions"),
 			"*.csv",
-			wx.FD_SAVE
+			wx.FD_SAVE,
 		)
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
@@ -312,7 +327,7 @@ class SIRA(wx.Dialog):
 				self.contactList.SetFocus()
 			except Exception as e:
 				msg = _(
-					"""It was not possible to export the file! {}""".format(e)
+					"""It was not possible to export the file! {}""".format(e),
 				)
 
 				# Translators: Message displayed to the user in case of errors when exporting the CSV file
@@ -389,27 +404,27 @@ class SIRA(wx.Dialog):
 			gui.mainFrame.postPopup()
 		else:
 			gui.messageBox(
-				_("No duplicate records were found."), 
-				_("No Duplicates Found"), 
-				style=wx.ICON_INFORMATION
+				_("No duplicate records were found."),
+				_("No Duplicates Found"),
+				style=wx.ICON_INFORMATION,
 			)
-		
+
 	def onSaveResearchResults(self, event):
 		"""
-			Saves ObjectlistView's filtered results in a CSV file.
+					Saves ObjectlistView's filtered results in a CSV file.
 
-			This function extracts the filtered items from the contact list and allows the user to choose a location to save the data in CSV format.
-			If there are no results to save, a warning message is displayed.
-			If an error occurs during the export process, an error message will be shown.
+					This function extracts the filtered items from the contact list and allows the user to choose a location to save the data in CSV format.
+					If there are no results to save, a warning message is displayed.
+					If an error occurs during the export process, an error message will be shown.
 
-		Args:
-			event (wx.Event): The event that called the function, usually an event of
-						  	button click or interface action.
+				Args:
+					event (wx.Event): The event that called the function, usually an event of
+		                                                        button click or interface action.
 
-		Exceptions:
-If an error occurs when saving the CSV file, an error message will be shown
-			with details about the problem.
-			"""
+				Exceptions:
+		If an error occurs when saving the CSV file, an error message will be shown
+					with details about the problem.
+		"""
 
 		# We extracted the item using the Getobject method
 		filtered_item = self.contactResults
@@ -425,7 +440,7 @@ If an error occurs when saving the CSV file, an error message will be shown
 			os.getcwd(),
 			_("List of extensions"),
 			"*.csv",
-			wx.FD_SAVE
+			wx.FD_SAVE,
 		)
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
@@ -435,7 +450,7 @@ If an error occurs when saving the CSV file, an error message will be shown
 				self.contactList.SetFocus()
 			except Exception as e:
 				msg = _(
-					"""It was not possible to export the file! {}""".format(e)
+					"""It was not possible to export the file! {}""".format(e),
 				)
 
 				# Translators: Message displayed to the user in case of errors when exporting the CSV file
@@ -443,7 +458,7 @@ If an error occurs when saving the CSV file, an error message will be shown
 		dlg.Destroy()
 		self.contactList.SetFocus()
 
-	def show_message(self, message, caption=_("Message"), style=wx.OK | wx.ICON_INFORMATION):
+	def show_message(self, message, caption=None, style=wx.OK | wx.ICON_INFORMATION):
 		"""
 		Displays a message to the user in a dialog box.
 
@@ -452,8 +467,10 @@ If an error occurs when saving the CSV file, an error message will be shown
 			caption (str, optional): The title of the dialog box. The default is ("Message").
 			style (int, optional): The style of the dialog box,
 			combining flags like wx.OK,
-			wx.CANCEL, wx.ICON INFORMATION, etc. The default is wx.OK | wx.ICON INFORMATION.
+			wx.CANCEL, wx.ICON INFORMATION, etc. The default is wx.OK | wx.ICON_INFORMATION.
 		"""
+		if caption is None:
+			caption = _("Message")
 		gui.messageBox(message, caption, style)
 
 	def onKeyPress(self, event):

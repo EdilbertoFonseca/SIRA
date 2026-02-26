@@ -11,6 +11,8 @@ https://www.gnu.org/licenses/gpl-2.0.html
 Created on: 09/01/2026
 """
 
+from typing import Any, cast
+
 import config
 
 from .varsConfig import ADDON_NAME
@@ -18,6 +20,7 @@ from .varsConfig import ADDON_NAME
 
 class DatabaseConfig:
 	def __init__(self, default_path):
+		super().__init__()
 		self.default_path = default_path
 		self.first_database = default_path
 		self.alt_database = ""
@@ -35,9 +38,10 @@ class DatabaseConfig:
 			self.alt_database = conf.get("altPath", self.default_path)
 
 	def save_config(self):
-		conf = config.conf.get(ADDON_NAME)
-		if conf is None:
-			conf = config.conf[ADDON_NAME]
+		if ADDON_NAME not in config.conf:
+			config.conf[ADDON_NAME] = {}
+
+		conf = cast(dict[str, Any], config.conf[ADDON_NAME])
 
 		conf["path"] = self.first_database
 		conf["altPath"] = self.alt_database

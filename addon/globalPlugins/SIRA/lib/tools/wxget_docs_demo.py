@@ -60,8 +60,10 @@ def get_paths_dict():
     sp = wx.StandardPaths.Get()
     pathdict = {}
     pathdict['TempDir'] = sp.GetTempDir()
-    pathdict['Cache'] = os.path.join(sp.GetUserLocalDataDir(), 'wxDocsDemoCache',
-                                     wx.VERSION_STRING)
+    pathdict['Cache'] = os.path.join(
+        sp.GetUserLocalDataDir(), 'wxDocsDemoCache',
+        wx.VERSION_STRING,
+    )
     pathdict['Docs_URL'] = wxget.get_docs_demo_url(False)
     #pathdict['wxDocs'] = os.path.join(sp.GetAppDocumentsDir(), 'wxDocs', wx.VERSION_STRING)
     pathdict['wxDocs'] = sp.GetAppDocumentsDir()
@@ -98,10 +100,14 @@ def get_item(final, url, cache, name, ext, forced=False):
     if not os.path.exists(cached) or forced:  # No cached copy
         yes_no = wx.MessageBox(
             "\n".join(
-                ["%s is not yet installed." % name,
-                 "Go on-line to get it?",
-                 "(Select No on charged or slow connections)"]),
-            "Download Prompt", wx.YES_NO|wx.CENTER|wx.ICON_INFORMATION)
+                [
+                    "%s is not yet installed." % name,
+                    "Go on-line to get it?",
+                    "(Select No on charged or slow connections)",
+                ],
+            ),
+            "Download Prompt", wx.YES_NO|wx.CENTER|wx.ICON_INFORMATION,
+        )
         if yes_no == wx.YES:
             cached = wxget.download_file(url, cache, force=forced, trusted=True)
         else:
@@ -116,8 +122,10 @@ def get_item(final, url, cache, name, ext, forced=False):
 def report_error(err_text):
     """ Report a problem."""
     ensure_wx_app()
-    wx.MessageBox(err_text, caption='ERROR!',
-                  style=wx.OK|wx.CENTRE|wx.ICON_ERROR)
+    wx.MessageBox(
+        err_text, caption='ERROR!',
+        style=wx.OK|wx.CENTRE|wx.ICON_ERROR,
+    )
 
 def done(result=0):
     """ Tidy up and exit."""
@@ -136,8 +144,10 @@ def docs_main(args=sys.argv):
     result = 0
     print("Launch Docs for wxPython V%s" % wx.VERSION_STRING)
     pd = get_paths_dict()
-    location = get_item(pd['wxDocs'], pd['Docs_URL'], pd['Cache'],
-                        pd['Docs_Name'], pd['Ext'], forced="--force" in args)
+    location = get_item(
+        pd['wxDocs'], pd['Docs_URL'], pd['Cache'],
+        pd['Docs_Name'], pd['Ext'], forced="--force" in args,
+    )
     if location:
         location = os.path.join(location, 'docs', 'html', 'index.html')
         location_url = urlparse.urljoin('file:', pathname2url(location))
@@ -154,8 +164,10 @@ def demo_main(args=sys.argv):
     ensure_wx_app()
     print("Launch Demo for wxPython V%s" % wx.VERSION_STRING)
     pd = get_paths_dict()
-    location = get_item(pd['wxDemo'], pd['Demo_URL'], pd['Cache'],
-                        pd['Demo_Name'], pd['Ext'], forced="--force" in args)
+    location = get_item(
+        pd['wxDemo'], pd['Demo_URL'], pd['Cache'],
+        pd['Demo_Name'], pd['Ext'], forced="--force" in args,
+    )
     if location:
         cmds = [sys.executable, os.path.join(location, "demo", "demo.py")]
         print("Launching", cmds[1])

@@ -35,6 +35,7 @@ class UpdateManager:
 	"""
 
 	def __init__(self, reponame, currentversion, addonnameforfile):
+		super().__init__()
 		self.reponame = reponame
 		self.currentversion = currentversion
 		self.addonnameforfile = addonnameforfile
@@ -44,14 +45,10 @@ class UpdateManager:
 		self.changes = None
 
 		log.info(
-			f"UpdateManager initialized for {self.reponame}, "
-			f"current version {self.currentversion}"
+			f"UpdateManager initialized for {self.reponame}, current version {self.currentversion}",
 		)
 
-	# ============================
 	# PUBLIC API
-	# ============================
-
 	def checkforupdates(self, silent=True):
 		"""
 		Inicia a verificação de atualizações em thread separada.
@@ -59,7 +56,7 @@ class UpdateManager:
 		threading.Thread(
 			target=self._checkthread,
 			args=(silent,),
-			daemon=True
+			daemon=True,
 		).start()
 
 	# ============================
@@ -72,7 +69,7 @@ class UpdateManager:
 
 			req = urllib.request.Request(
 				url,
-				headers={"User-Agent": "NVDA-Addon-UpdateManager"}
+				headers={"User-Agent": "NVDA-Addon-UpdateManager"},
 			)
 
 			with urllib.request.urlopen(req) as response:
@@ -89,7 +86,7 @@ class UpdateManager:
 				if not silent:
 					wx.CallAfter(
 						ui.message,
-						_("You are already running the latest version of SIRA.")
+						_("You are already running the latest version of SIRA."),
 					)
 				return
 
@@ -102,7 +99,7 @@ class UpdateManager:
 				if not silent:
 					wx.CallAfter(
 						ui.message,
-						_("An update is available, but no add-on file was found.")
+						_("An update is available, but no add-on file was found."),
 					)
 				return
 
@@ -110,7 +107,7 @@ class UpdateManager:
 				self._promptupdate,
 				self.latestversion,
 				self.downloadurl,
-				self.changes
+				self.changes,
 			)
 
 		except urllib.error.URLError as e:
@@ -118,18 +115,18 @@ class UpdateManager:
 			if not silent:
 				wx.CallAfter(
 					ui.message,
-					_("Failed to check for updates due to a network error.")
+					_("Failed to check for updates due to a network error."),
 				)
 
 		except Exception as e:
 			log.error(
 				f"Unexpected error while checking updates: {e}",
-				excinfo=True
+				excinfo=True,  # pyright: ignore[reportCallIssue]
 			)
 			if not silent:
 				wx.CallAfter(
 					ui.message,
-					_("An unexpected error occurred while checking for updates.")
+					_("An unexpected error occurred while checking for updates."),
 				)
 
 	def _find_addon_asset(self, data):
@@ -142,6 +139,7 @@ class UpdateManager:
 	def _compareversions(self, v1, v2):
 		def normalize(v):
 			return [int(x) for x in re.sub(r"(\.0+)$", "", v).split(".")]
+
 		return (normalize(v1) > normalize(v2)) - (normalize(v1) < normalize(v2))
 
 	# ============================
@@ -150,24 +148,24 @@ class UpdateManager:
 
 	def _promptupdate(self, version, url, changes):
 		title = _("Update available for {addon}").format(
-			addon=self.addonnameforfile
+			addon=self.addonnameforfile,
 		)
 
 		message = _(
 			"A new version of {addon} ({version}) is available.\n\n"
-			"Changes:\n{changes}\n\n"
-			"Do you want to download and install it now?"
+			+ "Changes:\n{changes}\n\n"
+			+ "Do you want to download and install it now?",
 		).format(
 			addon=self.addonnameforfile,
 			version=version,
-			changes=changes
+			changes=changes,
 		)
 
 		if gui.messageBox(message, title, wx.YES | wx.NO | wx.ICON_INFORMATION) == wx.YES:
 			threading.Thread(
 				target=self._downloadinstallthread,
 				args=(url,),
-				daemon=True
+				daemon=True,
 			).start()
 
 	def _downloadinstallthread(self, url):
@@ -175,19 +173,19 @@ class UpdateManager:
 			wx.CallAfter(
 				ui.message,
 				_("Downloading update for {addon}...").format(
-					addon=self.addonnameforfile
-				)
+					addon=self.addonnameforfile,
+				),
 			)
 
 			tempdir = tempfile.mkdtemp(prefix="nvdaAddonUpdate_")
 			addonpath = os.path.join(
 				tempdir,
-				f"{self.addonnameforfile}.nvda-addon"
+				f"{self.addonnameforfile}.nvda-addon",
 			)
 
 			req = urllib.request.Request(
 				url,
-				headers={"User-Agent": "NVDA-Addon-UpdateManager"}
+				headers={"User-Agent": "NVDA-Addon-UpdateManager"},
 			)
 
 			with urllib.request.urlopen(req) as response, open(addonpath, "wb") as f:
@@ -198,8 +196,8 @@ class UpdateManager:
 			wx.CallAfter(
 				ui.message,
 				_("Installing update for {addon}...").format(
-					addon=self.addonnameforfile
-				)
+					addon=self.addonnameforfile,
+				),
 			)
 
 			os.startfile(addonpath)
@@ -211,12 +209,12 @@ class UpdateManager:
 			log.error(f"Download error: {e}")
 			wx.CallAfter(
 				ui.message,
-				_("Failed to download the update due to a network error.")
+				_("Failed to download the update due to a network error."),
 			)
 
 		except Exception as e:
 			log.error(f"Unexpected error during download/install: {e}")
 			wx.CallAfter(
 				ui.message,
-				_("An unexpected error occurred while installing the update.")
+				_("An unexpected error occurred while installing the update."),
 			)

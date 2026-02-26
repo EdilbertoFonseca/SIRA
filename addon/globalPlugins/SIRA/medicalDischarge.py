@@ -17,7 +17,7 @@ from datetime import datetime
 
 import addonHandler
 import gui
-import wx.adv
+import wx
 from logHandler import log
 
 from .varsConfig import ADDON_PATH, is64, mask_phone, ADDON_NAME
@@ -75,14 +75,14 @@ class MedicalDischarge(wx.Dialog):
 		HEIGHT = 800
 
 		super(MedicalDischarge, self).__init__(
-			parent, title=title, size=(WIDTH, HEIGHT), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
-
-		self.InitUI()
-
-	def InitUI(self):
-		panel = wx.Panel(self)
+			parent,
+			title=title,
+			size=(WIDTH, HEIGHT),
+			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
+		)
 
 		# Layout
+		panel = wx.Panel(self)
 		main_sizer = wx.BoxSizer(wx.VERTICAL)
 		view_fields_box = wx.BoxSizer(wx.VERTICAL)
 		view_button_box = wx.BoxSizer(wx.HORIZONTAL)
@@ -90,119 +90,213 @@ class MedicalDischarge(wx.Dialog):
 		# Nome do Hospital
 		self.labelHospital = wx.StaticText(panel, label=_("Hospital: "))
 		self.textHospital = wx.TextCtrl(panel, value="", size=(300, -1))
-		view_fields_box.Add(self.labelHospital,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textHospital, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+		view_fields_box.Add(
+			self.labelHospital,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textHospital,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Paciente
 		self.labelPaciente = wx.StaticText(panel, label=_("Patient: "))
 		self.textPaciente = wx.TextCtrl(panel, value="", size=(300, -1))
-		view_fields_box.Add(self.textPaciente, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
-		view_fields_box.Add(self.labelPaciente,
-							flag=wx.TOP | wx.LEFT, border=5)
+		view_fields_box.Add(
+			self.textPaciente,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.labelPaciente,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
 
 		# Quarto
 		self.labelQuarto = wx.StaticText(panel, label=_("Hospital room: "))
 		self.textQuarto = wx.TextCtrl(panel, value="", size=(300, -1))
 		view_fields_box.Add(self.labelQuarto, flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textQuarto, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+		view_fields_box.Add(
+			self.textQuarto,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Leito
 		self.labelLeito = wx.StaticText(panel, label=_("Bed: "))
 		self.textLeito = wx.TextCtrl(panel, value="", size=(300, -1))
 		view_fields_box.Add(self.labelLeito, flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textLeito, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+		view_fields_box.Add(
+			self.textLeito,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Transporte
 		self.labelTransporte = wx.StaticText(panel, label=_("Transporte: "))
 		self.textTransporte = wx.TextCtrl(panel, size=(250, 25))
-		view_fields_box.Add(self.labelTransporte,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textTransporte, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+		view_fields_box.Add(
+			self.labelTransporte,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textTransporte,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Telefone do paciente
 		self.labelContatoDoPaciente = wx.StaticText(
-			panel, label=_("Patient contact: "))
+			panel,
+			label=_("Patient contact: "),
+		)
 		self.textContatoDoPaciente = MaskedTextCtrl(
-			panel, mask_phone, size=(300, -1))
-		view_fields_box.Add(self.labelContatoDoPaciente,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textContatoDoPaciente, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+			panel,
+			mask_phone,
+			size=(300, -1),
+		)
+		view_fields_box.Add(
+			self.labelContatoDoPaciente,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textContatoDoPaciente,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Acompanhante
 		self.labelAcompanhante = wx.StaticText(
-			panel, label=_("Escort: "))
+			panel,
+			label=_("Escort: "),
+		)
 		self.textAcompanhante = wx.TextCtrl(panel, value="", size=(300, -1))
-		view_fields_box.Add(self.labelAcompanhante,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textAcompanhante, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+		view_fields_box.Add(
+			self.labelAcompanhante,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textAcompanhante,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Telefone do Acompanhante
 		self.labelContatoDoAcompanhante = wx.StaticText(
-			panel, label=_("Escort contact: "))
+			panel,
+			label=_("Escort contact: "),
+		)
 		self.textContatoDoAcompanhante = MaskedTextCtrl(
-			panel, mask_phone, size=(300, -1))
-		view_fields_box.Add(self.labelContatoDoAcompanhante,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textContatoDoAcompanhante, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+			panel,
+			mask_phone,
+			size=(300, -1),
+		)
+		view_fields_box.Add(
+			self.labelContatoDoAcompanhante,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textContatoDoAcompanhante,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Responsável pela alta
 		self.labelResponsavelPelaAlta = wx.StaticText(
-			panel, label=_("Responsible for discharge: "))
+			panel,
+			label=_("Responsible for discharge: "),
+		)
 		self.textResponsavelPelaAlta = wx.TextCtrl(panel, value="", size=(300, -1))
-		view_fields_box.Add(self.labelResponsavelPelaAlta,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textResponsavelPelaAlta, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+		view_fields_box.Add(
+			self.labelResponsavelPelaAlta,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textResponsavelPelaAlta,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Telefone do Responsável pela alta
 		self.labelContatoDoResponsavelPelaAlta = wx.StaticText(
-			panel, label=_("Contato do Responsible for discharge: "))
+			panel,
+			label=_("Contato do Responsible for discharge: "),
+		)
 		self.textContatoDoResponsavelPelaAlta = MaskedTextCtrl(
-			panel, mask_phone, size=(300, -1))
+			panel,
+			mask_phone,
+			size=(300, -1),
+		)
 		view_fields_box.Add(
-			self.labelContatoDoResponsavelPelaAlta, flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textContatoDoResponsavelPelaAlta, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+			self.labelContatoDoResponsavelPelaAlta,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textContatoDoResponsavelPelaAlta,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Texto da observação
 		self.labelObservação = wx.StaticText(panel, label=_("Observation: "))
 		self.textObservação = wx.TextCtrl(
-			panel, style=wx.TE_MULTILINE, size=(300, 150))
-		view_fields_box.Add(self.labelObservação,
-							flag=wx.TOP | wx.LEFT, border=5)
-		view_fields_box.Add(self.textObservação, flag=wx.EXPAND |
-							wx.LEFT | wx.RIGHT, border=5)
+			panel,
+			style=wx.TE_MULTILINE,
+			size=(300, 150),
+		)
+		view_fields_box.Add(
+			self.labelObservação,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textObservação,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+			border=5,
+		)
 
 		# Botão para Salvar o recado
 		self.save_button = wx.Button(panel, label=_("&Save"))
 		self.save_button.Bind(wx.EVT_BUTTON, self.OnSave)
-		view_button_box.Add(self.save_button, flag=wx.ALIGN_CENTER |
-							wx.TOP | wx.BOTTOM, border=10)
+		view_button_box.Add(
+			self.save_button,
+			flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM,
+			border=10,
+		)
 
 		# Botão para limpar os campos
 		self.clean_button = wx.Button(panel, label=_("C&lean"))
 		self.clean_button.Bind(wx.EVT_BUTTON, self.onClean)
-		view_button_box.Add(self.clean_button, flag=wx.ALIGN_CENTER |
-							wx.TOP | wx.BOTTOM, border=10)
+		view_button_box.Add(
+			self.clean_button,
+			flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM,
+			border=10,
+		)
 
 		# Botão para cancelar o diálogo
 		self.cancel_button = wx.Button(panel, wx.ID_CANCEL, label=_("&Cancel"))
 		self.cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
-		view_button_box.Add(self.cancel_button, flag=wx.ALIGN_CENTER |
-							wx.TOP | wx.BOTTOM, border=10)
+		view_button_box.Add(
+			self.cancel_button,
+			flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM,
+			border=10,
+		)
 
 		main_sizer.Add(view_fields_box, flag=wx.EXPAND | wx.ALL, border=10)
-		main_sizer.Add(view_button_box, flag=wx.ALIGN_CENTER |
-					   wx.TOP, border=10)
+		main_sizer.Add(
+			view_button_box,
+			flag=wx.ALIGN_CENTER | wx.TOP,
+			border=10,
+		)
 		# Aplicando o sizer principal no painel
 		panel.SetSizerAndFit(main_sizer)
 
@@ -249,8 +343,13 @@ class MedicalDischarge(wx.Dialog):
 
 		# Tenta salvar o arquivo
 		if self._save_message_to_file(file_name, altaMedica):
-			self.show_message(_("High Medical Saves successfully!"), _(
-				"Attention"), wx.OK | wx.ICON_INFORMATION)
+			self.show_message(
+				_("High Medical Saves successfully!"),
+				_(
+					"Attention",
+				),
+				wx.OK | wx.ICON_INFORMATION,
+			)
 			self.onClean(event)
 
 	def _are_required_fields_empty(self, variables):
@@ -301,7 +400,7 @@ class MedicalDischarge(wx.Dialog):
 						str: A mensagem formatada.
 		"""
 
-		timestamp = datetime.now().strftime('%H:%M %d/%m/%Y')
+		timestamp = datetime.now().strftime("%H:%M %d/%m/%Y")
 
 		msg = f"""ALTA MÉDICA
 
@@ -333,9 +432,14 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 		"""
 
 		caminho_documentos = os.path.join(
-			os.environ["USERPROFILE"], "Documents")
-		cod_file = datetime.now().strftime('%H-%M %d-%m-%Y')
-		return os.path.join(caminho_documentos, f"Alta médica - Hospital {hospital} {cod_file}.txt" if hospital else "Alta médica.txt")
+			os.environ["USERPROFILE"],
+			"Documents",
+		)
+		cod_file = datetime.now().strftime("%H-%M %d-%m-%Y")
+		return os.path.join(
+			caminho_documentos,
+			f"Alta médica - Hospital {hospital} {cod_file}.txt" if hospital else "Alta médica.txt",
+		)
 
 	def _save_message_to_file(self, file_name, altaMedica):
 		"""
@@ -353,8 +457,15 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 				file.write(altaMedica + "\n")
 			return True
 		except Exception as e:
-			self.show_message(_("Error when saving message: {}".format(
-				str(e))), _("Error"), wx.OK | wx.ICON_ERROR)
+			self.show_message(
+				_(
+					"Error when saving message: {}".format(
+						str(e),
+					),
+				),
+				_("Error"),
+				wx.OK | wx.ICON_ERROR,
+			)
 			return False
 
 	def onClean(self, event):
@@ -389,7 +500,7 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 		# Foca no campo hospital
 		self.textHospital.SetFocus()
 
-	def show_message(self, message, caption=_("Attention"), style=wx.OK | wx.ICON_INFORMATION):
+	def show_message(self, message, caption=None, style=None):
 		"""
 		Displays a message to the user in a dialog box.
 
@@ -400,6 +511,12 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 			combining flags like wx.OK,
 			wx.CANCEL, wx.ICON_INFORMATION, etc. The default is wx.OK | wx.ICON_INFORMATION.
 		"""
+
+		# Avoid function calls or complex expressions in default parameter values.
+		if caption is None:
+			caption = _("Attention")
+		if style is None:
+			style = wx.OK | wx.ICON_INFORMATION
 
 		gui.messageBox(message, caption, style)
 

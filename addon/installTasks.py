@@ -18,6 +18,7 @@ import config
 _addon = addonHandler.getCodeAddon()
 ADDON_NAME = _addon.name
 
+
 def onUninstall():
 	"""
 	Optionally remove add-on configuration during uninstallation.

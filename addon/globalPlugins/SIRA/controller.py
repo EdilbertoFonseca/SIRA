@@ -37,6 +37,7 @@ except ImportError as e:
 # Initialize translation support
 addonHandler.initTranslation()
 
+
 def get_all_records():
 	"""
 	Function that retrieves all data from the database.
@@ -68,16 +69,35 @@ def convert_results(results):
 					List: A list of objects `Objectcontact`, where each object represents a contact in the database.
 	"""
 
-	rows = [ObjectExtensionRegistrationSystem(
-		record["id"], record["secretary_office"], record["landline"], record["sector"], record["responsible"], record["extension"], record["cell"], record["email"]) for record in results]
+	rows = [
+		ObjectExtensionRegistrationSystem(
+			record["id"],
+			record["secretary_office"],
+			record["landline"],
+			record["sector"],
+			record["responsible"],
+			record["extension"],
+			record["cell"],
+			record["email"],
+		)
+		for record in results
+	]
 	return rows
+
 
 def add_record(data):
 	"""
 	Insert new records into the database.
 	"""
-	required_keys = ['secretary_office', 'landline',
-					 'sector', 'responsible', 'extension', 'cell', 'email']
+	required_keys = [
+		"secretary_office",
+		"landline",
+		"sector",
+		"responsible",
+		"extension",
+		"cell",
+		"email",
+	]
 	contact_data = data.get("contacts")  # Acesse a chave 'contacts'
 
 	if not contact_data:
@@ -92,8 +112,15 @@ def add_record(data):
 			trans.execute(
 				"""INSERT INTO contacts (secretary_office, landline, sector, responsible, extension, cell, email)
 				VALUES (?, ?, ?, ?, ?, ?, ?)""",
-				(contact_data["secretary_office"], contact_data["landline"], contact_data["sector"],
-				 contact_data["responsible"], contact_data["extension"], contact_data["cell"], contact_data["email"])
+				(
+					contact_data["secretary_office"],
+					contact_data["landline"],
+					contact_data["sector"],
+					contact_data["responsible"],
+					contact_data["extension"],
+					contact_data["cell"],
+					contact_data["email"],
+				),
 			)
 			trans.persist()
 	except Exception as e:
@@ -103,45 +130,46 @@ def add_record(data):
 
 def search_records(filterChoice, keyword):
 	"""
-Search registrations in the database based on the chosen filter and the keyword provided by the user.
+	Search registrations in the database based on the chosen filter and the keyword provided by the user.
 
-	ARGS:
-					Filterchoice (STR): The filter criterion to be used in the research.
-									Possible options are:
-													- 'Secretary Office' (Secretariat): filters records by the name of the secretary.
-													- 'Landline' (landline): filters records by the landline number of the contact.
-													- 'sector' (sector): filters records by the contact sector.
-													- 'Responsible' (responsible): filters records by the responsible person.
-													- 'Extension' (extension): filters records by the extension number.
-													- 'Cell Phone' (mobile): filters records by the mobile number of the contact.
-													- 'Email' (email): filters records by the contact email address.
+		ARGS:
+						Filterchoice (STR): The filter criterion to be used in the research.
+										Possible options are:
+														- 'Secretary Office' (Secretariat): filters records by the name of the secretary.
+														- 'Landline' (landline): filters records by the landline number of the contact.
+														- 'sector' (sector): filters records by the contact sector.
+														- 'Responsible' (responsible): filters records by the responsible person.
+														- 'Extension' (extension): filters records by the extension number.
+														- 'Cell Phone' (mobile): filters records by the mobile number of the contact.
+														- 'Email' (email): filters records by the contact email address.
 
-					Keyword (STR): The keyword to be used in the search. It can be a part of the name, phone number or email, depending on the chosen filter.
+						Keyword (STR): The keyword to be used in the search. It can be a part of the name, phone number or email, depending on the chosen filter.
 
-	Returns:
-					List: A list of objects `Objectcontact` corresponding to the records found.
-						"""
+		Returns:
+						List: A list of objects `Objectcontact` corresponding to the records found.
+	"""
 
 	query_map = {
-		_('Secretary office'): "SELECT * FROM contacts WHERE secretary_office LIKE ?",
-		_('Landline'): "SELECT * FROM contacts WHERE landline LIKE ?",
-		_('Sector'): "SELECT * FROM contacts WHERE sector LIKE ?",
-		_('Responsible'): "SELECT * FROM contacts WHERE responsible LIKE ?",
-		_('Extension'): "SELECT * FROM contacts WHERE extension LIKE ?",
-		_('Cell phone'): "SELECT * FROM contacts WHERE cell LIKE ?",
-		_('Email'): "SELECT * FROM contacts WHERE email LIKE ?",
+		_("Secretary office"): "SELECT * FROM contacts WHERE secretary_office LIKE ?",
+		_("Landline"): "SELECT * FROM contacts WHERE landline LIKE ?",
+		_("Sector"): "SELECT * FROM contacts WHERE sector LIKE ?",
+		_("Responsible"): "SELECT * FROM contacts WHERE responsible LIKE ?",
+		_("Extension"): "SELECT * FROM contacts WHERE extension LIKE ?",
+		_("Cell phone"): "SELECT * FROM contacts WHERE cell LIKE ?",
+		_("Email"): "SELECT * FROM contacts WHERE email LIKE ?",
 	}
 
 	# Check if the chosen filter is valid
-	query = query_map.get(filterChoice, '')
+	query = query_map.get(filterChoice, "")
 	if filterChoice not in query_map.keys():
 		raise ValueError(f"Invalid filter choice: {filterChoice}")
 
 	with Section() as trans:
-		trans.execute(query, ('%' + keyword + '%',))
+		trans.execute(query, ("%" + keyword + "%",))
 		results = trans.fetchall()
 
 	return convert_results(results)
+
 
 def edit_record(ID, row):
 	"""
@@ -163,10 +191,19 @@ def edit_record(ID, row):
 	with Section() as trans:
 		trans.execute(
 			"UPDATE contacts SET secretary_office = ?, landline = ?, sector = ?, responsible = ?, extension = ?, cell = ?, email = ? WHERE id = ?",
-			(row["secretary_office"], row["landline"], row["sector"],
-			 row["responsible"], row["extension"], row["cell"], row["email"], ID)
+			(
+				row["secretary_office"],
+				row["landline"],
+				row["sector"],
+				row["responsible"],
+				row["extension"],
+				row["cell"],
+				row["email"],
+				ID,
+			),
 		)
 		trans.persist()
+
 
 def delete(id):
 	"""
@@ -189,6 +226,7 @@ def delete(id):
 	except sql.Error as e:
 		log.error(f"Erro ao deletar registro (ID: {id}): {e.__class__.__name__} - {e}")
 		return False
+
 
 def reset_record():
 	"""
@@ -213,7 +251,8 @@ def import_csv_to_db(mypath):
 
 	if not isinstance(mypath, str) or not os.path.isfile(mypath):
 		raise FileNotFoundError(
-			f"The file at {mypath} does not exist or is not a valid path.")
+			f"The file at {mypath} does not exist or is not a valid path.",
+		)
 
 	with Section() as trans:
 		try:
@@ -243,13 +282,28 @@ def import_csv_to_db(mypath):
 					if len(row) == 7:
 						secretary_office, landline, sector, responsible, extension, cell, email = row
 						# Duplicates the values ​​to meet SQL
-						data_to_insert.append((
-							secretary_office, landline, sector, responsible, extension, cell, email,  # Para o INSERT
-							secretary_office, landline, sector, responsible, extension, cell, email   # Para o WHERE
-						))
+						data_to_insert.append(
+							(
+								secretary_office,
+								landline,
+								sector,
+								responsible,
+								extension,
+								cell,
+								email,  # Para o INSERT
+								secretary_office,
+								landline,
+								sector,
+								responsible,
+								extension,
+								cell,
+								email,  # Para o WHERE
+							),
+						)
 					else:
 						log.warning(
-							f"Skipping row {contents.line_num} with incorrect number of columns: {row}")
+							f"Skipping row {contents.line_num} with incorrect number of columns: {row}",
+						)
 
 			if data_to_insert:
 				trans.executemany(insert_records, data_to_insert)
@@ -259,19 +313,28 @@ def import_csv_to_db(mypath):
 			log.error(f"Error importing data: {str(e)}")
 			raise
 
+
 def export_db_to_csv(mypath):
 	try:
 		with Section() as trans:
 			trans.execute("SELECT * FROM contacts")
-			rows = trans.fetchall() # Isso retorna uma lista de dicionários.
-			
+			rows = trans.fetchall()  # Isso retorna uma lista de dicionários.
+
 			# Use os nomes das colunas para extrair os valores, excluindo o 'id'.
 			# Isso é seguro porque os dicionários são hashable e têm chaves.
 			cleaned_rows = [
-				[row['secretary_office'], row['landline'], row['sector'], row['responsible'], row['extension'], row['cell'], row['email']]
+				[
+					row["secretary_office"],
+					row["landline"],
+					row["sector"],
+					row["responsible"],
+					row["extension"],
+					row["cell"],
+					row["email"],
+				]
 				for row in rows
 			]
-			
+
 			with open(mypath, "w", newline="", encoding="utf-8") as file:
 				writer = csv.writer(file)
 				writer.writerows(cleaned_rows)
@@ -279,6 +342,7 @@ def export_db_to_csv(mypath):
 		log.error(f"Erro ao exportar dados para CSV: {str(e)}")
 		# A exceção deve ser relançada para notificar a interface
 		raise
+
 
 def count_records():
 	"""
@@ -292,50 +356,50 @@ def count_records():
 		with Section() as trans:
 			if not trans.connected:
 				return None
-			
+
 			trans.execute("SELECT COUNT(*) FROM contacts")
 			# Access the value of the dictionary by the 'Count (*)' key instead of the index [0].
-			count = trans.cursor.fetchone()['COUNT(*)']
+			count = trans.cursor.fetchone()["COUNT(*)"]
 			return count
 	except Exception as e:
 		log.error(f"Erro ao contar registros no banco de dados: {e.__class__.__name__} - {e}")
 		return None
 
+
 def save_csv(filtered_item, mypath):
 	"""
-	Save the filtered items in a CSV file on the specified path.
+		Save the filtered items in a CSV file on the specified path.
 
-This function receives a list of filtered items and exports its information
-	for a CSV file. CSV columns are mapped to the attributes of
-	items according to the predefined dictionary. If the file already exists, it will be
-	envelope. The CSV file is generated in "Latin-1" format with point and comma delimiter.
+	This function receives a list of filtered items and exports its information
+		for a CSV file. CSV columns are mapped to the attributes of
+		items according to the predefined dictionary. If the file already exists, it will be
+		envelope. The CSV file is generated in "Latin-1" format with point and comma delimiter.
 
-	Args:
-		filtered_item (list): List of objects whose data will be exported to the CSV file.
-		mypath (str): Way where the CSV file will be saved.
+		Args:
+			filtered_item (list): List of objects whose data will be exported to the CSV file.
+			mypath (str): Way where the CSV file will be saved.
 
-	Exceptions:
-No exception is explicitly managed within this function, but if there is
-		problems when writing in the file (such as permissions or I/O errors), an exception
-		Standard will be launched by Python.
-			"""
+		Exceptions:
+	No exception is explicitly managed within this function, but if there is
+			problems when writing in the file (such as permissions or I/O errors), an exception
+			Standard will be launched by Python.
+	"""
 
 	# Check if Filtered Item is a list
 	if isinstance(filtered_item, list):
-
 		# Mapping between CSV columns and object attributes
 		column_to_attribute = {
-			'Secretaria': 'secretary_office',
-			'Telefone fixo': 'landline',
-			'Setor': 'sector',
-			'Responsável': 'responsible',
-			'Ramal': 'extension',
-			'Telefone celular': 'cell',
-			'E-mail': 'email',
+			"Secretaria": "secretary_office",
+			"Telefone fixo": "landline",
+			"Setor": "sector",
+			"Responsável": "responsible",
+			"Ramal": "extension",
+			"Telefone celular": "cell",
+			"E-mail": "email",
 		}
 
 		# Open the file once and write all data
-		with open(mypath, mode='w', newline='', encoding='Latin-1') as file:
+		with open(mypath, mode="w", newline="", encoding="Latin-1") as file:
 			writer = csv.writer(file, delimiter=";")
 
 			# Writing the header
@@ -348,11 +412,12 @@ No exception is explicitly managed within this function, but if there is
 				dados_item = []
 				for col in column_to_attribute.values():  # Iterar sobre os atributos mapeados
 					# Checking if the attribute exists in the item
-					valor = getattr(item, col, '')  # Pega o valor do atributo ou um valor vazio
+					valor = getattr(item, col, "")  # Pega o valor do atributo ou um valor vazio
 					dados_item.append(valor)
 
 				# Write item data in the CSV file
 				writer.writerow(dados_item)
+
 
 def find_duplicate_records():
 	"""
@@ -373,27 +438,27 @@ def find_duplicate_records():
 			HAVING count(*) > 1
 			"""
 			trans.execute(sql_find_duplicates)
-			
+
 			duplicate_groups = trans.cursor.fetchall()
-			
+
 			if not duplicate_groups:
 				return []
 
 			all_duplicate_ids = []
 			for group in duplicate_groups:
 				# ACESSA O VALOR USANDO O APELIDO 'ids'
-				ids_str = group['ids']
-				ids = ids_str.split(',')
+				ids_str = group["ids"]
+				ids = ids_str.split(",")
 				all_duplicate_ids.extend(ids)
 
 			placeholders = ",".join(["?"] * len(all_duplicate_ids))
 			sql_fetch_duplicates = f"SELECT * FROM contacts WHERE id IN ({placeholders})"
 			trans.execute(sql_fetch_duplicates, all_duplicate_ids)
-			
+
 			duplicate_records = [
 				ObjectExtensionRegistrationSystem(**record) for record in trans.cursor.fetchall()
 			]
-			
+
 			return duplicate_records
 
 	except Exception as e:
