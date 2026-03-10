@@ -106,14 +106,15 @@ exclude = [
 	# When excluding concrete paths relative to a directory,
 	# not matching multiple folders by name e.g. `__pycache__`,
 	# paths are relative to the configuration file.
-	"addon/globalPlugins/SIRA/lib",
-	"addon/globalPlugins/SIRA/lib64",
+	"./addon/globalPlugins/SIRA/lib",
+	"./addon/globalPlugins/SIRA/lib64",
 ]
 
 # Tell pyright where to load python code from
 extraPaths = [
 	"./addon",
 	"../NVDA/source",
+	".vscode/typings"
 ]
 
 # General config

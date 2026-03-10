@@ -93,5 +93,3 @@ if __name__ == '__main__':
     pnl = TestPanel(frm)
     frm.Show()
     app.MainLoop()
-
-
