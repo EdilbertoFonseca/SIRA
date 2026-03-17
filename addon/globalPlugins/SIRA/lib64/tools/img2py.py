@@ -113,8 +113,10 @@ def convert(fileName, maskClr, outputDir, outputName, outType, outExt):
         if outputName:
             newname = outputName
         else:
-            newname = os.path.join(outputDir,
-                                   os.path.basename(os.path.splitext(fileName)[0]) + outExt)
+            newname = os.path.join(
+                outputDir,
+                os.path.basename(os.path.splitext(fileName)[0]) + outExt,
+            )
         with open(newname, "wb") as f_out:
             with open(fileName, "rb") as f_in:
                 f_out.write(f_in.read())
@@ -157,16 +159,17 @@ def _write_image(out, imgName, data, append, icon, catalog, functionCompatible, 
     out.write("\n")
 
 
-def img2py(image_file, python_file,
-           append=DEFAULT_APPEND,
-           compressed=DEFAULT_COMPRESSED,
-           maskClr=DEFAULT_MASKCLR,
-           imgName=DEFAULT_IMGNAME,
-           icon=DEFAULT_ICON,
-           catalog=DEFAULT_CATALOG,
-           functionCompatible=DEFAULT_COMPATIBLE,
-           functionCompatibile=-1,   # typo version for backward compatibility
-           ):
+def img2py(
+    image_file, python_file,
+    append=DEFAULT_APPEND,
+    compressed=DEFAULT_COMPRESSED,
+    maskClr=DEFAULT_MASKCLR,
+    imgName=DEFAULT_IMGNAME,
+    icon=DEFAULT_ICON,
+    catalog=DEFAULT_CATALOG,
+    functionCompatible=DEFAULT_COMPATIBLE,
+    functionCompatibile=-1,   # typo version for backward compatibility
+):
     """
     Converts an image file to a data structure written in a Python file
     --image_file: string; the path of the source image file
@@ -298,8 +301,10 @@ def main(args=None):
         return
 
     image_file, python_file = fileArgs
-    img2py(image_file, python_file,
-           append, compressed, maskClr, imgName, icon, catalog, compatible)
+    img2py(
+        image_file, python_file,
+        append, compressed, maskClr, imgName, icon, catalog, compatible,
+    )
 
 
 if __name__ == "__main__":

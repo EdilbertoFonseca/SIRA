@@ -68,11 +68,13 @@ def _iterdump(connection, *, filter=None):
             if not writeable_schema:
                 writeable_schema = True
                 yield('PRAGMA writable_schema=ON;')
-            yield("INSERT INTO sqlite_master(type,name,tbl_name,rootpage,sql)"
-                  "VALUES('table',{0},{0},0,{1});".format(
-                      _quote_value(table_name),
-                      _quote_value(sql),
-                  ))
+            yield(
+                "INSERT INTO sqlite_master(type,name,tbl_name,rootpage,sql)"
+                "VALUES('table',{0},{0},0,{1});".format(
+                    _quote_value(table_name),
+                    _quote_value(sql),
+                )
+            )
         else:
             yield('{0};'.format(sql))
 
@@ -84,7 +86,7 @@ def _iterdump(connection, *, filter=None):
             table_name_ident,
             "','".join(
                 "||quote({0})||".format(_quote_name(col)) for col in column_names
-            )
+            ),
         )
         query_res = cu.execute(q)
         for row in query_res:

@@ -61,8 +61,10 @@ class SqliteInteractiveConsole(InteractiveConsole):
                 case "":
                     pass
                 case _ as unknown:
-                    self.write("Error: unknown command or invalid arguments:"
-                               f'  "{unknown}".\n')
+                    self.write(
+                        "Error: unknown command or invalid arguments:"
+                        f'  "{unknown}".\n',
+                    )
         else:
             if not sqlite3.complete_statement(source):
                 return True

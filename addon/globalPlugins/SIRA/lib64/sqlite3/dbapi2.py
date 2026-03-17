@@ -57,8 +57,10 @@ collections.abc.Sequence.register(Row)
 def register_adapters_and_converters():
     from warnings import warn
 
-    msg = ("The default {what} is deprecated as of Python 3.12; "
-           "see the sqlite3 documentation for suggested replacement recipes")
+    msg = (
+        "The default {what} is deprecated as of Python 3.12; "
+        "see the sqlite3 documentation for suggested replacement recipes"
+    )
 
     def adapt_date(val):
         warn(msg.format(what="date adapter"), DeprecationWarning, stacklevel=2)
@@ -102,7 +104,9 @@ def __getattr__(name):
     if name in _deprecated_names:
         from warnings import warn
 
-        warn(f"{name} is deprecated and will be removed in Python 3.14",
-             DeprecationWarning, stacklevel=2)
+        warn(
+            f"{name} is deprecated and will be removed in Python 3.14",
+            DeprecationWarning, stacklevel=2,
+        )
         return globals()[f"_deprecated_{name}"]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -114,6 +114,7 @@ exclude = [
 extraPaths = [
 	"./addon",
 	"../NVDA/source",
+	".vscode/typings"
 ]
 
 # General config
@@ -183,7 +184,6 @@ reportUnnecessaryTypeIgnoreComment = true
 reportUnsupportedDunderAll = true
 # reportUntypedBaseClass = true
 reportUntypedClassDecorator = true
-reportUntypedFunctionDecorator = true
 reportUntypedNamedTuple = true
 reportUnusedClass = true
 reportUnusedCoroutine = true
@@ -238,3 +238,4 @@ reportMissingTypeStubs = false
 reportAttributeAccessIssue = false
 reportImportCycles = false
 reportUntypedBaseClass = false
+reportUntypedFunctionDecorator = false
