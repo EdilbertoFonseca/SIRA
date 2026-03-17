@@ -38,7 +38,7 @@ jobs:
       run: python -m pip install uv
 
     - name: Code checks
-      run: export SKIP=no-commit-to-branch; pre-commit run --all
+      run: export SKIP=no-commit-to-branch; pre-commit run --all-files
 
     - name: building addon
       run: scons && scons pot
