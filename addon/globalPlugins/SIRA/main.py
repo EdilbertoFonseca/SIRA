@@ -69,6 +69,7 @@ class SIRA(wx.Dialog):
 		panel = wx.Panel(self)
 		self.contactList = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 		self._create_columns()
+		self.contactList.Bind(wx.EVT_CHAR_HOOK, self.ao_pressionar_letras)
 		self._itemMap = {}
 		self.initialize_contact_list()
 		self.contactList.SetFocus()
@@ -542,3 +543,45 @@ class SIRA(wx.Dialog):
 		]
 		lineComplete = " | ".join(data)
 		self.visualizationField.SetValue(lineComplete)
+
+	def ao_pressionar_letras(self, event):
+		codigo = event.GetKeyCode()
+
+		if codigo >= 256:
+			event.Skip()
+			return
+
+		try:
+			tecla = chr(codigo).upper()
+		except Exception:
+			event.Skip()
+			return
+
+		# Mapeamento tecla → coluna
+		mapa = {
+			"S": 0,  # Secretary
+			"L": 1,  # Landline
+			"C": 2,  # Sector
+			"R": 3,  # Responsible
+			"M": 4,  # Ramal:
+			"P": 5,  # Cell phone
+			"E": 6,  # Email
+		}
+
+		if tecla not in mapa:
+			event.Skip()
+			return
+
+		idx = self.contactList.GetFirstSelected()
+		if idx == -1:
+			event.Skip()
+			return
+
+		coluna = mapa[tecla]
+
+		texto = self.contactList.GetItemText(idx, coluna)
+
+		if texto:
+			ui.message(texto)
+		else:
+			ui.message(_("Empty"))
