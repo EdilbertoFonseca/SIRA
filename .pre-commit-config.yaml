@@ -12,20 +12,29 @@ ci:
 default_language_version:
   python: python3.13
 
+exclude: |
+  (?x)(
+    (^|/)
+    (
+      addon/globalPlugins/SIRA/lib/|
+      addon/globalPlugins/SIRA/lib64/|
+      __pycache__/|
+      \.venv/|
+      \.git/
+    )
+  )
+
 repos:
 
-# ------------------------------------------------------------
 # Meta checks
-# ------------------------------------------------------------
+
 - repo: meta
   hooks:
     - id: check-useless-excludes
     - id: check-hooks-apply
 
-
-# ------------------------------------------------------------
 # Core pre-commit hooks
-# ------------------------------------------------------------
+
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v5.0.0
   hooks:
@@ -52,19 +61,16 @@ repos:
     - id: check-vcs-permalinks
     - id: check-illegal-windows-names
 
-
-# ------------------------------------------------------------
 # Trailing comma helper (works well with Ruff)
-# ------------------------------------------------------------
+
 - repo: https://github.com/asottile/add-trailing-comma
   rev: v3.2.0
   hooks:
     - id: add-trailing-comma
 
 
-# ------------------------------------------------------------
 # Ruff (lint + format)
-# ------------------------------------------------------------
+
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.12.7
   hooks:
@@ -75,10 +81,8 @@ repos:
     - id: ruff-format
       name: format with ruff
 
-
-# ------------------------------------------------------------
 # Pyright (local, fast execution)
-# ------------------------------------------------------------
+
 - repo: local
   hooks:
     - id: pyright
