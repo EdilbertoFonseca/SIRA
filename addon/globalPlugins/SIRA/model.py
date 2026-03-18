@@ -18,7 +18,8 @@ import globalVars
 from .dbConfig import DatabaseConfig
 from .sqlLoader import sql
 
-ADDON_DATA_DIR = os.path.join(globalVars.appArgs.configPath, "SIRA")  # pyright: ignore[reportCallIssue]
+config_path = getattr(globalVars.appArgs, "configPath", "")
+ADDON_DATA_DIR = os.path.join(config_path, "SIRA")
 
 if not os.path.isdir(ADDON_DATA_DIR):
 	os.makedirs(ADDON_DATA_DIR)

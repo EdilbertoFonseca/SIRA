@@ -81,7 +81,7 @@ class AddEditRecDialog(wx.Dialog):
 		WIDTH = 600
 		HEIGHT = 400
 
-		wx.Dialog.__init__(self, parent, title=_("{} extensions.").format(title), size=(WIDTH, HEIGHT))
+		super().__init__(self, parent, title=_("{} extensions.").format(title), size=(WIDTH, HEIGHT))
 
 		# Get the configuration for this add-on.
 		conf = config.conf.get(ADDON_NAME)
