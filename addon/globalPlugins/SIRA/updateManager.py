@@ -119,10 +119,8 @@ class UpdateManager:
 				)
 
 		except Exception as e:
-			log.error(
-				f"Unexpected error while checking updates: {e}",
-				excinfo=True,  # pyright: ignore[reportCallIssue]
-			)
+			log.error(f"Unexpected error while checking updates: {e}", exc_info=True)
+
 			if not silent:
 				wx.CallAfter(
 					ui.message,

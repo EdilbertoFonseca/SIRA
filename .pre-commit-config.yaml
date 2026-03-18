@@ -68,7 +68,6 @@ repos:
   hooks:
     - id: add-trailing-comma
 
-
 # Ruff (lint + format)
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
@@ -91,3 +90,4 @@ repos:
       entry: uv run pyright
       language: system
       types: [python]
+      pass_filenames: false

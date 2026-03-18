@@ -12,6 +12,8 @@ addon/doc/en/
 # Python
 *.py[co]
 __pycache__/
+*.egg-info/      # Ignore Python package metadata
+SIRA.egg-info/
 
 # Addon-specific files
 *_docHandler.py
@@ -22,11 +24,7 @@ manifest.ini
 .sconsign.dblite
 /[0-9]*.[0-9]*.[0-9]*.json
 
-
-
-# Ambientes Virtuais
-
-
+# Virtual Environments
 .venv/
 venv/
 env/
