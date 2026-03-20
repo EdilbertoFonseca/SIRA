@@ -337,7 +337,7 @@ wheels = [
 ]
 
 [[package]]
-name = "training"
+name = "sira"
 source = { editable = "." }
 dependencies = [
     { name = "crowdin-api-client" },
