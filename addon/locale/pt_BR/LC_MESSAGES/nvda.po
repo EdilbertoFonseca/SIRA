@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 'SIRA' '2026.1.0'\n"
+"Project-Id-Version: 'SIRA' '2026.1.1'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-03-17 15:45-0300\n"
-"PO-Revision-Date: 2026-03-17 16:06-0300\n"
+"POT-Creation-Date: 2026-03-20 13:30-0300\n"
+"PO-Revision-Date: 2026-03-20 13:49-0300\n"
 "Last-Translator: Edilberto Fonseca <edilberto.fonseca@outlook.com>\n"
 "Language-Team: Edilberto Fonseca <edilberto.fonseca@outlook.com>\n"
 "Language: pt_BR\n"
@@ -22,504 +22,428 @@ msgstr ""
 "X-Poedit-SearchPath-0: addon/globalPlugins/SIRA\n"
 "X-Poedit-SearchPath-1: buildVars.py\n"
 
-#: addon\globalPlugins\SIRA\__init__.py:97
+#: addon\globalPlugins\SIRA\__init__.py:103
 msgid "&Lists of registered extensions..."
 msgstr "&Listas de ramais registrados..."
 
-#: addon\globalPlugins\SIRA\__init__.py:101
+#: addon\globalPlugins\SIRA\__init__.py:107
 msgid "Message for &transport..."
 msgstr "Mensagem para o &transporte..."
 
-#: addon\globalPlugins\SIRA\__init__.py:105
+#: addon\globalPlugins\SIRA\__init__.py:111
 msgid "Medical discharge &register..."
 msgstr "&Registro de alta médica..."
 
-#: addon\globalPlugins\SIRA\__init__.py:109
+#: addon\globalPlugins\SIRA\__init__.py:115
 msgid "&General message..."
 msgstr "Mensagem &geral..."
 
-#: addon\globalPlugins\SIRA\__init__.py:116
+#: addon\globalPlugins\SIRA\__init__.py:122
 msgid "Check for &updates..."
 msgstr "&Verificar atualizações..."
 
-#: addon\globalPlugins\SIRA\__init__.py:120
+#: addon\globalPlugins\SIRA\__init__.py:126
 msgid "&Settings..."
 msgstr "&Configurações..."
 
-#: addon\globalPlugins\SIRA\__init__.py:124
+#: addon\globalPlugins\SIRA\__init__.py:130
 msgid "&Help"
 msgstr "&Ajuda"
 
-#: addon\globalPlugins\SIRA\__init__.py:155
+#: addon\globalPlugins\SIRA\__init__.py:161
 msgid "Lists of registered extensions"
 msgstr "Listas de ramais registrados"
 
-#: addon\globalPlugins\SIRA\__init__.py:161
+#: addon\globalPlugins\SIRA\__init__.py:167
 msgid "Message for transport"
 msgstr "Mensagem para o transporte"
 
-#: addon\globalPlugins\SIRA\__init__.py:167
+#: addon\globalPlugins\SIRA\__init__.py:173
 msgid "Medical discharge register"
 msgstr "Registro de alta médica"
 
-#: addon\globalPlugins\SIRA\__init__.py:173
+#: addon\globalPlugins\SIRA\__init__.py:179
 msgid "General message"
 msgstr "Mensagem geral"
 
-#: addon\globalPlugins\SIRA\__init__.py:203
+#: addon\globalPlugins\SIRA\__init__.py:209
 msgid "{addon} - Opens the list of registered extensions."
 msgstr "{addon} - Abre a lista de extensões registradas."
 
-#: addon\globalPlugins\SIRA\__init__.py:213
+#: addon\globalPlugins\SIRA\__init__.py:219
 msgid "{addon} - Opens the message for transport dialog."
 msgstr "{addon} - Abre a mensagem para caixa de diálogo de transporte."
 
-#: addon\globalPlugins\SIRA\__init__.py:223
+#: addon\globalPlugins\SIRA\__init__.py:229
 msgid "{addon} - Opens the medical discharge register."
 msgstr "{addon} - Abre o registro de alta médica."
 
-#: addon\globalPlugins\SIRA\__init__.py:233
+#: addon\globalPlugins\SIRA\__init__.py:239
 msgid "{addon} - Opens the general message dialog."
 msgstr "{addon} - Abre a caixa de diálogo de mensagens gerais."
 
-#: addon\globalPlugins\SIRA\__init__.py:243
+#: addon\globalPlugins\SIRA\__init__.py:249
 msgid "{addon} - Check for updates."
 msgstr "{addon} - Verificar atualizações."
 
-#: addon\globalPlugins\SIRA\addEditRecord.py:38
-msgid "Mandatory Library Absent: Masked"
-msgstr "Biblioteca obrigatória ausente: Masked"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:58
-msgid "It is necessary to inform the secretary office!"
-msgstr "É necessário informar a secretaria!"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:60
-msgid "It is necessary to inform the landline!"
-msgstr "É necessário informar o telefone fixo!"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:62
-msgid "It is necessary to inform the extension!"
-msgstr "É necessário informar o ramal!"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:66
-msgid "Invalid email format!"
-msgstr "Formato de email inválido!"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:78
-msgid "Add"
-msgstr "Adicionar"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:84
-msgid "{} extensions."
-msgstr "{} ramais."
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:109
-msgid "Secretary: "
-msgstr "Secretaria: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:112
-msgid "Landline: "
-msgstr "Telefone fixo: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:120
-msgid "Sector: "
-msgstr "Setor: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:123
-msgid "Responsible: "
-msgstr "Responsável: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:126
-msgid "Extension: "
-msgstr "Ramal: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:129
-msgid "Cell phone: "
-msgstr "Telefone celular: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:132
-msgid "Email: "
-msgstr "E-mail: "
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:135
-msgid "&Ok"
-msgstr "&OK"
-
-#. Botão para cancelar o diálogo
-#: addon\globalPlugins\SIRA\addEditRecord.py:138
-#: addon\globalPlugins\SIRA\generalMessage.py:153
-#: addon\globalPlugins\SIRA\medicalDischarge.py:286
-#: addon\globalPlugins\SIRA\messageForTransport.py:194
-msgid "&Cancel"
-msgstr "&Cancelar"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:216
-#: addon\globalPlugins\SIRA\addEditRecord.py:242
-#: addon\globalPlugins\SIRA\addEditRecord.py:292
-#: addon\globalPlugins\SIRA\generalMessage.py:298
-#: addon\globalPlugins\SIRA\main.py:212 addon\globalPlugins\SIRA\main.py:236
-#: addon\globalPlugins\SIRA\main.py:249 addon\globalPlugins\SIRA\main.py:354
-#: addon\globalPlugins\SIRA\main.py:373
-#: addon\globalPlugins\SIRA\medicalDischarge.py:466
-#: addon\globalPlugins\SIRA\messageForTransport.py:349
-msgid "Error"
-msgstr "Erro"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:234
-msgid "Contact added, want to add a new contact?"
-msgstr "Contato adicionado, deseja adicionar um novo contato?"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:235
-#: addon\globalPlugins\SIRA\addEditRecord.py:289
-#: addon\globalPlugins\SIRA\generalMessage.py:207
-#: addon\globalPlugins\SIRA\main.py:246 addon\globalPlugins\SIRA\main.py:370
-#: addon\globalPlugins\SIRA\messageForTransport.py:252
-msgid "Success"
-msgstr "Sucesso"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:242
-msgid "Error adding contact: {}"
-msgstr "Erro ao adicionar contato: {}"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:289
-msgid "Contact edited!"
-msgstr "Contato Editado!"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:292
-msgid "Error editing contact: {}"
-msgstr "Erro ao editar o contato: {}"
-
-#: addon\globalPlugins\SIRA\addEditRecord.py:308
-#: addon\globalPlugins\SIRA\main.py:474
-msgid "Message"
-msgstr "Mensagem"
-
-#: addon\globalPlugins\SIRA\configPanel.py:58
+#: addon\globalPlugins\SIRA\configPanel.py:66
 msgid "Add mask for phone fields:"
 msgstr "Adicionar máscara para campos telefônicos:"
 
 #. Cell phone
-#: addon\globalPlugins\SIRA\configPanel.py:65
-#: addon\globalPlugins\SIRA\controller.py:158
-#: addon\globalPlugins\SIRA\main.py:93 addon\globalPlugins\SIRA\main.py:165
+#: addon\globalPlugins\SIRA\configPanel.py:73
+#: addon\globalPlugins\SIRA\controller.py:164
+#: addon\globalPlugins\SIRA\main.py:99 addon\globalPlugins\SIRA\main.py:171
 msgid "Cell phone"
 msgstr "Telefone celular"
 
 #. Landline
-#: addon\globalPlugins\SIRA\configPanel.py:70
-#: addon\globalPlugins\SIRA\controller.py:154
-#: addon\globalPlugins\SIRA\main.py:89 addon\globalPlugins\SIRA\main.py:161
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:81
+#: addon\globalPlugins\SIRA\configPanel.py:78
+#: addon\globalPlugins\SIRA\controller.py:160
+#: addon\globalPlugins\SIRA\main.py:95 addon\globalPlugins\SIRA\main.py:167
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:87
 msgid "Landline"
 msgstr "Telefone fixo"
 
-#: addon\globalPlugins\SIRA\configPanel.py:80
+#: addon\globalPlugins\SIRA\configPanel.py:88
 msgid "Remove all saved settings when uninstalling this add-on"
 msgstr "Remova todas as configurações salvas ao desinstalar este complemento"
 
-#: addon\globalPlugins\SIRA\configPanel.py:89
+#: addon\globalPlugins\SIRA\configPanel.py:97
 msgid "Show option to delete entire calendar"
 msgstr "Mostrar opção para excluir todo o calendário"
 
-#: addon\globalPlugins\SIRA\configPanel.py:98
+#: addon\globalPlugins\SIRA\configPanel.py:106
 msgid "Show import CSV file button"
 msgstr "Mostrar botão de importação de arquivo CSV"
 
-#: addon\globalPlugins\SIRA\configPanel.py:107
+#: addon\globalPlugins\SIRA\configPanel.py:115
 msgid "Show export CSV file button"
 msgstr "Mostrar botão de exportação de arquivo CSV"
 
-#: addon\globalPlugins\SIRA\configPanel.py:121
+#: addon\globalPlugins\SIRA\configPanel.py:129
 msgid "Path of agenda files:"
 msgstr "Caminho dos arquivos da agenda:"
 
-#: addon\globalPlugins\SIRA\configPanel.py:140
+#: addon\globalPlugins\SIRA\configPanel.py:148
 msgid "&Select or add a directory"
 msgstr "&Selecione ou adicione um diretório"
 
-#: addon\globalPlugins\SIRA\configPanel.py:151
+#: addon\globalPlugins\SIRA\configPanel.py:159
 msgid "Choose where to save the database file"
 msgstr "Escolha onde salvar o arquivo da agenda"
 
-#: addon\globalPlugins\SIRA\configPanel.py:154
+#: addon\globalPlugins\SIRA\configPanel.py:162
 msgid "Database files (*.db)"
 msgstr "Arquivos de banco de dados (*.db)"
 
-#: addon\globalPlugins\SIRA\controller.py:104
+#: addon\globalPlugins\SIRA\controller.py:110
 msgid "Missing 'contacts' key in dictionary"
 msgstr "Chave 'contacts' ausente no dicionário"
 
-#: addon\globalPlugins\SIRA\controller.py:108
+#: addon\globalPlugins\SIRA\controller.py:114
 msgid "Missing key in dictionary: {key}"
 msgstr "Chave ausente no dicionário: {key}"
 
-#: addon\globalPlugins\SIRA\controller.py:127
+#: addon\globalPlugins\SIRA\controller.py:133
 msgid "Error inserting record: {}"
 msgstr "Erro ao inserir registro {}"
 
-#: addon\globalPlugins\SIRA\controller.py:153
-#: addon\globalPlugins\SIRA\main.py:88 addon\globalPlugins\SIRA\main.py:96
-#: addon\globalPlugins\SIRA\main.py:160
+#: addon\globalPlugins\SIRA\controller.py:159
+#: addon\globalPlugins\SIRA\main.py:94 addon\globalPlugins\SIRA\main.py:102
+#: addon\globalPlugins\SIRA\main.py:166
 msgid "Secretary office"
 msgstr "Secretaria"
 
-#: addon\globalPlugins\SIRA\controller.py:155
-#: addon\globalPlugins\SIRA\main.py:90 addon\globalPlugins\SIRA\main.py:162
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:83
+#: addon\globalPlugins\SIRA\controller.py:161
+#: addon\globalPlugins\SIRA\main.py:96 addon\globalPlugins\SIRA\main.py:168
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:89
 msgid "Sector"
 msgstr "Setor"
 
-#: addon\globalPlugins\SIRA\controller.py:156
-#: addon\globalPlugins\SIRA\main.py:91 addon\globalPlugins\SIRA\main.py:163
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:84
+#: addon\globalPlugins\SIRA\controller.py:162
+#: addon\globalPlugins\SIRA\main.py:97 addon\globalPlugins\SIRA\main.py:169
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:90
 msgid "Responsible"
 msgstr "Responsável"
 
-#: addon\globalPlugins\SIRA\controller.py:157
-#: addon\globalPlugins\SIRA\main.py:92 addon\globalPlugins\SIRA\main.py:164
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:82
+#: addon\globalPlugins\SIRA\controller.py:163
+#: addon\globalPlugins\SIRA\main.py:98 addon\globalPlugins\SIRA\main.py:170
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:88
 msgid "Extension"
 msgstr "Ramal"
 
-#: addon\globalPlugins\SIRA\controller.py:159
-#: addon\globalPlugins\SIRA\main.py:94 addon\globalPlugins\SIRA\main.py:166
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:85
+#: addon\globalPlugins\SIRA\controller.py:165
+#: addon\globalPlugins\SIRA\main.py:100 addon\globalPlugins\SIRA\main.py:172
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:91
 msgid "Email"
 msgstr "E-mail"
 
-#: addon\globalPlugins\SIRA\generalMessage.py:36
-#: addon\globalPlugins\SIRA\medicalDischarge.py:36
-#: addon\globalPlugins\SIRA\messageForTransport.py:36
+#: addon\globalPlugins\SIRA\generalMessage.py:42
+#: addon\globalPlugins\SIRA\medicalDischarge.py:42
+#: addon\globalPlugins\SIRA\messageForTransport.py:42
 msgid "Mandatory Library Absent: MaskedTextCtrl"
 msgstr "Biblioteca obrigatória ausente: MaskedTextCtrl"
 
 #. Nome do remetente
-#: addon\globalPlugins\SIRA\generalMessage.py:91
-#: addon\globalPlugins\SIRA\messageForTransport.py:92
+#: addon\globalPlugins\SIRA\generalMessage.py:97
+#: addon\globalPlugins\SIRA\messageForTransport.py:98
 msgid "Sender: "
 msgstr "Remetente: "
 
 #. Assunto
-#: addon\globalPlugins\SIRA\generalMessage.py:101
-#: addon\globalPlugins\SIRA\messageForTransport.py:102
+#: addon\globalPlugins\SIRA\generalMessage.py:107
+#: addon\globalPlugins\SIRA\messageForTransport.py:108
 msgid "Subject: "
 msgstr "Assunto: "
 
 #. Texto do recado
-#: addon\globalPlugins\SIRA\generalMessage.py:111
+#: addon\globalPlugins\SIRA\generalMessage.py:117
 msgid "Message Text: "
 msgstr "Texto da mensagem: "
 
 #. Telefone do remetente
-#: addon\globalPlugins\SIRA\generalMessage.py:125
-#: addon\globalPlugins\SIRA\messageForTransport.py:166
+#: addon\globalPlugins\SIRA\generalMessage.py:131
+#: addon\globalPlugins\SIRA\messageForTransport.py:172
 msgid "Sender's phone: "
 msgstr "Telefone do remetente: "
 
 #. Botão para Salvar o recado
-#: addon\globalPlugins\SIRA\generalMessage.py:135
-#: addon\globalPlugins\SIRA\messageForTransport.py:176
+#: addon\globalPlugins\SIRA\generalMessage.py:141
+#: addon\globalPlugins\SIRA\messageForTransport.py:182
 msgid "Save & message"
 msgstr "Salvar  &mensagem"
 
 #. Botão para limpar os campos
-#: addon\globalPlugins\SIRA\generalMessage.py:144
-#: addon\globalPlugins\SIRA\medicalDischarge.py:277
-#: addon\globalPlugins\SIRA\messageForTransport.py:185
+#: addon\globalPlugins\SIRA\generalMessage.py:150
+#: addon\globalPlugins\SIRA\medicalDischarge.py:283
+#: addon\globalPlugins\SIRA\messageForTransport.py:191
 msgid "C&lean"
 msgstr "&Limpar"
 
-#: addon\globalPlugins\SIRA\generalMessage.py:205
-#: addon\globalPlugins\SIRA\messageForTransport.py:250
+#. Botão para cancelar o diálogo
+#: addon\globalPlugins\SIRA\generalMessage.py:159
+#: addon\globalPlugins\SIRA\medicalDischarge.py:292
+#: addon\globalPlugins\SIRA\messageForTransport.py:200
+#: addon\globalPlugins\SIRA\addEditRecord.py:144
+msgid "&Cancel"
+msgstr "&Cancelar"
+
+#: addon\globalPlugins\SIRA\generalMessage.py:211
+#: addon\globalPlugins\SIRA\messageForTransport.py:256
 msgid "Saved message!"
 msgstr "Mensagem salva!"
 
-#: addon\globalPlugins\SIRA\generalMessage.py:227
+#: addon\globalPlugins\SIRA\generalMessage.py:213
+#: addon\globalPlugins\SIRA\main.py:252 addon\globalPlugins\SIRA\main.py:376
+#: addon\globalPlugins\SIRA\messageForTransport.py:258
+#: addon\globalPlugins\SIRA\addEditRecord.py:241
+#: addon\globalPlugins\SIRA\addEditRecord.py:295
+msgid "Success"
+msgstr "Sucesso"
+
+#: addon\globalPlugins\SIRA\generalMessage.py:233
 msgid "The Name, Subject and Message Fields cannot be null!"
 msgstr "Os campos Nome, Assunto e Mensagem não podem estar vazios!"
 
 #. Translators: Message displayed to the user in case of errors when importing the CSV file
 #. Translators: Message displayed to the user in case of errors when exporting the CSV file
-#: addon\globalPlugins\SIRA\generalMessage.py:229
-#: addon\globalPlugins\SIRA\generalMessage.py:340
-#: addon\globalPlugins\SIRA\main.py:240 addon\globalPlugins\SIRA\main.py:260
-#: addon\globalPlugins\SIRA\main.py:301 addon\globalPlugins\SIRA\main.py:309
-#: addon\globalPlugins\SIRA\main.py:327 addon\globalPlugins\SIRA\main.py:335
-#: addon\globalPlugins\SIRA\main.py:359 addon\globalPlugins\SIRA\main.py:364
-#: addon\globalPlugins\SIRA\main.py:450 addon\globalPlugins\SIRA\main.py:458
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:113
-#: addon\globalPlugins\SIRA\medicalDischarge.py:349
-#: addon\globalPlugins\SIRA\medicalDischarge.py:358
-#: addon\globalPlugins\SIRA\medicalDischarge.py:517
-#: addon\globalPlugins\SIRA\messageForTransport.py:274
-#: addon\globalPlugins\SIRA\messageForTransport.py:396
+#: addon\globalPlugins\SIRA\generalMessage.py:235
+#: addon\globalPlugins\SIRA\generalMessage.py:346
+#: addon\globalPlugins\SIRA\main.py:246 addon\globalPlugins\SIRA\main.py:266
+#: addon\globalPlugins\SIRA\main.py:307 addon\globalPlugins\SIRA\main.py:315
+#: addon\globalPlugins\SIRA\main.py:333 addon\globalPlugins\SIRA\main.py:341
+#: addon\globalPlugins\SIRA\main.py:365 addon\globalPlugins\SIRA\main.py:370
+#: addon\globalPlugins\SIRA\main.py:456 addon\globalPlugins\SIRA\main.py:464
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:119
+#: addon\globalPlugins\SIRA\medicalDischarge.py:355
+#: addon\globalPlugins\SIRA\medicalDischarge.py:364
+#: addon\globalPlugins\SIRA\medicalDischarge.py:523
+#: addon\globalPlugins\SIRA\messageForTransport.py:280
+#: addon\globalPlugins\SIRA\messageForTransport.py:402
 msgid "Attention"
 msgstr "Atenção"
 
-#: addon\globalPlugins\SIRA\generalMessage.py:294
-#: addon\globalPlugins\SIRA\medicalDischarge.py:462
-#: addon\globalPlugins\SIRA\messageForTransport.py:345
+#: addon\globalPlugins\SIRA\generalMessage.py:300
+#: addon\globalPlugins\SIRA\medicalDischarge.py:468
+#: addon\globalPlugins\SIRA\messageForTransport.py:351
 msgid "Error when saving message: {}"
 msgstr "Erro ao salvar a mensagem: {}"
 
-#: addon\globalPlugins\SIRA\main.py:40
+#: addon\globalPlugins\SIRA\generalMessage.py:304
+#: addon\globalPlugins\SIRA\main.py:218 addon\globalPlugins\SIRA\main.py:242
+#: addon\globalPlugins\SIRA\main.py:255 addon\globalPlugins\SIRA\main.py:360
+#: addon\globalPlugins\SIRA\main.py:379
+#: addon\globalPlugins\SIRA\medicalDischarge.py:472
+#: addon\globalPlugins\SIRA\messageForTransport.py:355
+#: addon\globalPlugins\SIRA\addEditRecord.py:222
+#: addon\globalPlugins\SIRA\addEditRecord.py:248
+#: addon\globalPlugins\SIRA\addEditRecord.py:298
+msgid "Error"
+msgstr "Erro"
+
+#: addon\globalPlugins\SIRA\main.py:46
 msgid "An instance of {} is already open!"
 msgstr "Uma instância de {} já está aberta!"
 
 #. Translators: Search field label.
-#: addon\globalPlugins\SIRA\main.py:84
+#: addon\globalPlugins\SIRA\main.py:90
 msgid "Search for: "
 msgstr "Procurar por: "
 
-#: addon\globalPlugins\SIRA\main.py:99
+#: addon\globalPlugins\SIRA\main.py:105
 msgid "&Search"
 msgstr "&Procurar"
 
-#: addon\globalPlugins\SIRA\main.py:104
+#: addon\globalPlugins\SIRA\main.py:110
 msgid "&Edit"
 msgstr "&Editar"
 
-#: addon\globalPlugins\SIRA\main.py:105
+#: addon\globalPlugins\SIRA\main.py:111
 msgid "&New"
 msgstr "&Novo"
 
-#: addon\globalPlugins\SIRA\main.py:106
+#: addon\globalPlugins\SIRA\main.py:112
 msgid "&Remove"
 msgstr "&Remover"
 
-#: addon\globalPlugins\SIRA\main.py:107
+#: addon\globalPlugins\SIRA\main.py:113
 msgid "Find Duplicates"
 msgstr "Encontrar duplicados"
 
-#: addon\globalPlugins\SIRA\main.py:108
+#: addon\globalPlugins\SIRA\main.py:114
 msgid "&Save the research"
 msgstr "&Salvar pesquisa"
 
-#: addon\globalPlugins\SIRA\main.py:109
+#: addon\globalPlugins\SIRA\main.py:115
 msgid "Refres&h"
 msgstr "&Atualizar"
 
-#: addon\globalPlugins\SIRA\main.py:110
+#: addon\globalPlugins\SIRA\main.py:116
 msgid "&Import csv..."
 msgstr "&Importar CSV..."
 
-#: addon\globalPlugins\SIRA\main.py:111
+#: addon\globalPlugins\SIRA\main.py:117
 msgid "E&xport csv..."
 msgstr "E&xportar csv."
 
-#: addon\globalPlugins\SIRA\main.py:112
+#: addon\globalPlugins\SIRA\main.py:118
 msgid "&Delete all records."
 msgstr "Exclua &todos os registros."
 
-#: addon\globalPlugins\SIRA\main.py:113
+#: addon\globalPlugins\SIRA\main.py:119
 msgid "Exi&t"
 msgstr "&Sair"
 
-#: addon\globalPlugins\SIRA\main.py:212 addon\globalPlugins\SIRA\main.py:236
+#: addon\globalPlugins\SIRA\main.py:218 addon\globalPlugins\SIRA\main.py:242
 msgid "No records selected!"
 msgstr "Nenhum registro selecionado!"
 
-#: addon\globalPlugins\SIRA\main.py:217
+#: addon\globalPlugins\SIRA\main.py:223
 msgid "To edit"
 msgstr "Editar"
 
-#: addon\globalPlugins\SIRA\main.py:239
+#: addon\globalPlugins\SIRA\main.py:245
 msgid "Do you want to delete the selected record?"
 msgstr "Deseja excluir o registro selecionado?"
 
-#: addon\globalPlugins\SIRA\main.py:246
+#: addon\globalPlugins\SIRA\main.py:252
 msgid "Record deleted!"
 msgstr "Registro excluído!"
 
-#: addon\globalPlugins\SIRA\main.py:249
+#: addon\globalPlugins\SIRA\main.py:255
 msgid "Error deleting record: {}"
 msgstr "Erro ao excluir registro: {}"
 
-#: addon\globalPlugins\SIRA\main.py:260
+#: addon\globalPlugins\SIRA\main.py:266
 msgid "The search field is empty!"
 msgstr "O campo de pesquisa está vazio!"
 
 #. If there are no results, displays an informative message
-#: addon\globalPlugins\SIRA\main.py:272
+#: addon\globalPlugins\SIRA\main.py:278
 msgid "No contacts found matching the search criteria."
 msgstr "Nenhum contato encontrado correspondendo aos critérios da busca."
 
-#: addon\globalPlugins\SIRA\main.py:291
+#: addon\globalPlugins\SIRA\main.py:297
 msgid "import csv file"
 msgstr "importar arquivo csv"
 
-#: addon\globalPlugins\SIRA\main.py:301
+#: addon\globalPlugins\SIRA\main.py:307
 msgid "File imported successfully!"
 msgstr "Arquivo importado com sucesso!"
 
-#: addon\globalPlugins\SIRA\main.py:305
+#: addon\globalPlugins\SIRA\main.py:311
 msgid "It was not possible to import the file! {}"
 msgstr "Não foi possível importar o arquivo! {}"
 
-#: addon\globalPlugins\SIRA\main.py:317 addon\globalPlugins\SIRA\main.py:440
+#: addon\globalPlugins\SIRA\main.py:323 addon\globalPlugins\SIRA\main.py:446
 msgid "export csv file"
 msgstr "exportar arquivo csv"
 
-#: addon\globalPlugins\SIRA\main.py:319 addon\globalPlugins\SIRA\main.py:442
+#: addon\globalPlugins\SIRA\main.py:325 addon\globalPlugins\SIRA\main.py:448
 msgid "List of extensions"
 msgstr "Lista de ramais"
 
-#: addon\globalPlugins\SIRA\main.py:327 addon\globalPlugins\SIRA\main.py:450
+#: addon\globalPlugins\SIRA\main.py:333 addon\globalPlugins\SIRA\main.py:456
 msgid "File exported successfully!"
 msgstr "Arquivo exportado com sucesso!"
 
-#: addon\globalPlugins\SIRA\main.py:331 addon\globalPlugins\SIRA\main.py:454
+#: addon\globalPlugins\SIRA\main.py:337 addon\globalPlugins\SIRA\main.py:460
 msgid "It was not possible to export the file! {}"
 msgstr "Não foi possível exportar o arquivo! {}"
 
 #. If Record Count for None, there was an error in the database.
 #. The error message is already displayed internally by the Core.COUNT Records function.
-#: addon\globalPlugins\SIRA\main.py:354
+#: addon\globalPlugins\SIRA\main.py:360
 msgid "An error occurred while counting records. Check the logs."
 msgstr "Ocorreu um erro ao contar registros. Verifique os logs."
 
 #. If Record Count for 0, the agenda is already empty.
-#: addon\globalPlugins\SIRA\main.py:359
+#: addon\globalPlugins\SIRA\main.py:365
 msgid "The agenda is already empty!"
 msgstr "A agenda já está vazia!"
 
 #. 3. If Record Count> 0, requests user confirmation.
-#: addon\globalPlugins\SIRA\main.py:363
+#: addon\globalPlugins\SIRA\main.py:369
 msgid "This operation erases all phonebook entries. Do you wish to continue?"
 msgstr ""
 "Essa operação apaga todos os registros da agenda telefônica. Deseja "
 "continuar?"
 
-#: addon\globalPlugins\SIRA\main.py:370
+#: addon\globalPlugins\SIRA\main.py:376
 msgid "Agenda deleted!"
 msgstr "Agenda excluída!"
 
-#: addon\globalPlugins\SIRA\main.py:373
+#: addon\globalPlugins\SIRA\main.py:379
 msgid "Error deleting records: {}"
 msgstr "Erro ao excluir registros {}"
 
-#: addon\globalPlugins\SIRA\main.py:408
+#: addon\globalPlugins\SIRA\main.py:414
 msgid "No duplicate records were found."
 msgstr "Nenhum registro duplicado foi encontrado."
 
-#: addon\globalPlugins\SIRA\main.py:409
+#: addon\globalPlugins\SIRA\main.py:415
 msgid "No Duplicates Found"
 msgstr "Nenhum duplicado encontrado"
 
-#: addon\globalPlugins\SIRA\main.py:532
+#: addon\globalPlugins\SIRA\main.py:480
+#: addon\globalPlugins\SIRA\addEditRecord.py:314
+msgid "Message"
+msgstr "Mensagem"
+
+#: addon\globalPlugins\SIRA\main.py:538
 msgid "Updated records!"
 msgstr "Registros atualizados!"
 
-#: addon\globalPlugins\SIRA\main.py:588
+#: addon\globalPlugins\SIRA\main.py:593
 msgid "Empty"
 msgstr "Vazio"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:27
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:33
 msgid "Manage Duplicate Records"
 msgstr "Gerenciar registros duplicados"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:40
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:46
 msgid ""
 "Found the following duplicate records. Select the ones you want to remove."
 msgstr ""
@@ -527,161 +451,237 @@ msgstr ""
 "remover."
 
 #. Button to remove selected items
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:59
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:65
 msgid "Remove Selected"
 msgstr "Excluir selecionados"
 
 #. Close button
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:64
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:70
 msgid "Close"
 msgstr "Fechar"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:79
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:85
 msgid "ID"
 msgstr "ID"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:80
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:86
 msgid "Secretary Office"
 msgstr "Secretaria"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:113
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:119
 msgid "No records selected for removal."
 msgstr "Nenhum registro selecionado para remoção."
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:116
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:122
 msgid "Are you sure you want to remove the selected duplicate records?"
 msgstr ""
 "Tem certeza de que deseja remover os registros duplicados selecionados?"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:117
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:123
 msgid "Confirm Deletion"
 msgstr "Confirmar exclusão"
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:129
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:135
 #, python-format
 msgid "%d selected records were removed."
 msgstr "%d registros selecionados foram removidos."
 
-#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:130
+#: addon\globalPlugins\SIRA\manageDuplicatesDialog.py:136
 msgid "Removal Complete"
 msgstr "Remoção concluída"
 
 #. Nome do Hospital
-#: addon\globalPlugins\SIRA\medicalDischarge.py:91
+#: addon\globalPlugins\SIRA\medicalDischarge.py:97
 msgid "Hospital: "
 msgstr "Hospital: "
 
 #. Paciente
 #. Texto do recado
-#: addon\globalPlugins\SIRA\medicalDischarge.py:105
-#: addon\globalPlugins\SIRA\messageForTransport.py:112
+#: addon\globalPlugins\SIRA\medicalDischarge.py:111
+#: addon\globalPlugins\SIRA\messageForTransport.py:118
 msgid "Patient: "
 msgstr "Paciente: "
 
+#. Endereço do paciente
+#: addon\globalPlugins\SIRA\medicalDischarge.py:125
+msgid "Address: "
+msgstr "Endereço: "
+
 #. Quarto
-#: addon\globalPlugins\SIRA\medicalDischarge.py:119
+#: addon\globalPlugins\SIRA\medicalDischarge.py:143
 msgid "Hospital room: "
 msgstr "Quarto: "
 
 #. Leito
-#: addon\globalPlugins\SIRA\medicalDischarge.py:129
+#: addon\globalPlugins\SIRA\medicalDischarge.py:153
 msgid "Bed: "
 msgstr "Leito: "
 
 #. Transporte
-#: addon\globalPlugins\SIRA\medicalDischarge.py:139
+#: addon\globalPlugins\SIRA\medicalDischarge.py:163
 msgid "Transporte: "
 msgstr "Transport: "
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:155
+#: addon\globalPlugins\SIRA\medicalDischarge.py:179
 msgid "Patient contact: "
 msgstr "Contato do paciente: "
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:176
+#: addon\globalPlugins\SIRA\medicalDischarge.py:200
 msgid "Escort: "
 msgstr "Acompanhante: "
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:193
+#: addon\globalPlugins\SIRA\medicalDischarge.py:217
 msgid "Escort contact: "
 msgstr "Contato do acompanhante: "
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:214
+#: addon\globalPlugins\SIRA\medicalDischarge.py:238
 msgid "Responsible for discharge: "
 msgstr "Responsável pela alta: "
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:231
+#: addon\globalPlugins\SIRA\medicalDischarge.py:255
 msgid "Contato do Responsible for discharge: "
 msgstr "Contato do responsável pela alta: "
 
-#. Texto da observação
-#: addon\globalPlugins\SIRA\medicalDischarge.py:250
-msgid "Observation: "
-msgstr "Observação: "
-
 #. Botão para Salvar o recado
-#: addon\globalPlugins\SIRA\medicalDischarge.py:268
+#: addon\globalPlugins\SIRA\medicalDischarge.py:274
 msgid "&Save"
 msgstr "&Salvar"
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:347
+#: addon\globalPlugins\SIRA\medicalDischarge.py:353
 msgid "High Medical Saves successfully!"
 msgstr "Alta Médica salva com sucesso!"
 
-#: addon\globalPlugins\SIRA\medicalDischarge.py:358
+#: addon\globalPlugins\SIRA\medicalDischarge.py:364
 msgid "Fill in all fields!"
 msgstr "Preencha todos os campos!"
 
 #. Travel date
-#: addon\globalPlugins\SIRA\messageForTransport.py:126
+#: addon\globalPlugins\SIRA\messageForTransport.py:132
 msgid "Travel date: "
 msgstr "Data da viagem: "
 
 #. Horário da viagem
-#: addon\globalPlugins\SIRA\messageForTransport.py:136
+#: addon\globalPlugins\SIRA\messageForTransport.py:142
 msgid "Time of Travel: "
 msgstr "Hora da viagem: "
 
 #. Cidade de destino
-#: addon\globalPlugins\SIRA\messageForTransport.py:146
+#: addon\globalPlugins\SIRA\messageForTransport.py:152
 msgid "City: "
 msgstr "Cidade: "
 
 #. Ponto de espera
-#: addon\globalPlugins\SIRA\messageForTransport.py:156
+#: addon\globalPlugins\SIRA\messageForTransport.py:162
 msgid "Point: "
 msgstr "Ponto: "
 
-#: addon\globalPlugins\SIRA\messageForTransport.py:272
+#: addon\globalPlugins\SIRA\messageForTransport.py:278
 msgid "The Name, Subject, patient and city Fields cannot be null!"
 msgstr "Os campos nome, assunto, paciente e cidade não podem ser nulos!"
 
-#: addon\globalPlugins\SIRA\updateManager.py:89
+#: addon\globalPlugins\SIRA\addEditRecord.py:44
+msgid "Mandatory Library Absent: Masked"
+msgstr "Biblioteca obrigatória ausente: Masked"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:64
+msgid "It is necessary to inform the secretary office!"
+msgstr "É necessário informar a secretaria!"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:66
+msgid "It is necessary to inform the landline!"
+msgstr "É necessário informar o telefone fixo!"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:68
+msgid "It is necessary to inform the extension!"
+msgstr "É necessário informar o ramal!"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:72
+msgid "Invalid email format!"
+msgstr "Formato de email inválido!"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:84
+msgid "Add"
+msgstr "Adicionar"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:90
+msgid "{} extensions."
+msgstr "{} ramais."
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:115
+msgid "Secretary: "
+msgstr "Secretaria: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:118
+msgid "Landline: "
+msgstr "Telefone fixo: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:126
+msgid "Sector: "
+msgstr "Setor: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:129
+msgid "Responsible: "
+msgstr "Responsável: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:132
+msgid "Extension: "
+msgstr "Ramal: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:135
+msgid "Cell phone: "
+msgstr "Telefone celular: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:138
+msgid "Email: "
+msgstr "E-mail: "
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:141
+msgid "&Ok"
+msgstr "&OK"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:240
+msgid "Contact added, want to add a new contact?"
+msgstr "Contato adicionado, deseja adicionar um novo contato?"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:248
+msgid "Error adding contact: {}"
+msgstr "Erro ao adicionar contato: {}"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:295
+msgid "Contact edited!"
+msgstr "Contato Editado!"
+
+#: addon\globalPlugins\SIRA\addEditRecord.py:298
+msgid "Error editing contact: {}"
+msgstr "Erro ao editar o contato: {}"
+
+#: addon\globalPlugins\SIRA\updateManager.py:95
 msgid "You are already running the latest version of SIRA."
 msgstr "Você já está executando a última versão do SIRA."
 
-#: addon\globalPlugins\SIRA\updateManager.py:93
+#: addon\globalPlugins\SIRA\updateManager.py:99
 msgid "No release notes provided."
 msgstr "Nenhuma nota de lançamento fornecida."
 
-#: addon\globalPlugins\SIRA\updateManager.py:102
+#: addon\globalPlugins\SIRA\updateManager.py:108
 msgid "An update is available, but no add-on file was found."
 msgstr ""
 "Uma atualização está disponível, mas nenhum arquivo de complemento foi "
 "encontrado."
 
-#: addon\globalPlugins\SIRA\updateManager.py:118
+#: addon\globalPlugins\SIRA\updateManager.py:124
 msgid "Failed to check for updates due to a network error."
 msgstr "Falha ao verificar atualizações devido a um erro de rede."
 
-#: addon\globalPlugins\SIRA\updateManager.py:129
+#: addon\globalPlugins\SIRA\updateManager.py:133
 msgid "An unexpected error occurred while checking for updates."
 msgstr "Ocorreu um erro ao contar registros. Verifique os logs."
 
-#: addon\globalPlugins\SIRA\updateManager.py:150
+#: addon\globalPlugins\SIRA\updateManager.py:154
 msgid "Update available for {addon}"
 msgstr "Atualização disponível para {addon}"
 
-#: addon\globalPlugins\SIRA\updateManager.py:155
+#: addon\globalPlugins\SIRA\updateManager.py:159
 msgid ""
 "A new version of {addon} ({version}) is available.\n"
 "\n"
@@ -689,19 +689,19 @@ msgstr ""
 "Está disponível uma nova versão do {addon} ({version}).\n"
 "\n"
 
-#: addon\globalPlugins\SIRA\updateManager.py:175
+#: addon\globalPlugins\SIRA\updateManager.py:179
 msgid "Downloading update for {addon}..."
 msgstr "A transferir atualização para {addon}..."
 
-#: addon\globalPlugins\SIRA\updateManager.py:198
+#: addon\globalPlugins\SIRA\updateManager.py:202
 msgid "Installing update for {addon}..."
 msgstr "Instalando atualização para {addon}..."
 
-#: addon\globalPlugins\SIRA\updateManager.py:212
+#: addon\globalPlugins\SIRA\updateManager.py:216
 msgid "Failed to download the update due to a network error."
 msgstr "Falha ao baixar a atualização devido a um erro de rede."
 
-#: addon\globalPlugins\SIRA\updateManager.py:219
+#: addon\globalPlugins\SIRA\updateManager.py:223
 msgid "An unexpected error occurred while installing the update."
 msgstr "Ocorreu um erro inesperado durante a instalação da atualização."
 
@@ -746,6 +746,9 @@ msgstr ""
 "\n"
 "Adiciona suporte a tabelas Markdown em buildVars.py e melhora a lógica de "
 "desinstalação para limpar a configuração opcionalmente."
+
+#~ msgid "Observation: "
+#~ msgstr "Observação: "
 
 #~ msgid "Error when moving database file: {error}"
 #~ msgstr "Erro ao mover arquivo de banco de dados: {error}"

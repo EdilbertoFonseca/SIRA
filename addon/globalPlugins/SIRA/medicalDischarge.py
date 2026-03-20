@@ -2,13 +2,19 @@
 
 """
 Author: Edilberto Fonseca <edilberto.fonseca@outlook.com>
-Copyright: (C) 2025 Edilberto Fonseca
+Copyright: (C) 2025 - 2026 Edilberto Fonseca
 
 This file is covered by the GNU General Public License.
 See the file COPYING for more details or visit:
 https://www.gnu.org/licenses/gpl-2.0.html
 
-Created on: 07/02/2025
+-------------------------------------------------------------------------
+AI DISCLOSURE / NOTA DE IA:
+This project utilizes AI for code refactoring and logic suggestions.
+All AI-generated code was manually reviewed and tested by the author.
+-------------------------------------------------------------------------
+
+Created on: 19/03/2026Created on: 07/02/2025
 """
 
 import os
@@ -112,6 +118,24 @@ class MedicalDischarge(wx.Dialog):
 		view_fields_box.Add(
 			self.labelPaciente,
 			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+
+		# Endereço do paciente
+		self.labelEndereco = wx.StaticText(panel, label=_("Address: "))
+		self.textEndereco = wx.TextCtrl(
+			panel,
+			style=wx.TE_MULTILINE,
+			size=(300, 150),
+		)
+		view_fields_box.Add(
+			self.labelEndereco,
+			flag=wx.TOP | wx.LEFT,
+			border=5,
+		)
+		view_fields_box.Add(
+			self.textEndereco,
+			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
 			border=5,
 		)
 
@@ -246,24 +270,6 @@ class MedicalDischarge(wx.Dialog):
 			border=5,
 		)
 
-		# Texto da observação
-		self.labelObservação = wx.StaticText(panel, label=_("Observation: "))
-		self.textObservação = wx.TextCtrl(
-			panel,
-			style=wx.TE_MULTILINE,
-			size=(300, 150),
-		)
-		view_fields_box.Add(
-			self.labelObservação,
-			flag=wx.TOP | wx.LEFT,
-			border=5,
-		)
-		view_fields_box.Add(
-			self.textObservação,
-			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
-			border=5,
-		)
-
 		# Botão para Salvar o recado
 		self.save_button = wx.Button(panel, label=_("&Save"))
 		self.save_button.Bind(wx.EVT_BUTTON, self.OnSave)
@@ -320,6 +326,7 @@ class MedicalDischarge(wx.Dialog):
 		variables = {
 			"hospital": self.textHospital.GetValue(),
 			"paciente": self.textPaciente.GetValue(),
+			"endereço": self.textEndereco.GetValue(),
 			"quarto": self.textQuarto.GetValue(),
 			"leito": self.textLeito.GetValue(),
 			"transporte": self.textTransporte.GetValue(),
@@ -328,7 +335,6 @@ class MedicalDischarge(wx.Dialog):
 			"contatoDoAcompanhante": self.textContatoDoAcompanhante.GetValue(),
 			"responsavelPelaAlta": self.textResponsavelPelaAlta.GetValue(),
 			"contatoDoResponsavelPelaAlta": self.textContatoDoResponsavelPelaAlta.GetValue(),
-			"observação": self.textObservação.GetValue(),
 		}
 
 		# Verifica se os campos obrigatórios estão vazios
@@ -366,7 +372,7 @@ class MedicalDischarge(wx.Dialog):
 		elif field == "paciente":
 			self.textPaciente.SetFocus()
 		elif field == "observação":
-			self.textObservação.SetFocus()
+			self.textEndereco.SetFocus()
 		elif field == "quarto":
 			self.textQuarto.SetFocus()
 		elif field == "leito":
@@ -406,7 +412,7 @@ class MedicalDischarge(wx.Dialog):
 
 Hospital {variables["hospital"]}
 Paciente: {variables["paciente"]}
-Observação: {variables["observação"]}
+Endereço: {variables["endereço"]}
 Quarto: {variables["quarto"]}
 Leito: {variables["leito"]}
 Transporte: {variables["transporte"]}
@@ -488,7 +494,7 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 			self.textContatoDoPaciente,
 			self.textAcompanhante,
 			self.textContatoDoAcompanhante,
-			self.textObservação,
+			self.textEndereco,
 			self.textResponsavelPelaAlta,
 			self.textContatoDoResponsavelPelaAlta,
 		]

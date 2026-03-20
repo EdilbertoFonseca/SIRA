@@ -84,10 +84,9 @@ repos:
 
 - repo: local
   hooks:
-
     - id: pyright
       name: type check with pyright
       entry: pyright
       language: node
-      types: [python]
       pass_filenames: false
+      types: [python]

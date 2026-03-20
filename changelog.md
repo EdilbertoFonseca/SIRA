@@ -1,13 +1,14 @@
 # Changelog
 
-- Replace `addonPath` with `ADDONPATH` and add `is64` detection to select `lib` or `lib64` directories.
+## Improvements
 
-- Update imports across SIRA plugins to load internal libs from the correct folder and log/raise clearer errors when mandatory internal modules are missing.
+- Added the **address** field to the medical discharge form
+- Included information about the use of AI in the header and README
+- Improvements made to build and configuration files:
+  - `build_addon`
+  - `.pre-commit-config.yaml`
+  - `pyproject.toml`
 
-- Centralize SQLite/sql handling in `sqlLoader` and adjust model/controller code to use the new `sql` module.
+## Fixes
 
-- Add `onUninstall` logic to optionally clear add-on config on uninstall and ensure addon data dir/name capitalization is consistent.
-
-- Bump add-on version/name in `buildVars`, add `pyproject.toml` and `uv.lock` for packaging/dependencies, and overhaul `pre-commit`/`ruff`/`pyright` configurations.
-
-- Miscellaneous fixes: tidy up `sitescons` tool code (formatting, typing, builder args), small typing/formatting edits, and add missing trailing commas.
+- Fixed the class call using `super`
