@@ -1,0 +1,42 @@
+name: Create Manual Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (ex: v2026.1.1)'
+        required: true
+      commit:
+        description: 'Commit hash to tag (optional, default HEAD)'
+        required: false
+
+jobs:
+  manual-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create annotated tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Usa o commit fornecido ou HEAD por padrão
+          if [ -z "${{ github.event.inputs.commit }}" ]; then
+            COMMIT=$(git rev-parse HEAD)
+          else
+            COMMIT=${{ github.event.inputs.commit }}
+          fi
+
+          # Pega a versão do input corretamente
+          VERSION="${{ github.event.inputs.version }}"
+
+          echo "Creating tag $VERSION at commit $COMMIT"
+
+          # Cria tag anotada
+          git tag -a "$VERSION" -m "Release $VERSION" $COMMIT
+
+          # Envia tag para o remoto
+          git push origin "$VERSION"
