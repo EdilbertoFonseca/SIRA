@@ -14,6 +14,10 @@ jobs:
   manual-tag:
     runs-on: ubuntu-latest
 
+    # SECURITY: Set permissions for this Job only
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
