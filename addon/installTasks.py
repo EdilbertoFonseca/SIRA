@@ -26,15 +26,28 @@ ADDON_NAME = _addon.name
 
 
 def onUninstall():
-	"""
-	Optionally remove add-on configuration during uninstallation.
-	Uses only supported NVDA configuration APIs.
-	"""
-
-	# Check user preference
-	if not config.conf.get(ADDON_NAME, {}).get("resetRecords", False):
+	# 1. Check if the configuration exists
+	if ADDON_NAME not in config.conf:
 		return
 
-	# Clear add-on configuration safely
-	config.conf[ADDON_NAME] = {}
-	config.conf.save()
+	# 2. Check user preference
+	# We use direct access via square brackets to read the value
+	if not config.conf[ADDON_NAME].get("removeConfigOnUninstall", False):
+		return
+
+	try:
+		# 1. We remove the specification (the mold)
+		if ADDON_NAME in config.conf.spec:
+			del config.conf.spec[ADDON_NAME]
+
+		# 2. Instead of iterating over keys(), we clear the section in the base object
+		# O NVDA permite remover a secção do perfil atual desta forma:
+		config.conf.profiles[0].pop(ADDON_NAME, None)
+
+		# 3. We force write so that nvda.ini is updated
+		config.conf.save()
+
+	except Exception as e:
+		import logHandler
+
+		logHandler.log.error(f"Failed to remove config from {ADDON_NAME}: {e}")

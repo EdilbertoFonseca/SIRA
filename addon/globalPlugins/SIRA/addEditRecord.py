@@ -28,10 +28,10 @@ import wx
 from logHandler import log
 
 from . import controller as core
-from .varsConfig import ADDON_PATH, is64, ADDON_NAME
+from .varsConfig import ADDON_NAME, ADDON_PATH, EMAIL_REGEX, IS64
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if is64 else "lib"
+libFolder = "lib64" if IS64 else "lib"
 libPath = os.path.join(ADDON_PATH, libFolder)
 
 if os.path.isdir(libPath) and libPath not in sys.path:
@@ -43,11 +43,8 @@ except ImportError as e:
 	log.error(f"[{ADDON_NAME}] Error when importing internal library 'masked': {e}")
 	raise ImportError(_("Mandatory Library Absent: Masked"))
 
-# Global Constants for Regex
-EMAIL_REGEX = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$"
 
-
-def validate_fields(data):
+def validateFields(data):
 	"""
 	Validates the fields of the contact form.
 
@@ -170,6 +167,11 @@ class AddEditRecDialog(wx.Dialog):
 		mainSizer.Add(buttonSizer, 0, wx.CENTER)
 		self.panel.SetSizerAndFit(mainSizer)
 
+		# Bindings for text fields
+		self.textCell.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
+		self.textLandline.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
+		self.textExtension.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
+
 		# Bindings to move the focus by pressing Enter into the fields of text
 		self.textSecretary_office.Bind(wx.EVT_TEXT_ENTER, self.onFocusSecretary)
 		self.textSector.Bind(wx.EVT_TEXT_ENTER, self.onFocusSector)
@@ -215,12 +217,12 @@ class AddEditRecDialog(wx.Dialog):
 			"email": self.textEmail.GetValue().strip(),
 		}
 
-		errors = validate_fields(contactDict)
+		errors = validateFields(contactDict)
 		if errors:
 			# Take the first error and display the message
 			field, message = next(iter(errors.items()))
-			self.show_message(message, _("Error"))
-			self.focus_field(field)
+			self.showMessage(message, _("Error"))
+			self.focusField(field)
 			return None
 
 		return contactDict
@@ -234,20 +236,20 @@ class AddEditRecDialog(wx.Dialog):
 			return
 
 		data = {"contacts": contactDict}
-		success, error = self.save_contact_to_db(data)
+		success, error = self.saveContactToDB(data)
 
 		if success:
 			message = _("Contact added, want to add a new contact?")
 			caption = _("Success")
 			user_response = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
 			if user_response == wx.YES:
-				self.clear_form()
+				self.clearForm()
 			else:
 				self.Destroy()
 		else:
-			self.show_message(_("Error adding contact: {}").format(error), _("Error"), wx.ICON_ERROR)
+			self.showMessage(_("Error adding contact: {}").format(error), _("Error"), wx.ICON_ERROR)
 
-	def save_contact_to_db(self, data):
+	def saveContactToDB(self, data):
 		"""
 		Save a contact in the database.
 
@@ -258,12 +260,12 @@ class AddEditRecDialog(wx.Dialog):
 			tuple: A boolean indicating success or failure, and an error message in case of failure.
 		"""
 		try:
-			core.add_record(data)
+			core.addRecord(data)
 			return True, None
 		except Exception as e:
 			return False, str(e)
 
-	def focus_field(self, field_name):
+	def focusField(self, fieldName):
 		"""
 		Defines the focus on the field corresponding to the name of the provided field.
 
@@ -279,8 +281,8 @@ class AddEditRecDialog(wx.Dialog):
 			"cell": self.textCell,
 			"email": self.textEmail,
 		}
-		if field_name in focus_mapping:
-			focus_mapping[field_name].SetFocus()
+		if fieldName in focus_mapping:
+			focus_mapping[fieldName].SetFocus()
 
 	def onEdit(self):
 		"""
@@ -291,11 +293,11 @@ class AddEditRecDialog(wx.Dialog):
 			return
 
 		try:
-			core.edit_record(self.selectedRow.id, contactDict)
-			self.show_message(_("Contact edited!"), _("Success"), wx.ICON_INFORMATION)
+			core.editRecord(self.selectedRow.id, contactDict)
+			self.showMessage(_("Contact edited!"), _("Success"), wx.ICON_INFORMATION)
 			self.Destroy()
 		except Exception as e:
-			self.show_message(_("Error editing contact: {}").format(str(e)), _("Error"), wx.ICON_ERROR)
+			self.showMessage(_("Error editing contact: {}").format(str(e)), _("Error"), wx.ICON_ERROR)
 
 	def handleRecord(self, event):
 		"""
@@ -306,15 +308,15 @@ class AddEditRecDialog(wx.Dialog):
 		else:
 			self.onEdit()
 
-	def show_message(self, message, caption=None, style=wx.OK | wx.ICON_INFORMATION):
+	def showMessage(self, message, caption=None, style=wx.OK | wx.ICON_INFORMATION):
 		"""
 		Displays a message to the user in a dialog box.
 		"""
 		if caption is None:
-			caption = _("Message")
+			caption = _("Attention")
 		gui.messageBox(message, caption, style)
 
-	def clear_form(self):
+	def clearForm(self):
 		"""
 		Cleans the fields of the form and position the focus on the first field.
 		"""
@@ -333,3 +335,28 @@ class AddEditRecDialog(wx.Dialog):
 		Handles the cancel event by destroying the current window.
 		"""
 		self.Destroy()
+
+	def onPasteAndClean(self, event):
+		# Check if it is Ctrl+V
+		if event.GetKeyCode() == ord("V") and event.ControlDown():
+			# Get the currently focused field (the one that triggered the event)
+			currentField = event.GetEventObject()
+
+			# Open the Windows clipboard
+			if not wx.TheClipboard.IsOpened():
+				wx.TheClipboard.Open()
+				data = wx.TextDataObject()
+				success = wx.TheClipboard.GetData(data)
+				wx.TheClipboard.Close()
+
+				if success:
+					clipboardText = data.GetText()
+					# Remove all non-digit characters from the clipboard text
+					cleanText = re.sub(r"\D", "", clipboardText)
+
+					# Inserts only clean numbers in the focused field
+					currentField.SetValue(cleanText)
+					return  # Block the original "dirty" Ctrl+V
+
+		# If it's not Ctrl+V, let other keys (arrows, numbers, backspace) pass
+		event.Skip()

@@ -18,6 +18,7 @@ Created on: 19/03/2026Created on: 07/02/2025
 """
 
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -26,10 +27,10 @@ import gui
 import wx
 from logHandler import log
 
-from .varsConfig import ADDON_PATH, is64, mask_phone, ADDON_NAME
+from .varsConfig import ADDON_NAME, ADDON_PATH, IS64, MASK_PHONE
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if is64 else "lib"
+libFolder = "lib64" if IS64 else "lib"
 libPath = os.path.join(ADDON_PATH, libFolder)
 
 if os.path.isdir(libPath) and libPath not in sys.path:
@@ -123,7 +124,7 @@ class MedicalDischarge(wx.Dialog):
 
 		# Endereço do paciente
 		self.labelEndereco = wx.StaticText(panel, label=_("Address: "))
-		self.textEndereco = wx.TextCtrl(
+		self.textAddress = wx.TextCtrl(
 			panel,
 			style=wx.TE_MULTILINE,
 			size=(300, 150),
@@ -134,7 +135,7 @@ class MedicalDischarge(wx.Dialog):
 			border=5,
 		)
 		view_fields_box.Add(
-			self.textEndereco,
+			self.textAddress,
 			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
 			border=5,
 		)
@@ -151,10 +152,10 @@ class MedicalDischarge(wx.Dialog):
 
 		# Leito
 		self.labelLeito = wx.StaticText(panel, label=_("Bed: "))
-		self.textLeito = wx.TextCtrl(panel, value="", size=(300, -1))
+		self.textBed = wx.TextCtrl(panel, value="", size=(300, -1))
 		view_fields_box.Add(self.labelLeito, flag=wx.TOP | wx.LEFT, border=5)
 		view_fields_box.Add(
-			self.textLeito,
+			self.textBed,
 			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
 			border=5,
 		)
@@ -178,18 +179,19 @@ class MedicalDischarge(wx.Dialog):
 			panel,
 			label=_("Patient contact: "),
 		)
-		self.textContatoDoPaciente = MaskedTextCtrl(
+		self.textPatientContact = MaskedTextCtrl(
 			panel,
-			mask_phone,
+			MASK_PHONE,
 			size=(300, -1),
 		)
+		self.textPatientContact.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 		view_fields_box.Add(
 			self.labelContatoDoPaciente,
 			flag=wx.TOP | wx.LEFT,
 			border=5,
 		)
 		view_fields_box.Add(
-			self.textContatoDoPaciente,
+			self.textPatientContact,
 			flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
 			border=5,
 		)
@@ -218,9 +220,10 @@ class MedicalDischarge(wx.Dialog):
 		)
 		self.textContatoDoAcompanhante = MaskedTextCtrl(
 			panel,
-			mask_phone,
+			MASK_PHONE,
 			size=(300, -1),
 		)
+		self.textContatoDoAcompanhante.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 		view_fields_box.Add(
 			self.labelContatoDoAcompanhante,
 			flag=wx.TOP | wx.LEFT,
@@ -256,9 +259,10 @@ class MedicalDischarge(wx.Dialog):
 		)
 		self.textContatoDoResponsavelPelaAlta = MaskedTextCtrl(
 			panel,
-			mask_phone,
+			MASK_PHONE,
 			size=(300, -1),
 		)
+		self.textContatoDoResponsavelPelaAlta.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 		view_fields_box.Add(
 			self.labelContatoDoResponsavelPelaAlta,
 			flag=wx.TOP | wx.LEFT,
@@ -326,11 +330,11 @@ class MedicalDischarge(wx.Dialog):
 		variables = {
 			"hospital": self.textHospital.GetValue(),
 			"paciente": self.textPaciente.GetValue(),
-			"endereço": self.textEndereco.GetValue(),
+			"endereço": self.textAddress.GetValue(),
 			"quarto": self.textQuarto.GetValue(),
-			"leito": self.textLeito.GetValue(),
+			"leito": self.textBed.GetValue(),
 			"transporte": self.textTransporte.GetValue(),
-			"contatoDoPaciente": self.textContatoDoPaciente.GetValue(),
+			"contatoDoPaciente": self.textPatientContact.GetValue(),
 			"acompanhante": self.textAcompanhante.GetValue(),
 			"contatoDoAcompanhante": self.textContatoDoAcompanhante.GetValue(),
 			"responsavelPelaAlta": self.textResponsavelPelaAlta.GetValue(),
@@ -372,15 +376,15 @@ class MedicalDischarge(wx.Dialog):
 		elif field == "paciente":
 			self.textPaciente.SetFocus()
 		elif field == "observação":
-			self.textEndereco.SetFocus()
+			self.textAddress.SetFocus()
 		elif field == "quarto":
 			self.textQuarto.SetFocus()
 		elif field == "leito":
-			self.textLeito.SetFocus()
+			self.textBed.SetFocus()
 		elif field == "transporte":
 			self.textTransporte.SetFocus()
 		elif field == "contatoDoPaciente":
-			self.textContatoDoPaciente.SetFocus()
+			self.textPatientContact.SetFocus()
 		elif field == "acompanhante":
 			self.textAcompanhante.SetFocus()
 		elif field == "contatoDoAcompanhante":
@@ -488,13 +492,13 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 		text_controls = [
 			self.textHospital,
 			self.textPaciente,
-			self.textLeito,
+			self.textBed,
 			self.textQuarto,
 			self.textTransporte,
-			self.textContatoDoPaciente,
+			self.textPatientContact,
 			self.textAcompanhante,
 			self.textContatoDoAcompanhante,
-			self.textEndereco,
+			self.textAddress,
 			self.textResponsavelPelaAlta,
 			self.textContatoDoResponsavelPelaAlta,
 		]
@@ -537,3 +541,28 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 						Fecha a janela atual ao ser chamado.
 		"""
 		self.Destroy()
+
+	def onPasteAndClean(self, event):
+		# Check if it is Ctrl+V
+		if event.GetKeyCode() == ord("V") and event.ControlDown():
+			# Get the currently focused field (the one that triggered the event)
+			currentField = event.GetEventObject()
+
+			# Open the Windows clipboard
+			if not wx.TheClipboard.IsOpened():
+				wx.TheClipboard.Open()
+				data = wx.TextDataObject()
+				success = wx.TheClipboard.GetData(data)
+				wx.TheClipboard.Close()
+
+				if success:
+					clipboardText = data.GetText()
+					# Remove all non-digit characters from the clipboard text
+					cleanText = re.sub(r"\D", "", clipboardText)
+
+					# Inserts only clean numbers in the focused field
+					currentField.SetValue(cleanText)
+					return  # Block the original "dirty" Ctrl+V
+
+		# If it's not Ctrl+V, let other keys (arrows, numbers, backspace) pass
+		event.Skip()

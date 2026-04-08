@@ -96,7 +96,7 @@ class ManageDuplicatesDialog(wx.Dialog):
 
 		for i, record in enumerate(self.duplicates):
 			index = self.duplicateList.InsertItem(self.duplicateList.GetItemCount(), str(record.id))
-			self.duplicateList.SetItem(index, 1, record.secretary_office)
+			self.duplicateList.SetItem(index, 1, record.secretaryOffice)
 			self.duplicateList.SetItem(index, 2, record.landline)
 			self.duplicateList.SetItem(index, 3, record.extension)
 			self.duplicateList.SetItem(index, 4, record.sector)
@@ -137,7 +137,7 @@ class ManageDuplicatesDialog(wx.Dialog):
 			)
 
 			# Update the list after removal
-			remaining_duplicates = core.find_duplicate_records()
+			remaining_duplicates = core.findDuplicateRecords()
 			if remaining_duplicates:
 				self.duplicates = remaining_duplicates
 				self.initialize_duplicate_list()

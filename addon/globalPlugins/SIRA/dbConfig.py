@@ -24,43 +24,54 @@ import config
 from .varsConfig import ADDON_NAME
 
 
-class DatabaseConfig:
-	def __init__(self, default_path):
+class DatabaseConfig(object):
+	def __init__(self, defaultPath):
 		super().__init__()
-		self.default_path = default_path
-		self.first_database = default_path
-		self.alt_database = ""
-		self.index_db = 0
+		self.defaultPath = defaultPath
+		self.firstDatabase = defaultPath
+		self.altDatabase = ""
+		self.indexDB = 0
 
-	def load_config(self):
+	def loadConfig(self):
+		"""
+		Reads settings from the configuration file.
+		Improvement: Loads all paths to avoid stale data in memory.
+		"""
 		conf = config.conf.get(ADDON_NAME)
 		if conf is None:
 			return
 
-		self.index_db = int(conf.get("databaseIndex", 0))
-		if self.index_db == 0:
-			self.first_database = conf.get("path", self.default_path)
-		else:
-			self.alt_database = conf.get("altPath", self.default_path)
+		# Loads the current index (0 for main, 1 for alternative)
+		self.indexDB = int(conf.get("databaseIndex", 0))
 
-	def save_config(self):
+		# Always load both paths if they exist in the config
+		self.firstDatabase = conf.get("path", self.defaultPath)
+		self.altDatabase = conf.get("altPath", "")
+
+	def saveConfig(self):
+		"""
+		Stores the current settings in the global configuration dictionary.
+		"""
 		if ADDON_NAME not in config.conf:
 			config.conf[ADDON_NAME] = {}
 
 		conf = cast(dict[str, Any], config.conf[ADDON_NAME])
 
-		conf["path"] = self.first_database
-		conf["altPath"] = self.alt_database
-		conf["databaseIndex"] = self.index_db
+		conf["path"] = self.firstDatabase
+		conf["altPath"] = self.altDatabase
+		conf["databaseIndex"] = self.indexDB
+		# save the settings
+		config.conf.save()
 
-	def get_current_database_path(self):
+	def getCurrentDatabasePath(self):
 		"""
-		Returns the currently selected database path.
+		Returns the path of the currently selected database.
 		"""
-		return self.first_database if self.index_db == 0 else self.alt_database
+		# If indexDB is 0, use the first one. If it is 1 (or any other), use the alternative.
+		return self.firstDatabase if self.indexDB == 0 else self.altDatabase
 
 	def reload(self):
 		"""
-		Reloads database paths from NVDA configuration.
+		Reloads the paths from the configuration.
 		"""
-		self.load_config()
+		self.loadConfig()
