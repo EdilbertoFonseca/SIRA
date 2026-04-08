@@ -59,7 +59,7 @@ class SIRA(wx.Dialog):
 		HEIGHT = 400
 
 		try:
-			self.contactResults = core.get_all_records()
+			self.contactResults = core.getAllRecords()
 		except EOFError:
 			self.contactResults = []
 
@@ -75,7 +75,7 @@ class SIRA(wx.Dialog):
 		panel = wx.Panel(self)
 		self.contactList = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 		self._create_columns()
-		self.contactList.Bind(wx.EVT_CHAR_HOOK, self.ao_pressionar_letras)
+		self.contactList.Bind(wx.EVT_CHAR_HOOK, self.whenPressingLetters)
 		self._itemMap = {}
 		self.initialize_contact_list()
 		self.contactList.SetFocus()
@@ -184,7 +184,7 @@ class SIRA(wx.Dialog):
 		for record in self.contactResults:
 			index = self.contactList.InsertItem(
 				self.contactList.GetItemCount(),
-				record.secretary_office,
+				record.secretaryOffice,
 			)
 
 			record_values = (
@@ -215,7 +215,7 @@ class SIRA(wx.Dialog):
 		"""Edit a selected record."""
 		selectedRow = self.get_selected_record()
 		if selectedRow is None:
-			self.show_message(_("No records selected!"), _("Error"))
+			self.showMessage(_("No records selected!"), _("Error"))
 			return
 		dlg = AddEditRecDialog(
 			gui.mainFrame,
@@ -239,7 +239,7 @@ class SIRA(wx.Dialog):
 		"""
 		selectedRow = self.get_selected_record()
 		if selectedRow is None:
-			self.show_message(_("No records selected!"), _("Error"))
+			self.showMessage(_("No records selected!"), _("Error"))
 			return
 
 		message = _("Do you want to delete the selected record?")
@@ -249,10 +249,10 @@ class SIRA(wx.Dialog):
 		if user_response == wx.YES:
 			try:
 				core.delete(selectedRow.id)
-				self.show_message(_("Record deleted!"), _("Success"))
+				self.showMessage(_("Record deleted!"), _("Success"))
 				self._refresh_and_focus()
 			except Exception as e:
-				self.show_message(_("Error deleting record: {}").format(str(e)), _("Error"))
+				self.showMessage(_("Error deleting record: {}").format(str(e)), _("Error"))
 				return
 		self.contactList.SetFocus()
 
@@ -263,19 +263,19 @@ class SIRA(wx.Dialog):
 		keyword = self.search.GetValue()
 
 		if not keyword or keyword.strip() == "":
-			self.show_message(_("The search field is empty!"), _("Attention"))
+			self.showMessage(_("The search field is empty!"), _("Attention"))
 			self.search.SetFocus()
 			return
 
 		# Try to search based on filter and keyword option
 		try:
 			# Call the search function in the core module, passing the filter and keyword option
-			self.contactResults = core.search_records(filterChoice, keyword)
+			self.contactResults = core.searchRecords(filterChoice, keyword)
 
 			# Check if there were any results returned by the search
 			if not self.contactResults:
 				# If there are no results, displays an informative message
-				self.show_message(_("No contacts found matching the search criteria."))
+				self.showMessage(_("No contacts found matching the search criteria."))
 				self.search.SetFocus()
 			else:
 				# Otherwise, update the contact list in the graphical interface
@@ -288,7 +288,7 @@ class SIRA(wx.Dialog):
 				self.contactList.SetFocus()
 		except Exception as e:
 			# Display an error message if an exception occurs during the search
-			self.show_message("{}".format(e))
+			self.showMessage("{}".format(e))
 
 	def onToImport(self, event):
 		"""Import csv file to the List of extensions."""
@@ -303,8 +303,8 @@ class SIRA(wx.Dialog):
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
 				mypath = dlg.GetPath()
-				core.import_csv_to_db(mypath)
-				self.show_message(_("File imported successfully!"), _("Attention"))
+				core.importCsvToDb(mypath)
+				self.showMessage(_("File imported successfully!"), _("Attention"))
 				self._refresh_and_focus()
 			except Exception as e:
 				msg = _(
@@ -312,7 +312,7 @@ class SIRA(wx.Dialog):
 				)
 
 				# Translators: Message displayed to the user in case of errors when importing the CSV file
-				self.show_message(msg, _("Attention"))
+				self.showMessage(msg, _("Attention"))
 		dlg.Destroy()
 		self.contactList.SetFocus()
 
@@ -329,8 +329,8 @@ class SIRA(wx.Dialog):
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
 				mypath = dlg.GetPath()
-				core.export_db_to_csv(mypath)
-				self.show_message(_("File exported successfully!"), _("Attention"))
+				core.exportDBToCsv(mypath)
+				self.showMessage(_("File exported successfully!"), _("Attention"))
 				self.contactList.SetFocus()
 			except Exception as e:
 				msg = _(
@@ -338,7 +338,7 @@ class SIRA(wx.Dialog):
 				)
 
 				# Translators: Message displayed to the user in case of errors when exporting the CSV file
-				self.show_message(msg, _("Attention"))
+				self.showMessage(msg, _("Attention"))
 		dlg.Destroy()
 		self.contactList.SetFocus()
 
@@ -351,18 +351,18 @@ class SIRA(wx.Dialog):
 		"""
 
 		# 1. Obtains the counting of records safely.
-		record_count = core.count_records()
+		record_count = core.countRecords()
 
 		# 2. Checks the three possible scenarios: failure, empty list or list with records.
 		if record_count is None:
 			# If Record Count for None, there was an error in the database.
 			# The error message is already displayed internally by the Core.COUNT Records function.
-			self.show_message(_("An error occurred while counting records. Check the logs."), _("Error"))
+			self.showMessage(_("An error occurred while counting records. Check the logs."), _("Error"))
 			return
 
 		elif record_count == 0:
 			# If Record Count for 0, the agenda is already empty.
-			self.show_message(_("The agenda is already empty!"), _("Attention"))
+			self.showMessage(_("The agenda is already empty!"), _("Attention"))
 			return
 
 		# 3. If Record Count> 0, requests user confirmation.
@@ -372,11 +372,11 @@ class SIRA(wx.Dialog):
 		user_response = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
 		if user_response == wx.YES:
 			try:
-				core.reset_record()
-				self.show_message(_("Agenda deleted!"), _("Success"))
+				core.resetRecord()
+				self.showMessage(_("Agenda deleted!"), _("Success"))
 				self._refresh_and_focus()
 			except Exception as e:
-				self.show_message(_("Error deleting records: {}").format(str(e)), _("Error"))
+				self.showMessage(_("Error deleting records: {}").format(str(e)), _("Error"))
 				return
 
 		# 4. Refreshes the list and sets focus, encapsulating repeated calls.
@@ -399,7 +399,7 @@ class SIRA(wx.Dialog):
 		"""
 		Busca e, se houver, exibe registros duplicados para o usuário em um novo diálogo.
 		"""
-		duplicates = core.find_duplicate_records()
+		duplicates = core.findDuplicateRecords()
 
 		if duplicates:
 			# Abre o novo diálogo para o usuário gerenciar as duplicatas
@@ -426,7 +426,7 @@ class SIRA(wx.Dialog):
 
 				Args:
 					event (wx.Event): The event that called the function, usually an event of
-		                                                        button click or interface action.
+																button click or interface action.
 
 				Exceptions:
 		If an error occurs when saving the CSV file, an error message will be shown
@@ -438,7 +438,7 @@ class SIRA(wx.Dialog):
 
 		# Check if the item was found
 		if not filtered_item:
-			self.show_message("No results found to save.", "Warning")
+			self.showMessage("No results found to save.", "Warning")
 			return
 
 		dlg = wx.FileDialog(
@@ -452,8 +452,8 @@ class SIRA(wx.Dialog):
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
 				mypath = dlg.GetPath()
-				core.save_csv(filtered_item, mypath)
-				self.show_message(_("File exported successfully!"), _("Attention"))
+				core.saveCsv(filtered_item, mypath)
+				self.showMessage(_("File exported successfully!"), _("Attention"))
 				self.contactList.SetFocus()
 			except Exception as e:
 				msg = _(
@@ -461,11 +461,11 @@ class SIRA(wx.Dialog):
 				)
 
 				# Translators: Message displayed to the user in case of errors when exporting the CSV file
-				self.show_message(msg, _("Attention"))
+				self.showMessage(msg, _("Attention"))
 		dlg.Destroy()
 		self.contactList.SetFocus()
 
-	def show_message(self, message, caption=None, style=wx.OK | wx.ICON_INFORMATION):
+	def showMessage(self, message, caption=None, style=wx.OK | wx.ICON_INFORMATION):
 		"""
 		Displays a message to the user in a dialog box.
 
@@ -482,28 +482,33 @@ class SIRA(wx.Dialog):
 
 	def onKeyPress(self, event):
 		"""
-			Handles key press events in the dialog, closing it when Esc is pressed,
-			deleting a link when Delete is pressed, and allowing editing of a link when F2 is pressed.
-
-		Args:
-			event (wx.Event): The event triggered when pressing a key. If Esc is pressed, the dialog is closed;
-			if Delete is pressed, the selected link is deleted; if F2 is pressed, the link is edited.
+		Handles key press events in the dialog.
 		"""
-
 		keyCode = event.GetKeyCode()
+		focused = self.FindFocus()
+
 		if keyCode == wx.WXK_F5:
 			self.onToUpdate(event)
+
 		elif keyCode == wx.WXK_DELETE:
 			# Checks if focus is on an edit field
-			focused = self.FindFocus()
 			if isinstance(focused, (wx.TextCtrl, wx.SearchCtrl)):
-				# Enables default Delete behavior
 				event.Skip()
 				return
 			self.onDelete(event)
+
 		elif keyCode == wx.WXK_F2:
 			self.onEdit(event)
-		event.Skip()
+
+		elif keyCode == wx.WXK_RETURN:
+			# If the focus is on the search, execute the search
+			if focused == self.search:
+				self.onSearch(event)
+			else:
+				event.Skip()  # Allows default behavior in other fields
+		else:
+			# For any other key, let the system process normally
+			event.Skip()
 
 	def onClose(self, event):
 		"""
@@ -521,7 +526,7 @@ class SIRA(wx.Dialog):
 		return self._itemMap.get(idx)
 
 	def show_all_records(self):
-		self.contactResults = core.get_all_records()
+		self.contactResults = core.getAllRecords()
 		self.initialize_contact_list()
 
 	def _refresh_and_focus(self):
@@ -550,21 +555,21 @@ class SIRA(wx.Dialog):
 		lineComplete = " | ".join(data)
 		self.visualizationField.SetValue(lineComplete)
 
-	def ao_pressionar_letras(self, event):
-		codigo = event.GetKeyCode()
+	def whenPressingLetters(self, event):
+		code = event.GetKeyCode()
 
-		if codigo >= 256:
+		if code >= 256:
 			event.Skip()
 			return
 
 		try:
-			tecla = chr(codigo).upper()
+			key = chr(code).upper()
 		except Exception:
 			event.Skip()
 			return
 
-		# Mapeamento tecla → coluna
-		mapa = {
+		# Mapping key column
+		map = {
 			"S": 0,  # Secretary
 			"L": 1,  # Landline
 			"C": 2,  # Sector
@@ -574,7 +579,7 @@ class SIRA(wx.Dialog):
 			"E": 6,  # Email
 		}
 
-		if tecla not in mapa:
+		if key not in map:
 			event.Skip()
 			return
 
@@ -583,11 +588,11 @@ class SIRA(wx.Dialog):
 			event.Skip()
 			return
 
-		coluna = mapa[tecla]
+		column = map[key]
 
-		texto = self.contactList.GetItemText(idx, coluna)
+		text = self.contactList.GetItemText(idx, column)
 
-		if texto:
-			ui.message(texto)
+		if text:
+			ui.message(text)
 		else:
 			ui.message(_("Empty"))

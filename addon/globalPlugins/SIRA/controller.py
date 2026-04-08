@@ -25,10 +25,10 @@ from logHandler import log
 
 from .model import ObjectExtensionRegistrationSystem, Section
 from .sqlLoader import sql
-from .varsConfig import ADDON_PATH, is64
+from .varsConfig import ADDON_PATH, IS64
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if is64 else "lib"
+libFolder = "lib64" if IS64 else "lib"
 libPath = os.path.join(ADDON_PATH, libFolder)
 
 if os.path.isdir(libPath) and libPath not in sys.path:
@@ -44,7 +44,7 @@ except ImportError as e:
 addonHandler.initTranslation()
 
 
-def get_all_records():
+def getAllRecords():
 	"""
 	Function that retrieves all data from the database.
 
@@ -56,12 +56,12 @@ def get_all_records():
 					list: A list of `ObjectContact` objects representing all records in the database.
 	"""
 	with Section() as trans:
-		trans.execute("SELECT * FROM contacts ORDER BY secretary_office ASC")
+		trans.execute("SELECT * FROM contacts ORDER BY secretaryOffice ASC")
 		results = trans.fetchall()
-	return convert_results(results)
+	return convertResults(results)
 
 
-def convert_results(results):
+def convertResults(results):
 	"""
 	Converts the results to objects `objectcontact`.
 
@@ -78,7 +78,7 @@ def convert_results(results):
 	rows = [
 		ObjectExtensionRegistrationSystem(
 			record["id"],
-			record["secretary_office"],
+			record["secretaryOffice"],
 			record["landline"],
 			record["sector"],
 			record["responsible"],
@@ -91,12 +91,12 @@ def convert_results(results):
 	return rows
 
 
-def add_record(data):
+def addRecord(data):
 	"""
 	Insert new records into the database.
 	"""
-	required_keys = [
-		"secretary_office",
+	requiredKeys = [
+		"secretaryOffice",
 		"landline",
 		"sector",
 		"responsible",
@@ -104,28 +104,28 @@ def add_record(data):
 		"cell",
 		"email",
 	]
-	contact_data = data.get("contacts")  # Acesse a chave 'contacts'
+	contactData = data.get("contacts")  # Acesse a chave 'contacts'
 
-	if not contact_data:
+	if not contactData:
 		raise ValueError(_("Missing 'contacts' key in dictionary"))
 
-	for key in required_keys:
-		if key not in contact_data:
+	for key in requiredKeys:
+		if key not in contactData:
 			raise ValueError(_(f"Missing key in dictionary: {key}"))
 
 	try:
 		with Section() as trans:
 			trans.execute(
-				"""INSERT INTO contacts (secretary_office, landline, sector, responsible, extension, cell, email)
+				"""INSERT INTO contacts (secretaryOffice, landline, sector, responsible, extension, cell, email)
 				VALUES (?, ?, ?, ?, ?, ?, ?)""",
 				(
-					contact_data["secretary_office"],
-					contact_data["landline"],
-					contact_data["sector"],
-					contact_data["responsible"],
-					contact_data["extension"],
-					contact_data["cell"],
-					contact_data["email"],
+					contactData["secretaryOffice"],
+					contactData["landline"],
+					contactData["sector"],
+					contactData["responsible"],
+					contactData["extension"],
+					contactData["cell"],
+					contactData["email"],
 				),
 			)
 			trans.persist()
@@ -134,7 +134,7 @@ def add_record(data):
 		raise
 
 
-def search_records(filterChoice, keyword):
+def searchRecords(filterChoice, keyword):
 	"""
 	Search registrations in the database based on the chosen filter and the keyword provided by the user.
 
@@ -155,8 +155,8 @@ def search_records(filterChoice, keyword):
 						List: A list of objects `Objectcontact` corresponding to the records found.
 	"""
 
-	query_map = {
-		_("Secretary office"): "SELECT * FROM contacts WHERE secretary_office LIKE ?",
+	queryMap = {
+		_("Secretary office"): "SELECT * FROM contacts WHERE secretaryOffice LIKE ?",
 		_("Landline"): "SELECT * FROM contacts WHERE landline LIKE ?",
 		_("Sector"): "SELECT * FROM contacts WHERE sector LIKE ?",
 		_("Responsible"): "SELECT * FROM contacts WHERE responsible LIKE ?",
@@ -166,18 +166,18 @@ def search_records(filterChoice, keyword):
 	}
 
 	# Check if the chosen filter is valid
-	query = query_map.get(filterChoice, "")
-	if filterChoice not in query_map.keys():
+	query = queryMap.get(filterChoice, "")
+	if filterChoice not in queryMap.keys():
 		raise ValueError(f"Invalid filter choice: {filterChoice}")
 
 	with Section() as trans:
 		trans.execute(query, ("%" + keyword + "%",))
 		results = trans.fetchall()
 
-	return convert_results(results)
+	return convertResults(results)
 
 
-def edit_record(ID, row):
+def editRecord(ID, row):
 	"""
 	Function to update records in the database.
 
@@ -185,7 +185,7 @@ def edit_record(ID, row):
 					ID (int): The unique identifier of the record that will be updated.
 					row (dict): A dictionary containing the new values for the registration.
 									The expected keys in the dictionary are:
-													- 'secretary_office' (str): The new name of the contact secretariat.
+													- 'secretaryOffice' (str): The new name of the contact secretariat.
 													- 'landline' (str): The new contact phone number of the contact.
 													- 'sector' (str): The new sector or department.
 													- 'responsible' (str): The new responsible for contact.
@@ -196,9 +196,9 @@ def edit_record(ID, row):
 
 	with Section() as trans:
 		trans.execute(
-			"UPDATE contacts SET secretary_office = ?, landline = ?, sector = ?, responsible = ?, extension = ?, cell = ?, email = ? WHERE id = ?",
+			"UPDATE contacts SET secretaryOffice = ?, landline = ?, sector = ?, responsible = ?, extension = ?, cell = ?, email = ? WHERE id = ?",
 			(
-				row["secretary_office"],
+				row["secretaryOffice"],
 				row["landline"],
 				row["sector"],
 				row["responsible"],
@@ -213,15 +213,15 @@ def edit_record(ID, row):
 
 def delete(id):
 	"""
-	Função para remover um registro do banco de dados com tratamento de erro.
+	Function to remove a record from the database with error handling.
 
 	Args:
-		id (int): O identificador único do registro a ser removido.
+		id (int): The unique identifier of the record to be removed.
 	"""
 	try:
 		with Section() as trans:
 			if not trans.connected:
-				log.warning("Não foi possível conectar ao banco de dados para deletar o registro.")
+				log.warning("Unable to connect to database to delete record.")
 				return False
 
 			trans.execute("DELETE FROM contacts WHERE id=?", (id,))
@@ -230,11 +230,11 @@ def delete(id):
 			return True
 
 	except sql.Error as e:
-		log.error(f"Erro ao deletar registro (ID: {id}): {e.__class__.__name__} - {e}")
+		log.error(f"Error deleting record (ID: {id}): {e.__class__.__name__} - {e}")
 		return False
 
 
-def reset_record():
+def resetRecord():
 	"""
 	Delete all records from the database.
 	"""
@@ -243,39 +243,39 @@ def reset_record():
 		trans.persist()
 
 
-def import_csv_to_db(mypath):
+def importCsvToDb(myPath):
 	"""
 	Import data from a CSV file to the database.
 
 	Args:
-					mypath (str): O caminho para o arquivo CSV que contém os dados a serem importados.
+					mypath (str): The path to the CSV file that contains the data to be imported.
 
 	Raises:
-					FileNotFoundError: Se o arquivo CSV especificado não existir.
-					csv.Error: Se ocorrer um erro ao processar o arquivo CSV.
+					FileNotFoundError: If the specified CSV file does not exist.
+					csv.Error: If an error occurs while processing the CSV file.
 	"""
 
-	if not isinstance(mypath, str) or not os.path.isfile(mypath):
+	if not isinstance(myPath, str) or not os.path.isfile(myPath):
 		raise FileNotFoundError(
-			f"The file at {mypath} does not exist or is not a valid path.",
+			f"The file at {myPath} does not exist or is not a valid path.",
 		)
 
 	with Section() as trans:
 		try:
-			with open(mypath, "r", encoding="UTF-8") as file:
+			with open(myPath, "r", encoding="UTF-8") as file:
 				# Detects the delimiter automatically
-				first_line = file.readline()
-				detected_delimiter = csv.Sniffer().sniff(first_line).delimiter
-				file.seek(0)  # Retorna ao início do arquivo
+				firstLine = file.readline()
+				detectedDelimiter = csv.Sniffer().sniff(firstLine).delimiter
+				file.seek(0)  # Returns to the beginning of the file
 
-				contents = csv.reader(file, delimiter=detected_delimiter)
+				contents = csv.reader(file, delimiter=detectedDelimiter)
 
-				insert_records = """
-				INSERT INTO contacts (secretary_office, landline, sector, responsible, extension, cell, email)
+				insertRecords = """
+				INSERT INTO contacts (secretaryOffice, landline, sector, responsible, extension, cell, email)
 				SELECT ?, ?, ?, ?, ?, ?, ?
 				WHERE NOT EXISTS (
 					SELECT 1 FROM contacts
-					WHERE secretary_office = ?
+					WHERE secretaryOffice = ?
 					AND landline = ?
 					AND sector = ?
 					AND responsible = ?
@@ -283,21 +283,21 @@ def import_csv_to_db(mypath):
 					AND cell = ?
 					AND email = ?
 				)"""
-				data_to_insert = []
+				dataToInsert = []
 				for row in contents:
 					if len(row) == 7:
-						secretary_office, landline, sector, responsible, extension, cell, email = row
+						secretaryOffice, landline, sector, responsible, extension, cell, email = row
 						# Duplicates the values ​​to meet SQL
-						data_to_insert.append(
+						dataToInsert.append(
 							(
-								secretary_office,
+								secretaryOffice,
 								landline,
 								sector,
 								responsible,
 								extension,
 								cell,
 								email,  # Para o INSERT
-								secretary_office,
+								secretaryOffice,
 								landline,
 								sector,
 								responsible,
@@ -311,8 +311,8 @@ def import_csv_to_db(mypath):
 							f"Skipping row {contents.line_num} with incorrect number of columns: {row}",
 						)
 
-			if data_to_insert:
-				trans.executemany(insert_records, data_to_insert)
+			if dataToInsert:
+				trans.executemany(insertRecords, dataToInsert)
 			trans.persist()
 
 		except (FileNotFoundError, csv.Error, UnicodeDecodeError) as e:
@@ -320,17 +320,17 @@ def import_csv_to_db(mypath):
 			raise
 
 
-def export_db_to_csv(mypath):
+def exportDBToCsv(myPath):
 	try:
 		with Section() as trans:
 			trans.execute("SELECT * FROM contacts")
-			rows = trans.fetchall()  # Isso retorna uma lista de dicionários.
+			rows = trans.fetchall()  # This returns a list of dictionaries.
 
-			# Use os nomes das colunas para extrair os valores, excluindo o 'id'.
-			# Isso é seguro porque os dicionários são hashable e têm chaves.
-			cleaned_rows = [
+			# Use the column names to extract the values, excluding the 'id'.
+			# This is secure because dictionaries are hashable and have keys.
+			cleanedRows = [
 				[
-					row["secretary_office"],
+					row["secretaryOffice"],
 					row["landline"],
 					row["sector"],
 					row["responsible"],
@@ -341,16 +341,16 @@ def export_db_to_csv(mypath):
 				for row in rows
 			]
 
-			with open(mypath, "w", newline="", encoding="utf-8") as file:
+			with open(myPath, "w", newline="", encoding="utf-8") as file:
 				writer = csv.writer(file)
-				writer.writerows(cleaned_rows)
+				writer.writerows(cleanedRows)
 	except Exception as e:
-		log.error(f"Erro ao exportar dados para CSV: {str(e)}")
-		# A exceção deve ser relançada para notificar a interface
+		log.error(f"Error exporting data to CSV: {str(e)}")
+		# The exception must be rethrown to notify the interface
 		raise
 
 
-def count_records():
+def countRecords():
 	"""
 	It counts the total number of records in the database safely.
 
@@ -368,11 +368,11 @@ def count_records():
 			count = trans.cursor.fetchone()["COUNT(*)"]
 			return count
 	except Exception as e:
-		log.error(f"Erro ao contar registros no banco de dados: {e.__class__.__name__} - {e}")
+		log.error(f"Error counting records in database: {e.__class__.__name__} - {e}")
 		return None
 
 
-def save_csv(filtered_item, mypath):
+def saveCsv(filteredItem, myPath):
 	"""
 		Save the filtered items in a CSV file on the specified path.
 
@@ -392,81 +392,81 @@ def save_csv(filtered_item, mypath):
 	"""
 
 	# Check if Filtered Item is a list
-	if isinstance(filtered_item, list):
+	if isinstance(filteredItem, list):
 		# Mapping between CSV columns and object attributes
-		column_to_attribute = {
-			"Secretaria": "secretary_office",
-			"Telefone fixo": "landline",
-			"Setor": "sector",
-			"Responsável": "responsible",
-			"Ramal": "extension",
-			"Telefone celular": "cell",
+		columnToAttribute = {
+			"Secretaria": "secretaryOffice",
+			"Landline": "landline",
+			"Sector": "sector",
+			"Responsible": "responsible",
+			"Extension": "extension",
+			"Cell phone": "cell",
 			"E-mail": "email",
 		}
 
 		# Open the file once and write all data
-		with open(mypath, mode="w", newline="", encoding="Latin-1") as file:
+		with open(myPath, mode="w", newline="", encoding="Latin-1") as file:
 			writer = csv.writer(file, delimiter=";")
 
 			# Writing the header
 			# Set the columns directly
-			colunas = list(column_to_attribute.keys())  # Obtém as chaves do mapeamento
+			colunas = list(columnToAttribute.keys())  # Gets the mapping keys
 			writer.writerow(colunas)
 
 			# Write the data (items data)
-			for item in filtered_item:
-				dados_item = []
-				for col in column_to_attribute.values():  # Iterar sobre os atributos mapeados
+			for item in filteredItem:
+				dadosItem = []
+				for col in columnToAttribute.values():  # Iterate over mapped attributes
 					# Checking if the attribute exists in the item
-					valor = getattr(item, col, "")  # Pega o valor do atributo ou um valor vazio
-					dados_item.append(valor)
+					valor = getattr(item, col, "")  # Gets the attribute value or an empty value
+					dadosItem.append(valor)
 
 				# Write item data in the CSV file
-				writer.writerow(dados_item)
+				writer.writerow(dadosItem)
 
 
-def find_duplicate_records():
+def findDuplicateRecords():
 	"""
-	Busca registros duplicados na tabela de contatos.
+	Searches for duplicate records in the contact table.
 	"""
 	try:
 		with Section() as trans:
 			if not trans.connected:
-				log.warning("Não foi possível conectar ao banco de dados para buscar duplicatas.")
+				log.warning("Unable to connect to database to search for duplicates.")
 				return []
 
-			# AQUI ESTÁ A CORREÇÃO: "AS ids" dá um apelido à coluna para facilitar o acesso.
+			# Find duplicates
 			sql_find_duplicates = """
 			SELECT
-				group_concat(id) AS ids, secretary_office, landline, sector, responsible, extension, cell, email
+				group_concat(id) AS ids, secretaryOffice, landline, sector, responsible, extension, cell, email
 			FROM contacts
-			GROUP BY secretary_office, landline, sector, extension
+			GROUP BY secretaryOffice, landline, sector, extension
 			HAVING count(*) > 1
 			"""
 			trans.execute(sql_find_duplicates)
 
-			duplicate_groups = trans.cursor.fetchall()
+			duplicateGroups = trans.cursor.fetchall()
 
-			if not duplicate_groups:
+			if not duplicateGroups:
 				return []
 
-			all_duplicate_ids = []
-			for group in duplicate_groups:
-				# ACESSA O VALOR USANDO O APELIDO 'ids'
-				ids_str = group["ids"]
-				ids = ids_str.split(",")
-				all_duplicate_ids.extend(ids)
+			allDuplicateIds = []
+			for group in duplicateGroups:
+				# Access the value using the alias 'ids'
+				idsStr = group["ids"]
+				ids = idsStr.split(",")
+				allDuplicateIds.extend(ids)
 
-			placeholders = ",".join(["?"] * len(all_duplicate_ids))
-			sql_fetch_duplicates = f"SELECT * FROM contacts WHERE id IN ({placeholders})"
-			trans.execute(sql_fetch_duplicates, all_duplicate_ids)
+			placeholders = ",".join(["?"] * len(allDuplicateIds))
+			sqlFetchDuplicates = f"SELECT * FROM contacts WHERE id IN ({placeholders})"
+			trans.execute(sqlFetchDuplicates, allDuplicateIds)
 
-			duplicate_records = [
+			duplicateRecords = [
 				ObjectExtensionRegistrationSystem(**record) for record in trans.cursor.fetchall()
 			]
 
-			return duplicate_records
+			return duplicateRecords
 
 	except Exception as e:
-		log.error(f"Erro ao buscar registros duplicados: {e.__class__.__name__} - {e}")
+		log.error(f"Error when searching for duplicate records: {e.__class__.__name__} - {e}")
 		return []

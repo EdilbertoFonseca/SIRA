@@ -36,14 +36,14 @@ DEFAULT_DB_PATH = os.path.join(
 )
 
 db = DatabaseConfig(DEFAULT_DB_PATH)
-db.load_config()
+db.loadConfig()
 
 
 class ObjectExtensionRegistrationSystem(object):
 	def __init__(
 		self,
 		id="",
-		secretary_office="",
+		secretaryOffice="",
 		landline="",
 		sector="",
 		responsible="",
@@ -56,7 +56,7 @@ class ObjectExtensionRegistrationSystem(object):
 
 		Args:
 			id (str): Unique contact identifier.
-			secretary_office (str): Name of the secretariat.
+			secretaryOffice (str): Name of the secretariat.
 			landline (str): Secretariat contact.
 			sector (str): Sector linked to the secretariat.
 			responsible(str): Name of person responsible for the sector.
@@ -66,7 +66,7 @@ class ObjectExtensionRegistrationSystem(object):
 		"""
 		super().__init__()  # calls the init of the parent class (silences linters and maintains compatibility)
 		self.id = id
-		self.secretary_office = secretary_office
+		self.secretaryOffice = secretaryOffice
 		self.landline = landline
 		self.sector = sector
 		self.responsible = responsible
@@ -82,7 +82,7 @@ class ObjectExtensionRegistrationSystem(object):
 			str: A formatted string with the contact's secretary, sector, landline, responsible, extension, cell, and email.
 		"""
 		return (
-			f"SecretaryOffice: {self.secretary_office}, "
+			f"SecretaryOffice: {self.secretaryOffice}, "
 			f"Landline: {self.landline}, "
 			f"Sector: {self.sector}, "
 			f"Responsible: {self.responsible}, "
@@ -99,7 +99,7 @@ class Section:
 
 	def __enter__(self):
 		"""Método de entrada para o gerenciador de contexto."""
-		self.connect = sql.connect(db.get_current_database_path())
+		self.connect = sql.connect(db.getCurrentDatabasePath())
 		self.connect.row_factory = self.dict_factory  # Adicionado aqui para consistência
 		self.cursor = self.connect.cursor()
 		self.connected = True
@@ -156,7 +156,7 @@ class Section:
 		with cls() as trans:
 			sqlCommand = """CREATE TABLE IF NOT EXISTS contacts(
 				id INTEGER PRIMARY KEY,
-				secretary_office TEXT,
+				secretaryOffice TEXT,
 				landline TEXT,
 				sector TEXT,
 				responsible TEXT,

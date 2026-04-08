@@ -41,20 +41,12 @@ addonHandler.initTranslation()
 
 GITHUB_REPO = f"EdilbertoFonseca/{ADDON_NAME}"
 
-# =========================
+
 # Secure mode decorator
-# =========================
-
-
 def disableInSecureMode(decoratedCls):
 	if globalVars.appArgs.secure:
 		return globalPluginHandler.GlobalPlugin
 	return decoratedCls
-
-
-# =========================
-# Global Plugin
-# =========================
 
 
 @disableInSecureMode
@@ -73,9 +65,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			log.error(f"Database initialization failed: {e}")
 
 		self.updateManager = UpdateManager(
-			reponame=GITHUB_REPO,
-			currentversion=ADDON_VERSION,
-			addonnameforfile=ADDON_NAME,
+			repoName=GITHUB_REPO,
+			currentVersion=ADDON_VERSION,
+			addonNameForFile=ADDON_NAME,
 		)
 
 		self._registerSettingsPanel()
@@ -180,7 +172,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		)
 
 	def _onCheckUpdates(self, event):
-		self.updateManager.checkforupdates(silent=False)
+		self.updateManager.checkForUpdates(silent=False)
 
 	def _onOpenSettings(self, event):
 		def _open_settings():
@@ -253,9 +245,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_update(self, gesture):
 		self._onCheckUpdates(None)
 
-	# =========================
-	# Cleanup
-	# =========================
+		# Cleanup
 
 	def terminate(self):
 		super().terminate()

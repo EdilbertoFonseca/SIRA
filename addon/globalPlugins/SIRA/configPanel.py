@@ -23,7 +23,7 @@ from typing import Any, cast
 import addonHandler
 import config
 import wx
-from gui import guiHelper, mainFrame
+from gui import guiHelper
 from gui.settingsDialogs import SettingsPanel
 
 from .dbConfig import DatabaseConfig
@@ -33,159 +33,143 @@ from .varsConfig import ADDON_NAME, ADDON_SUMMARY
 addonHandler.initTranslation()
 
 
-# =========================
-# Settings Panel
-# =========================
-
-
 class SIRASystemSettingsPanel(SettingsPanel):
-	# Translators: Title of the add-on settings panel
 	title = ADDON_SUMMARY
 
 	def makeSettings(self, sizer):
 		settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=sizer)
 
-		# Materialize configuration safely
-		conf = config.conf.get(ADDON_NAME)
-		if conf is None:
-			conf = config.conf[ADDON_NAME]
+		# Garantir que a configuração existe
+		if ADDON_NAME not in config.conf:
+			config.conf[ADDON_NAME] = {}
+		conf = config.conf[ADDON_NAME]
 
-		# Initialize database config lazily
-		self.db_config = DatabaseConfig(
-			default_path=os.path.join(os.path.dirname(__file__), "database.db"),
+		# Inicializa a configuração da base de dados
+		self.dbConfig = DatabaseConfig(
+			defaultPath=os.path.join(os.path.dirname(__file__), "database.db"),
 		)
-		self.db_config.load_config()
+		self.dbConfig.loadConfig()
 
-		# =========================
-		# Phone formatting
-		# =========================
+		# --- GRUPO 1: Máscaras de Telefone ---
+		phoneBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Phone field masks:"))
+		phoneGrid = wx.FlexGridSizer(cols=2, vgap=10, hgap=10)
 
-		phoneBoxSizer = wx.StaticBoxSizer(
-			wx.HORIZONTAL,
-			self,
-			label=_("Add mask for phone fields:"),
+		phoneGrid.Add(
+			wx.StaticText(phoneBoxSizer.GetStaticBox(), label=_("Cell phone:")),
+			0,
+			wx.ALIGN_CENTER_VERTICAL,
 		)
-		phoneBox = phoneBoxSizer.GetStaticBox()
-		phoneGroup = guiHelper.BoxSizerHelper(self, sizer=phoneBoxSizer)
-		settingsSizerHelper.addItem(phoneGroup)
-
-		# Cell phone
-		wx.StaticText(phoneBox, label=_("Cell phone"))
-		self.textCellPhone = wx.TextCtrl(phoneBox)
+		self.textCellPhone = wx.TextCtrl(phoneBoxSizer.GetStaticBox())
 		self.textCellPhone.SetValue(conf.get("formatCellPhone", "(##) #####-####"))
+		phoneGrid.Add(self.textCellPhone, 1, wx.EXPAND)
 
-		# Landline
-		wx.StaticText(phoneBox, label=_("Landline"))
-		self.textLandline = wx.TextCtrl(phoneBox)
+		phoneGrid.Add(
+			wx.StaticText(phoneBoxSizer.GetStaticBox(), label=_("Landline:")),
+			0,
+			wx.ALIGN_CENTER_VERTICAL,
+		)
+		self.textLandline = wx.TextCtrl(phoneBoxSizer.GetStaticBox())
 		self.textLandline.SetValue(conf.get("formatLandline", "(##) ####-####"))
+		phoneGrid.Add(self.textLandline, 1, wx.EXPAND)
 
-		# =========================
-		# Options
-		# =========================
+		phoneBoxSizer.Add(phoneGrid, 1, wx.ALL | wx.EXPAND, 10)
+		settingsSizerHelper.addItem(phoneBoxSizer)
 
-		self.removeConfigOnUninstall = wx.CheckBox(
-			self,
-			label=_("Remove all saved settings when uninstalling this add-on"),
-		)
-		self.removeConfigOnUninstall.SetValue(
-			bool(conf.get("removeConfigOnUninstall", False)),
-		)
-		settingsSizerHelper.addItem(self.removeConfigOnUninstall)
+		# --- GRUPO 2: Opções Gerais ---
+		optionsBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("General Options:"))
+		optionsBox = optionsBoxSizer.GetStaticBox()
 
-		self.resetRecords = wx.CheckBox(
-			self,
-			label=_("Show option to delete entire calendar"),
-		)
-		self.resetRecords.SetValue(
-			bool(conf.get("resetRecords", True)),
-		)
-		settingsSizerHelper.addItem(self.resetRecords)
+		self.removeConfigOnUninstall = wx.CheckBox(optionsBox, label=_("Remove settings on uninstall"))
+		self.removeConfigOnUninstall.SetValue(bool(conf.get("removeConfigOnUninstall", False)))
 
-		self.importCSV = wx.CheckBox(
-			self,
-			label=_("Show import CSV file button"),
-		)
-		self.importCSV.SetValue(
-			bool(conf.get("importCSV", True)),
-		)
-		settingsSizerHelper.addItem(self.importCSV)
+		self.resetRecords = wx.CheckBox(optionsBox, label=_("Show option to delete entire calendar"))
+		self.resetRecords.SetValue(bool(conf.get("resetRecords", True)))
 
-		self.exportCSV = wx.CheckBox(
-			self,
-			label=_("Show export CSV file button"),
-		)
-		self.exportCSV.SetValue(
-			bool(conf.get("exportCSV", True)),
-		)
-		settingsSizerHelper.addItem(self.exportCSV)
+		self.importCSV = wx.CheckBox(optionsBox, label=_("Show import CSV button"))
+		self.importCSV.SetValue(bool(conf.get("importCSV", True)))
 
-		# =========================
-		# Database path selection
-		# =========================
+		self.exportCSV = wx.CheckBox(optionsBox, label=_("Show export CSV button"))
+		self.exportCSV.SetValue(bool(conf.get("exportCSV", True)))
 
-		pathBoxSizer = wx.StaticBoxSizer(
-			wx.HORIZONTAL,
-			self,
-			label=_("Path of agenda files:"),
-		)
-		pathBox = pathBoxSizer.GetStaticBox()
-		pathGroup = guiHelper.BoxSizerHelper(self, sizer=pathBoxSizer)
-		settingsSizerHelper.addItem(pathGroup)
+		for cb in (self.removeConfigOnUninstall, self.resetRecords, self.importCSV, self.exportCSV):
+			optionsBoxSizer.Add(cb, 0, wx.ALL, 5)
+		settingsSizerHelper.addItem(optionsBoxSizer)
 
-		self.pathList = [
-			self.db_config.first_database,
-			self.db_config.alt_database,
+		# --- GRUPO 3: Localização dos Dados ---
+		pathBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Database Management:"))
+
+		# Prepara a lista para o Choice, lidando com strings vazias
+		displayPaths = [
+			self.dbConfig.firstDatabase,
+			self.dbConfig.altDatabase if self.dbConfig.altDatabase else _("Empty (Not configured)"),
 		]
-		self.pathNameCB = pathGroup.addLabeledControl(
-			"",
+
+		pathGroupHelper = guiHelper.BoxSizerHelper(self, sizer=pathBoxSizer)
+		self.pathNameCB = pathGroupHelper.addLabeledControl(
+			_("Current database path:"),
 			wx.Choice,
-			choices=self.pathList,
+			choices=displayPaths,
 		)
-		self.pathNameCB.SetSelection(self.db_config.index_db)
+		self.pathNameCB.SetSelection(self.dbConfig.indexDB)
 
-		changePathBtn = wx.Button(
-			pathBox,
-			label=_("&Select or add a directory"),
-		)
-		changePathBtn.Bind(wx.EVT_BUTTON, self.onSelectDirectory)
+		self.changePathBtn = wx.Button(pathBoxSizer.GetStaticBox(), label=_("&Select or add a directory"))
+		self.changePathBtn.Bind(wx.EVT_BUTTON, self.onSelectDirectory)
+		pathBoxSizer.Add(self.changePathBtn, 0, wx.ALL | wx.CENTER, 5)
 
-	# =========================
-	# Handlers
-	# =========================
+		settingsSizerHelper.addItem(pathBoxSizer)
 
 	def onSelectDirectory(self, event):
+		# Define o diretório atual para abrir o diálogo na pasta certa
+		currentPath = self.dbConfig.getCurrentDatabasePath()
+		initialDir = os.path.dirname(str(currentPath)) if currentPath else os.path.expanduser("~")
+
 		dlg = wx.FileDialog(
-			mainFrame,
+			self,  # Usar self (o painel) como pai é mais seguro
 			_("Choose where to save the database file"),
-			os.path.dirname(__file__),
+			initialDir,
 			"database.db",
-			wildcard=_("Database files (*.db)"),
-			style=wx.FD_SAVE,
+			wildcard=_("Database files (*.db)|*.db"),
+			style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
 		)
 
 		if dlg.ShowModal() == wx.ID_OK:
-			path = dlg.GetPath()
-			self.db_config.index_db = self.pathNameCB.GetSelection()
-			self.db_config.update_database_path(path)
+			newPath = dlg.GetPath()
+			currentIndex = self.pathNameCB.GetSelection()
 
-			self.pathList = [
-				self.db_config.first_database,
-				self.db_config.alt_database,
+			# ATENÇÃO: Corrigindo a lógica de atualização do caminho
+			if currentIndex == 0:
+				self.dbConfig.firstDatabase = newPath
+			else:
+				self.dbConfig.altDatabase = newPath
+
+			# Atualiza a interface
+			displayPaths = [
+				self.dbConfig.firstDatabase,
+				self.dbConfig.altDatabase,
 			]
-			self.pathNameCB.Set(self.pathList)
-			self.pathNameCB.SetSelection(self.db_config.index_db)
+			self.pathNameCB.Set(displayPaths)
+			self.pathNameCB.SetSelection(currentIndex)
 
 		dlg.Destroy()
 
-	# =========================
-	# Save
-	# =========================
+	def isValid(self) -> bool:
+		"""
+		Validates that the settings are correct before allowing saving.
+		"""
+
+		# Basic validation: the primary database path cannot be empty
+		if not self.dbConfig.firstDatabase:
+			wx.MessageBox(
+				_("The primary database path cannot be empty."),
+				_("Validation Error"),
+				wx.OK | wx.ICON_ERROR,
+				self,
+			)
+			return False
+
+		return True  # All right, you can save!
 
 	def onSave(self):
-		conf = config.conf.get(ADDON_NAME)
-		if ADDON_NAME not in config.conf:
-			config.conf[ADDON_NAME] = {}
-
 		conf = cast(dict[str, Any], config.conf[ADDON_NAME])
 
 		conf["formatCellPhone"] = self.textCellPhone.GetValue()
@@ -195,7 +179,9 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		conf["importCSV"] = self.importCSV.GetValue()
 		conf["exportCSV"] = self.exportCSV.GetValue()
 
-		self.db_config.index_db = self.pathNameCB.GetSelection()
-		self.db_config.save_config()
+		# Atualiza o índice selecionado antes de salvar
+		self.dbConfig.indexDB = self.pathNameCB.GetSelection()
+		self.dbConfig.saveConfig()
 
-		config.conf.enableProfileTriggers()
+		# Effectively saves to the nvda.ini file
+		config.conf.save()

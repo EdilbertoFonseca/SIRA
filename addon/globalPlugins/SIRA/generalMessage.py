@@ -18,6 +18,7 @@ Created on: 07/02/2025
 """
 
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -26,10 +27,10 @@ import gui
 import wx
 from logHandler import log
 
-from .varsConfig import ADDON_PATH, is64, mask_phone, ADDON_NAME
+from .varsConfig import ADDON_NAME, ADDON_PATH, IS64, MASK_PHONE
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if is64 else "lib"
+libFolder = "lib64" if IS64 else "lib"
 libPath = os.path.join(ADDON_PATH, libFolder)
 
 if os.path.isdir(libPath) and libPath not in sys.path:
@@ -129,7 +130,8 @@ class GeneralMessage(wx.Dialog):
 
 		# Telefone do remetente
 		self.labelPhone = wx.StaticText(panel, label=_("Sender's phone: "))
-		self.textPhone = MaskedTextCtrl(panel, mask_phone, size=(300, -1))
+		self.textPhone = MaskedTextCtrl(panel, MASK_PHONE, size=(300, -1))
+		self.textPhone.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 		view_fields_box.Add(self.labelPhone, flag=wx.TOP | wx.LEFT, border=5)
 		view_fields_box.Add(
 			self.textPhone,
@@ -358,3 +360,28 @@ class GeneralMessage(wx.Dialog):
 				Fecha a janela atual ao ser chamado.
 		"""
 		self.Destroy()
+
+	def onPasteAndClean(self, event):
+		# Check if it is Ctrl+V
+		if event.GetKeyCode() == ord("V") and event.ControlDown():
+			# Get the currently focused field (the one that triggered the event)
+			currentField = event.GetEventObject()
+
+			# Open the Windows clipboard
+			if not wx.TheClipboard.IsOpened():
+				wx.TheClipboard.Open()
+				data = wx.TextDataObject()
+				success = wx.TheClipboard.GetData(data)
+				wx.TheClipboard.Close()
+
+				if success:
+					clipboardText = data.GetText()
+					# Remove all non-digit characters from the clipboard text
+					cleanText = re.sub(r"\D", "", clipboardText)
+
+					# Inserts only clean numbers in the focused field
+					currentField.SetValue(cleanText)
+					return  # Block the original "dirty" Ctrl+V
+
+		# If it's not Ctrl+V, let other keys (arrows, numbers, backspace) pass
+		event.Skip()

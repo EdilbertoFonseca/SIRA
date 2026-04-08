@@ -37,41 +37,39 @@ addonHandler.initTranslation()
 
 class UpdateManager:
 	"""
-	Gerencia a verificação e instalação de atualizações do add-on via GitHub.
+	Manages checking and installing add-on updates via GitHub.
 	"""
 
-	def __init__(self, reponame, currentversion, addonnameforfile):
+	def __init__(self, repoName, currentVersion, addonNameForFile):
 		super().__init__()
-		self.reponame = reponame
-		self.currentversion = currentversion
-		self.addonnameforfile = addonnameforfile
+		self.repoName = repoName
+		self.currentVersion = currentVersion
+		self.addonNameForFile = addonNameForFile
 
-		self.latestversion = None
-		self.downloadurl = None
+		self.latestVersion = None
+		self.downloadURL = None
 		self.changes = None
 
 		log.info(
-			f"UpdateManager initialized for {self.reponame}, current version {self.currentversion}",
+			f"UpdateManager initialized for {self.repoName}, current version {self.currentVersion}",
 		)
 
 	# PUBLIC API
-	def checkforupdates(self, silent=True):
+	def checkForUpdates(self, silent=True):
 		"""
-		Inicia a verificação de atualizações em thread separada.
+		Starts checking for updates in a separate thread.
 		"""
 		threading.Thread(
-			target=self._checkthread,
+			target=self._checkThread,
 			args=(silent,),
 			daemon=True,
 		).start()
 
-	# ============================
 	# INTERNAL METHODS
-	# ============================
 
-	def _checkthread(self, silent):
+	def _checkThread(self, silent):
 		try:
-			url = f"https://api.github.com/repos/{self.reponame}/releases/latest"
+			url = f"https://api.github.com/repos/{self.repoName}/releases/latest"
 
 			req = urllib.request.Request(
 				url,
@@ -81,26 +79,30 @@ class UpdateManager:
 			with urllib.request.urlopen(req) as response:
 				data = json.loads(response.read().decode("utf-8"))
 
-			self.latestversion = data.get("tag_name", "").lstrip("vV")
+			self.latestVersion = data.get("tag_name", "").lstrip("vV")
 
-			if not self.latestversion:
+			if not self.latestVersion:
 				raise ValueError("Invalid version information received")
 
-			log.info(f"Latest version found: {self.latestversion}")
+			log.info(f"Latest version found: {self.latestVersion}")
 
-			if self._compareversions(self.latestversion, self.currentversion) <= 0:
+			if self._compareVersions(self.latestVersion, self.currentVersion) <= 0:
 				if not silent:
 					wx.CallAfter(
 						ui.message,
-						_("You are already running the latest version of SIRA."),
+						_(
+							"You are already running the latest version of SIRA - {}.".format(
+								self.currentVersion,
+							),
+						),
 					)
 				return
 
 			self.changes = data.get("body", _("No release notes provided."))
 
-			self.downloadurl = self._find_addon_asset(data)
+			self.downloadURL = self._findAddonAsset(data)
 
-			if not self.downloadurl:
+			if not self.downloadURL:
 				log.warning("No .nvda-addon file found in release assets.")
 				if not silent:
 					wx.CallAfter(
@@ -110,9 +112,9 @@ class UpdateManager:
 				return
 
 			wx.CallAfter(
-				self._promptupdate,
-				self.latestversion,
-				self.downloadurl,
+				self._promptUpdate,
+				self.latestVersion,
+				self.downloadURL,
 				self.changes,
 			)
 
@@ -133,26 +135,24 @@ class UpdateManager:
 					_("An unexpected error occurred while checking for updates."),
 				)
 
-	def _find_addon_asset(self, data):
+	def _findAddonAsset(self, data):
 		for asset in data.get("assets", []):
 			name = asset.get("name", "")
 			if name.endswith(".nvda-addon"):
 				return asset.get("browser_download_url")
 		return None
 
-	def _compareversions(self, v1, v2):
+	def _compareVersions(self, v1, v2):
 		def normalize(v):
 			return [int(x) for x in re.sub(r"(\.0+)$", "", v).split(".")]
 
 		return (normalize(v1) > normalize(v2)) - (normalize(v1) < normalize(v2))
 
-	# ============================
 	# UI METHODS (MAIN THREAD)
-	# ============================
 
-	def _promptupdate(self, version, url, changes):
+	def _promptUpdate(self, version, url, changes):
 		title = _("Update available for {addon}").format(
-			addon=self.addonnameforfile,
+			addon=self.addonNameForFile,
 		)
 
 		message = _(
@@ -160,31 +160,31 @@ class UpdateManager:
 			+ "Changes:\n{changes}\n\n"
 			+ "Do you want to download and install it now?",
 		).format(
-			addon=self.addonnameforfile,
+			addon=self.addonNameForFile,
 			version=version,
 			changes=changes,
 		)
 
 		if gui.messageBox(message, title, wx.YES | wx.NO | wx.ICON_INFORMATION) == wx.YES:
 			threading.Thread(
-				target=self._downloadinstallthread,
+				target=self._downloadInstallThread,
 				args=(url,),
 				daemon=True,
 			).start()
 
-	def _downloadinstallthread(self, url):
+	def _downloadInstallThread(self, url):
 		try:
 			wx.CallAfter(
 				ui.message,
 				_("Downloading update for {addon}...").format(
-					addon=self.addonnameforfile,
+					addon=self.addonNameForFile,
 				),
 			)
 
-			tempdir = tempfile.mkdtemp(prefix="nvdaAddonUpdate_")
-			addonpath = os.path.join(
-				tempdir,
-				f"{self.addonnameforfile}.nvda-addon",
+			tempDir = tempfile.mkdtemp(prefix="nvdaAddonUpdate_")
+			addonPath = os.path.join(
+				tempDir,
+				f"{self.addonNameForFile}.nvda-addon",
 			)
 
 			req = urllib.request.Request(
@@ -192,22 +192,22 @@ class UpdateManager:
 				headers={"User-Agent": "NVDA-Addon-UpdateManager"},
 			)
 
-			with urllib.request.urlopen(req) as response, open(addonpath, "wb") as f:
+			with urllib.request.urlopen(req) as response, open(addonPath, "wb") as f:
 				f.write(response.read())
 
-			log.info(f"Add-on downloaded to {addonpath}")
+			log.info(f"Add-on downloaded to {addonPath}")
 
 			wx.CallAfter(
 				ui.message,
 				_("Installing update for {addon}...").format(
-					addon=self.addonnameforfile,
+					addon=self.addonNameForFile,
 				),
 			)
 
-			os.startfile(addonpath)
+			os.startfile(addonPath)
 
-			# Não removemos o arquivo imediatamente.
-			# O NVDA pode ainda precisar dele durante a instalação.
+			# We do not remove the file immediately.
+			# NVDA may still need it during installation.
 
 		except urllib.error.URLError as e:
 			log.error(f"Download error: {e}")

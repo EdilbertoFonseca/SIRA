@@ -23,9 +23,9 @@ from typing import Any
 
 from logHandler import log
 
-from .varsConfig import ADDON_PATH, is64
+from .varsConfig import ADDON_PATH, IS64
 
-libFolder = "lib64" if is64 else "lib"
+libFolder = "lib64" if IS64 else "lib"
 libPath = os.path.join(ADDON_PATH, libFolder)
 
 # Adding library path to sys.path

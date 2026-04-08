@@ -24,15 +24,18 @@ import addonHandler
 import config
 
 # Constantes
-mask_date = "XX/XX/XXXX"
-mask_time = "XX:XX"
-mask_phone = "(XX) XXXXX-XXXX"
+MASK_DATE = "XX/XX/XXXX"
+MASK_TIME = "XX:XX"
+MASK_PHONE = "(XX) XXXXX-XXXX"
+
+# Global Constants for Regex
+EMAIL_REGEX = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$"
 
 # Get the path to the root of the current add-on
 ADDON_PATH = os.path.dirname(__file__)
 
 # Detect architecture
-is64 = struct.calcsize("P") * 8 == 64
+IS64 = struct.calcsize("P") * 8 == 64
 
 # Config# Get the add-on summary contained in the manifest.
 ADDON_SUMMARY = addonHandler.getCodeAddon().manifest["summary"]
@@ -62,3 +65,7 @@ def initConfiguration():
 
 	if ADDON_NAME not in config.conf:
 		config.conf[ADDON_NAME] = {}
+
+
+# Ensure configuration is initialized
+initConfiguration()
