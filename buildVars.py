@@ -25,14 +25,10 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_("""SIRA (an acronym in Portuguese for Sistema Interno de Ramais e Anotações) is an add-on designed to improve internal communication and the recording of essential information within the Health Department."""),
 	# version
-	addon_version="2026.2.1",
+	addon_version="2026.2.2",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
-	addon_changelog=_("""Moves database configuration logic to a new dbConfig.py module and refactors usage across the add-on for safer access.
-
-Updates the settings panel to support new options and improves configuration initialization.
-
-Adds Markdown table support in buildVars.py and improves uninstall logic to optionally clear configuration."""),
+	addon_changelog=_("""Fixes an error when pasting contacts without the ddd."""),
 	# Author(s)
 	addon_author="Edilberto Fonseca <edilberto.fonseca@outlook.com>",
 	# URL for the add-on documentation support

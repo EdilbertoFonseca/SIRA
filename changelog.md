@@ -1,28 +1,14 @@
 # Changelog
 
-Configuration and Architecture:
+Rename `secretary_office` to `secretaryOffice` throughout `addEditRecord.py` and update related UI controls, bindings, focus mapping, form data keys, and clearing logic to use the new identifier.
 
-- Renamed and standardized configuration constants and architecture flags (e.g., `is64` to `IS64`, `mask` to `MASK`).
-- Updated usages of these constants across SIRA modules.
-- Adjusted library path logic accordingly.
+Improve `TextCtrl` configuration (add `formatcodes`) and reorder bindings for paste handling. Rework `onPasteAndClean` to robustly handle `Ctrl+V`:
 
-UpdateManager:
+- Clean clipboard text to digits.
+- Detect the field mask.
+- Count mask digits.
+- Pad shorter inputs to align with the mask.
+- Set the field value.
+- Adjust the insertion point to preserve expected formatting.
 
-- Refactored API and internals (method and attribute renames).
-- Improved logging and threading method names.
-- Fixed call sites (e.g., `checkForUpdates`).
-
-Input Sanitization:
-
-- Added a paste-and-clean handler for phone, landline, and extension fields to - sanitize clipboard input.
-
-UI/UX Improvements:
-
-- Revamped `configPanel` layout and grouping for phone masks, general options, and database management.
-- Made minor control/label changes.
-- Improved helper usage.
-
-Localization and Versioning:
-
-- Updated translations (ptBR).
-- Bumped add-on version to `2026.2.0` in `buildVars.py`.
+Bump add-on version to `2026.2.2` and update the changelog in `buildVars.py` to mention the paste fix.

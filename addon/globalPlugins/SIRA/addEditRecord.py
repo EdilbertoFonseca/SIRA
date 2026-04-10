@@ -57,8 +57,8 @@ def validateFields(data):
 	errors = {}
 
 	# Validation of mandatory fields is essential to avoid corrupted data.
-	if not data.get("secretary_office"):
-		errors["secretary_office"] = _("It is necessary to inform the secretary office!")
+	if not data.get("secretaryOffice"):
+		errors["secretaryOffice"] = _("It is necessary to inform the secretary office!")
 	if not data.get("landline"):
 		errors["landline"] = _("It is necessary to inform the landline!")
 	if not data.get("extension"):
@@ -98,7 +98,7 @@ class AddEditRecDialog(wx.Dialog):
 		self.selectedRow = row
 
 		# Simplification of startup of variables using a conditional expression
-		secretary_office = row.secretary_office if row else ""
+		secretaryOffice = row.secretaryOffice if row else ""
 		landline = row.landline if row else ""
 		sector = row.sector if row else ""
 		responsible = row.responsible if row else ""
@@ -110,13 +110,14 @@ class AddEditRecDialog(wx.Dialog):
 		self.panel = wx.Panel(self)
 
 		labelSecretary = wx.StaticText(self.panel, label=_("Secretary: "))
-		self.textSecretary_office = wx.TextCtrl(self.panel, value=secretary_office, style=wx.TE_PROCESS_ENTER)
+		self.textSecretaryOffice = wx.TextCtrl(self.panel, value=secretaryOffice, style=wx.TE_PROCESS_ENTER)
 
 		labelLandline = wx.StaticText(self.panel, label=_("Landline: "))
 		self.textLandline = TextCtrl(
 			self.panel,
 			value=landline,
 			mask=self.formatLandline,
+			formatcodes="V",
 			style=wx.TE_PROCESS_ENTER,
 		)
 
@@ -130,7 +131,13 @@ class AddEditRecDialog(wx.Dialog):
 		self.textExtension = TextCtrl(self.panel, value=extension, mask=("####"), style=wx.TE_PROCESS_ENTER)
 
 		labelCell = wx.StaticText(self.panel, label=_("Cell phone: "))
-		self.textCell = TextCtrl(self.panel, value=cell, mask=self.formatCellPhone, style=wx.TE_PROCESS_ENTER)
+		self.textCell = TextCtrl(
+			self.panel,
+			value=cell,
+			mask=self.formatCellPhone,
+			formatcodes="V",
+			style=wx.TE_PROCESS_ENTER,
+		)
 
 		labelEmail = wx.StaticText(self.panel, label=_("Email: "))
 		self.textEmail = wx.TextCtrl(self.panel, value=email, style=wx.TE_PROCESS_ENTER)
@@ -145,7 +152,7 @@ class AddEditRecDialog(wx.Dialog):
 		mainSizer = wx.BoxSizer(wx.VERTICAL)
 		viewSizer = wx.BoxSizer(wx.VERTICAL)
 		viewSizer.Add(labelSecretary, 0, wx.ALL | wx.EXPAND, 5)
-		viewSizer.Add(self.textSecretary_office, 0, wx.ALL | wx.EXPAND, 5)
+		viewSizer.Add(self.textSecretaryOffice, 0, wx.ALL | wx.EXPAND, 5)
 		viewSizer.Add(labelLandline, 0, wx.ALL | wx.EXPAND, 5)
 		viewSizer.Add(self.textLandline, 0, wx.ALL | wx.EXPAND, 5)
 		viewSizer.Add(labelSector, 0, wx.ALL | wx.EXPAND, 5)
@@ -168,12 +175,12 @@ class AddEditRecDialog(wx.Dialog):
 		self.panel.SetSizerAndFit(mainSizer)
 
 		# Bindings for text fields
-		self.textCell.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 		self.textLandline.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
+		self.textCell.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 		self.textExtension.Bind(wx.EVT_CHAR_HOOK, self.onPasteAndClean)
 
 		# Bindings to move the focus by pressing Enter into the fields of text
-		self.textSecretary_office.Bind(wx.EVT_TEXT_ENTER, self.onFocusSecretary)
+		self.textSecretaryOffice.Bind(wx.EVT_TEXT_ENTER, self.onFocusSecretary)
 		self.textSector.Bind(wx.EVT_TEXT_ENTER, self.onFocusSector)
 		self.textResponsible.Bind(wx.EVT_TEXT_ENTER, self.onFocusResponsible)
 		self.textEmail.Bind(wx.EVT_TEXT_ENTER, self.onFocusEmail)
@@ -208,7 +215,7 @@ class AddEditRecDialog(wx.Dialog):
 		"""
 		# Form data collection
 		contactDict = {
-			"secretary_office": self.textSecretary_office.GetValue().strip(),
+			"secretaryOffice": self.textSecretaryOffice.GetValue().strip(),
 			"landline": self.textLandline.GetValue().strip(),
 			"sector": self.textSector.GetValue().strip(),
 			"responsible": self.textResponsible.GetValue().strip(),
@@ -273,7 +280,7 @@ class AddEditRecDialog(wx.Dialog):
 			field_name (str): Name of the field to be focused.
 		"""
 		focus_mapping = {
-			"secretary_office": self.textSecretary_office,
+			"secretaryOffice": self.textSecretaryOffice,
 			"landline": self.textLandline,
 			"sector": self.textSector,
 			"responsible": self.textResponsible,
@@ -321,14 +328,14 @@ class AddEditRecDialog(wx.Dialog):
 		Cleans the fields of the form and position the focus on the first field.
 		"""
 		# Cleaning of safer and direct fields
-		self.textSecretary_office.SetValue("")
+		self.textSecretaryOffice.SetValue("")
 		self.textLandline.SetValue("")
 		self.textSector.SetValue("")
 		self.textResponsible.SetValue("")
 		self.textExtension.SetValue("")
 		self.textCell.SetValue("")
 		self.textEmail.SetValue("")
-		self.textSecretary_office.SetFocus()
+		self.textSecretaryOffice.SetFocus()
 
 	def onCancel(self, event):
 		"""
@@ -337,26 +344,54 @@ class AddEditRecDialog(wx.Dialog):
 		self.Destroy()
 
 	def onPasteAndClean(self, event):
-		# Check if it is Ctrl+V
+		"""
+		Handles the Ctrl+V event, cleans the clipboard data, and intelligently
+		aligns the numbers based on the current field's mask.
+		"""
+		# Check if the key combination is Ctrl+V
 		if event.GetKeyCode() == ord("V") and event.ControlDown():
-			# Get the currently focused field (the one that triggered the event)
+			# Get the currently focused field
 			currentField = event.GetEventObject()
 
-			# Open the Windows clipboard
+			# Open the system clipboard
 			if not wx.TheClipboard.IsOpened():
 				wx.TheClipboard.Open()
-				data = wx.TextDataObject()
-				success = wx.TheClipboard.GetData(data)
+				dataObject = wx.TextDataObject()
+				success = wx.TheClipboard.GetData(dataObject)
 				wx.TheClipboard.Close()
 
 				if success:
-					clipboardText = data.GetText()
-					# Remove all non-digit characters from the clipboard text
-					cleanText = re.sub(r"\D", "", clipboardText)
+					rawText = dataObject.GetText()
+					# 1. Clean the text: keep only digits
+					cleanText = re.sub(r"\D", "", rawText)
 
-					# Inserts only clean numbers in the focused field
+					# 2. Identify the field's current mask
+					currentMask = currentField.GetMask()
+
+					# 3. Count how many digits (#) the mask supports
+					maskDigitCount = currentMask.count("#")
+					pastedDigitCount = len(cleanText)
+
+					# 4. Automatic Alignment (Padding)
+					# If the pasted string is shorter than the mask, we pad it with
+					# leading spaces to prevent the mask from deleting initial digits.
+					if 0 < pastedDigitCount < maskDigitCount:
+						digitDifference = maskDigitCount - pastedDigitCount
+						# Add leading spaces equivalent to the difference
+						cleanText = (" " * digitDifference) + cleanText
+
+					# 5. Set the formatted value into the field
 					currentField.SetValue(cleanText)
-					return  # Block the original "dirty" Ctrl+V
 
-		# If it's not Ctrl+V, let other keys (arrows, numbers, backspace) pass
+					# 6. Intelligent Cursor Positioning
+					# If the area was partially filled (e.g., missing Area Code),
+					# we set the cursor to the beginning of the field.
+					if pastedDigitCount < maskDigitCount:
+						# Find the first editable position (the first #)
+						firstEditablePos = currentMask.find("#")
+						currentField.SetInsertionPoint(max(0, firstEditablePos))
+
+					return  # Block the default system Paste action
+
+		# If it's not Ctrl+V or success failed, let the event propagate
 		event.Skip()
