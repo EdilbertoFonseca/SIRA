@@ -73,7 +73,19 @@ class GeneralMessage(wx.Dialog):
 			InitUI(self): Configura os elementos da interface do usuário, como rótulos, caixas de entrada e botões.
 	"""
 
+	_instance = None
+
+	def __new__(cls, *args, **kwargs):
+		# Make this a singleton.
+		if GeneralMessage._instance is None:
+			return super(GeneralMessage, cls).__new__(cls, *args, **kwargs)
+		return GeneralMessage._instance
+
 	def __init__(self, parent, title):
+		if GeneralMessage._instance is not None:
+			return
+		GeneralMessage._instance = self
+
 		# Title of contact list dialog.
 		self.title = title
 
@@ -87,7 +99,7 @@ class GeneralMessage(wx.Dialog):
 			size=(WIDTH, HEIGHT),
 			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
 		)
-
+		self.Bind(wx.EVT_WINDOW_DESTROY, self._onInternalDestroy)
 		# Layout
 		panel = wx.Panel(self)
 		main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -385,3 +397,8 @@ class GeneralMessage(wx.Dialog):
 
 		# If it's not Ctrl+V, let other keys (arrows, numbers, backspace) pass
 		event.Skip()
+
+	def _onInternalDestroy(self, evt):
+		# Limpa a instância do Singleton para que o próximo __new__ crie uma nova
+		GeneralMessage._instance = None
+		evt.Skip()

@@ -73,8 +73,20 @@ class MedicalDischarge(wx.Dialog):
 					InitUI(self): Configura os elementos da interface do usuário, como rótulos, caixas de entrada e botões.
 	"""
 
+	_instance = None
+
+	def __new__(cls, *args, **kwargs):
+		# Make this a singleton.
+		if MedicalDischarge._instance is None:
+			return super(MedicalDischarge, cls).__new__(cls, *args, **kwargs)
+		return MedicalDischarge._instance
+
 	def __init__(self, parent, title):
-		# Title of contact list dialog.
+		if MedicalDischarge._instance is not None:
+			return
+		MedicalDischarge._instance = self
+
+		# translators: Title of medical discharge dialog.
 		self.title = title
 
 		# Window size definition
@@ -87,6 +99,7 @@ class MedicalDischarge(wx.Dialog):
 			size=(WIDTH, HEIGHT),
 			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
 		)
+		self.Bind(wx.EVT_WINDOW_DESTROY, self._onInternalDestroy)
 
 		# Layout
 		panel = wx.Panel(self)
@@ -566,3 +579,8 @@ Contato: {variables["contatoDoResponsavelPelaAlta"]}
 
 		# If it's not Ctrl+V, let other keys (arrows, numbers, backspace) pass
 		event.Skip()
+
+	def _onInternalDestroy(self, evt):
+		# Clears the Singleton instance so that the next __new__ creates a new one
+		MedicalDischarge._instance = None
+		evt.Skip()

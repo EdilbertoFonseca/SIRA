@@ -18,6 +18,7 @@ Created on: 25/02/2025
 """
 
 import os
+from functools import partial
 
 import addonHandler
 import globalPluginHandler
@@ -82,9 +83,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if SIRASystemSettingsPanel not in classes:
 			classes.append(SIRASystemSettingsPanel)
 
-	# =========================
 	# Menu creation
-	# =========================
 
 	def _createMenu(self):
 		self.toolsMenu = gui.mainFrame.sysTrayIcon.toolsMenu
@@ -124,10 +123,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		# Bindings (handlers dedicados, não scripts)
 		icon = gui.mainFrame.sysTrayIcon
-		icon.Bind(wx.EVT_MENU, self._onList, self.menuList)
-		icon.Bind(wx.EVT_MENU, self._onTransport, self.menuTransport)
-		icon.Bind(wx.EVT_MENU, self._onMedical, self.menuMedical)
-		icon.Bind(wx.EVT_MENU, self._onGeneral, self.menuGeneral)
+		icon.Bind(wx.EVT_MENU, self.script_openList, self.menuList)
+		icon.Bind(wx.EVT_MENU, self.script_openTransport, self.menuTransport)
+		icon.Bind(wx.EVT_MENU, self.script_openMedical, self.menuMedical)
+		icon.Bind(wx.EVT_MENU, self.script_openGeneral, self.menuGeneral)
 		icon.Bind(wx.EVT_MENU, self._onCheckUpdates, self.menuUpdate)
 		icon.Bind(wx.EVT_MENU, self._onOpenSettings, self.menuSettings)
 		icon.Bind(wx.EVT_MENU, self._onHelp, self.menuHelp)
@@ -135,40 +134,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.menuItem = self.toolsMenu.AppendSubMenu(
 			self.mainMenu,
 			"&{}...".format(ADDON_SUMMARY),
-		)
-
-	# =========================
-	# Menu handlers (GUI thread)
-	# =========================
-
-	def _popup(self, dlg):
-		gui.mainFrame.prePopup()
-		dlg.CentreOnScreen()
-		dlg.ShowModal()
-		gui.mainFrame.postPopup()
-
-	def _onList(self, event):
-		wx.CallAfter(
-			self._popup,
-			SIRA(gui.mainFrame, _("Lists of registered extensions")),
-		)
-
-	def _onTransport(self, event):
-		wx.CallAfter(
-			self._popup,
-			MessageForTransport(gui.mainFrame, _("Message for transport")),
-		)
-
-	def _onMedical(self, event):
-		wx.CallAfter(
-			self._popup,
-			MedicalDischarge(gui.mainFrame, _("Medical discharge register")),
-		)
-
-	def _onGeneral(self, event):
-		wx.CallAfter(
-			self._popup,
-			GeneralMessage(gui.mainFrame, _("General message")),
 		)
 
 	def _onCheckUpdates(self, event):
@@ -191,9 +156,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			).getDocFilePath(),
 		)
 
-	# =========================
 	# NVDA scripts (keyboard)
-	# =========================
 
 	@script(
 		gesture="kb:Alt+numpad1",
@@ -203,7 +166,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=ADDON_SUMMARY,
 	)
 	def script_openList(self, gesture):
-		self._onList(None)
+		wx.CallAfter(self.displayDialog, SIRA, "dlgSIRA", _("Lists of registered extensions"))
 
 	@script(
 		gesture="kb:Alt+numpad2",
@@ -213,7 +176,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=ADDON_SUMMARY,
 	)
 	def script_openTransport(self, gesture):
-		self._onTransport(None)
+		wx.CallAfter(self.displayDialog, MessageForTransport, "dlgTransport", _("Message for transport"))
 
 	@script(
 		gesture="kb:Alt+numpad3",
@@ -223,7 +186,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=ADDON_SUMMARY,
 	)
 	def script_openMedical(self, gesture):
-		self._onMedical(None)
+		wx.CallAfter(self.displayDialog, MedicalDischarge, "dlgMedical", _("Medical discharge register"))
 
 	@script(
 		gesture="kb:Alt+numpad4",
@@ -233,7 +196,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=ADDON_SUMMARY,
 	)
 	def script_openGeneral(self, gesture):
-		self._onGeneral(None)
+		wx.CallAfter(self.displayDialog, GeneralMessage, "dlgGeneral", _("General message"))
 
 	@script(
 		gesture="kb:Alt+numpad5",
@@ -245,9 +208,47 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_update(self, gesture):
 		self._onCheckUpdates(None)
 
-		# Cleanup
+	def _onDestroy(self, e: wx.Event, attrName: str) -> None:
+		self.onGenericClosed(e, attrName)
+
+	def displayDialog(self, dialogClass, attrName, *args, **kwargs):
+		# 1. Retrieves what is stored in the attribute
+		dlg = getattr(self, attrName, None)
+
+		# 2. "Life" check:
+		# If None OR if the wx object is no longer valid (window closed)
+		if dlg is None or not dlg:
+			# We create a new instance
+			dlg = dialogClass(gui.mainFrame, *args, **kwargs)
+			setattr(self, attrName, dlg)
+
+			# We bind the attribute cleanup when the window is destroyed
+			dlg.Bind(wx.EVT_WINDOW_DESTROY, partial(self._onDestroy, attrName=attrName))
+
+		# 3. Display and Focus
+		try:
+			gui.mainFrame.prePopup()
+
+			# We check once again if the object is active before calling methods
+			if dlg:
+				if dlg.IsIconized():
+					dlg.Restore()
+				dlg.Show()
+				dlg.Raise()
+				dlg.SetFocus()
+
+			gui.mainFrame.postPopup()
+		except Exception as e:
+			log.error(f"Error when manipulating window {attrName}: {e}")
+			setattr(self, attrName, None)
+
+	def onGenericClosed(self, evt: wx.Event, attrName: str) -> None:
+		"""Handles the closure of generic dialogs."""
+		setattr(self, attrName, None)
+		evt.Skip()
 
 	def terminate(self):
+		"""Terminates the SIRA addon."""
 		super().terminate()
 
 		try:

@@ -22,14 +22,13 @@ import os
 import addonHandler
 import config
 import gui
-import queueHandler
 import ui
 import wx
 from gui import guiHelper
 
 from . import controller as core
 from .addEditRecord import AddEditRecDialog
-from .varsConfig import ADDON_SUMMARY, ADDON_NAME
+from .varsConfig import ADDON_NAME
 from .manageDuplicatesDialog import ManageDuplicatesDialog
 
 # Initializes the translation
@@ -40,17 +39,15 @@ class SIRA(wx.Dialog):
 	_instance = None
 
 	def __new__(cls, *args, **kwargs):
-		if not cls._instance:
-			cls._instance = super(SIRA, cls).__new__(cls, *args, **kwargs)
-		else:
-			msg = _("An instance of {} is already open!").format(ADDON_SUMMARY)
-			queueHandler.queueFunction(queueHandler.eventQueue, ui.message, msg)
-		return cls._instance
+		# Make this a singleton.
+		if SIRA._instance is None:
+			return super(SIRA, cls).__new__(cls, *args, **kwargs)
+		return SIRA._instance
 
 	def __init__(self, parent, title):
-		if hasattr(self, "initialized"):
+		if SIRA._instance is not None:
 			return
-		self.initialized = True
+		SIRA._instance = self
 
 		# Title of Extension Registration System dialog.
 		self.title = title
@@ -69,6 +66,7 @@ class SIRA(wx.Dialog):
 			size=(WIDTH, HEIGHT),
 			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
 		)
+		self.Bind(wx.EVT_WINDOW_DESTROY, self._onInternalDestroy)
 		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
 
 		# Creating the screen objects.
@@ -596,3 +594,8 @@ class SIRA(wx.Dialog):
 			ui.message(text)
 		else:
 			ui.message(_("Empty"))
+
+	def _onInternalDestroy(self, evt):
+		# Limpa a instância do Singleton para que o próximo __new__ crie uma nova
+		SIRA._instance = None
+		evt.Skip()

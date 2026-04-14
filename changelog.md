@@ -1,14 +1,14 @@
 # Changelog
 
-Rename `secretary_office` to `secretaryOffice` throughout `addEditRecord.py` and update related UI controls, bindings, focus mapping, form data keys, and clearing logic to use the new identifier.
+- Convert SIRA, GeneralMessage, MessageForTransport, and MedicalDischarge dialogs to singletons.
+- Add EVTWINDOWDESTROY handlers to clear references, preventing duplicate windows and leaked objects.
+- Replace legacy menu popup handlers with NVDA script bindings that call a new GlobalPlugin.displayDialog helper.
+- This helper uses wx.CallAfter for safe window restoration, minimization, and focusing.
+- It also binds cleanup via partial to the onDestroy event.
 
-Improve `TextCtrl` configuration (add `formatcodes`) and reorder bindings for paste handling. Rework `onPasteAndClean` to robustly handle `Ctrl+V`:
+Minor main.py cleanup:
 
-- Clean clipboard text to digits.
-- Detect the field mask.
-- Count mask digits.
-- Pad shorter inputs to align with the mask.
-- Set the field value.
-- Adjust the insertion point to preserve expected formatting.
+- Removed queueHandler usage.
+- Adjusted imports.
 
-Bump add-on version to `2026.2.2` and update the changelog in `buildVars.py` to mention the paste fix.
+Bump add-on version to 2026.2.3 and update changelog/buildVars accordingly.
