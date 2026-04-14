@@ -88,14 +88,9 @@ class UpdateManager:
 
 			if self._compareVersions(self.latestVersion, self.currentVersion) <= 0:
 				if not silent:
-					wx.CallAfter(
-						ui.message,
-						_(
-							"You are already running the latest version of SIRA - {}.".format(
-								self.currentVersion,
-							),
-						),
-					)
+					# translators: Message shown when the user checks for updates but is already running the latest version of the add-on.
+					msg = _("You are already running the latest version of SIRA.")
+					wx.CallAfter(ui.message, msg)
 				return
 
 			self.changes = data.get("body", _("No release notes provided."))
