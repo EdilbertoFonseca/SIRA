@@ -1,11 +1,19 @@
 # Changelog
 
-- update addon_version to 2026.2.4 in buildVars.py
-- update brief changelog
-- simplify "already latest" message in updateManager (remove version formatting)
-- add translator comment in updateManager
-- refresh pt_BR translations (nvda.po)
-  - update Project-Id-Version and timestamps
-  - sync message ids, strings, and locations with code changes
-  - include new updateManager strings and formatting flags
-  - update translated release notes
+This commit updates the SIRA addon to utilize `globalVars.appArgs.configPath` for database storage, ensuring that the database and its necessary directories are correctly managed within the application's configuration path.
+
+Changes:
+
+- `configPanel`: Sets `DatabaseConfig.defaultPath` to `<configPath>/SIRADB/database.db`.
+- `dbConfig`: `getCurrentDatabasePath` now returns the primary DB path if the selected path is empty, preventing potential errors.
+
+`model`:
+
+- Builds `ADDONDATADIR` from `globalVars.appArgs.configPath`.
+- Defines `DEFAULTDBPATH`.
+- Creates the database directory on `Section.enter` before connecting to the database.
+
+`buildVars`:
+
+-Bumps the addon version to `2026.2.5`.
+- Raises the minimum NVDA version requirement to `2025.1.0`.

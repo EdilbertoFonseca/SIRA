@@ -65,10 +65,16 @@ class DatabaseConfig(object):
 
 	def getCurrentDatabasePath(self):
 		"""
-		Returns the path of the currently selected database.
+		Retorna o caminho da base de dados atual. 
+		Se o caminho estiver vazio, retorna o padrão para evitar erros.
 		"""
-		# If indexDB is 0, use the first one. If it is 1 (or any other), use the alternative.
-		return self.firstDatabase if self.indexDB == 0 else self.altDatabase
+		path = self.firstDatabase if self.indexDB == 0 else self.altDatabase
+
+		# Se o caminho alternativo estiver vazio, volta para o primeiro
+		if not path or path.strip() == "":
+			return self.firstDatabase
+
+		return path
 
 	def reload(self):
 		"""
