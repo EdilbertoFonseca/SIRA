@@ -8,11 +8,11 @@ This file is covered by the GNU General Public License.
 See the file COPYING for more details or visit:
 https://www.gnu.org/licenses/gpl-2.0.html
 
--------------------------------------------------------------------------
+-
 AI DISCLOSURE / NOTA DE IA:
 This project utilizes AI for code refactoring and logic suggestions.
 All AI-generated code was manually reviewed and tested by the author.
--------------------------------------------------------------------------
+-
 
 Created on: 25/02/2025
 """
@@ -22,6 +22,7 @@ from typing import Any, cast
 
 import addonHandler
 import config
+import globalVars
 import wx
 from gui import guiHelper
 from gui.settingsDialogs import SettingsPanel
@@ -32,25 +33,38 @@ from .varsConfig import ADDON_NAME, ADDON_SUMMARY
 # Initialize translation
 addonHandler.initTranslation()
 
+# Ensure we have a valid configuration path
+CONFIG_PATH = str(getattr(globalVars.appArgs, "configPath", ""))
+assert CONFIG_PATH is not None, "O caminho de configuração do NVDA não foi encontrado."
+
+# Initialize the database configuration with a default path
+dbConfig = DatabaseConfig(
+	defaultPath=os.path.join(CONFIG_PATH, "SIRA", "database.db"),
+)
+
 
 class SIRASystemSettingsPanel(SettingsPanel):
+	# translators: title of the SIRA system settings panel
 	title = ADDON_SUMMARY
 
 	def makeSettings(self, sizer):
 		settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=sizer)
 
-		# Garantir que a configuração existe
+		# Ensure configuration exists
 		if ADDON_NAME not in config.conf:
 			config.conf[ADDON_NAME] = {}
 		conf = config.conf[ADDON_NAME]
 
-		# Inicializa a configuração da base de dados
+		# Initialize the database configuration
+		# We use str() to ensure Pyright doesn't see the type as Optional
+		config_path = str(globalVars.appArgs.configPath)
+
 		self.dbConfig = DatabaseConfig(
-			defaultPath=os.path.join(os.path.dirname(__file__), "database.db"),
+			defaultPath=os.path.join(config_path, "SIRA_DB", "database.db"),
 		)
 		self.dbConfig.loadConfig()
 
-		# --- GRUPO 1: Máscaras de Telefone ---
+		# GROUP 1: Telephone Masks
 		phoneBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Phone field masks:"))
 		phoneGrid = wx.FlexGridSizer(cols=2, vgap=10, hgap=10)
 
@@ -75,7 +89,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		phoneBoxSizer.Add(phoneGrid, 1, wx.ALL | wx.EXPAND, 10)
 		settingsSizerHelper.addItem(phoneBoxSizer)
 
-		# --- GRUPO 2: Opções Gerais ---
+		# GROUP 2: General Options
 		optionsBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("General Options:"))
 		optionsBox = optionsBoxSizer.GetStaticBox()
 
@@ -95,7 +109,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 			optionsBoxSizer.Add(cb, 0, wx.ALL, 5)
 		settingsSizerHelper.addItem(optionsBoxSizer)
 
-		# --- GRUPO 3: Localização dos Dados ---
+		# GROUP 3: Data Location
 		pathBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Database Management:"))
 
 		# Prepara a lista para o Choice, lidando com strings vazias
@@ -119,7 +133,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		settingsSizerHelper.addItem(pathBoxSizer)
 
 	def onSelectDirectory(self, event):
-		# Define o diretório atual para abrir o diálogo na pasta certa
+		# Set the current directory to open the dialog in the right folder
 		currentPath = self.dbConfig.getCurrentDatabasePath()
 		initialDir = os.path.dirname(str(currentPath)) if currentPath else os.path.expanduser("~")
 
@@ -136,13 +150,13 @@ class SIRASystemSettingsPanel(SettingsPanel):
 			newPath = dlg.GetPath()
 			currentIndex = self.pathNameCB.GetSelection()
 
-			# ATENÇÃO: Corrigindo a lógica de atualização do caminho
+			# ATTENTION: Correcting path update logic
 			if currentIndex == 0:
 				self.dbConfig.firstDatabase = newPath
 			else:
 				self.dbConfig.altDatabase = newPath
 
-			# Atualiza a interface
+			# Update the interface
 			displayPaths = [
 				self.dbConfig.firstDatabase,
 				self.dbConfig.altDatabase,
@@ -179,7 +193,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		conf["importCSV"] = self.importCSV.GetValue()
 		conf["exportCSV"] = self.exportCSV.GetValue()
 
-		# Atualiza o índice selecionado antes de salvar
+		# Update the selected index before saving
 		self.dbConfig.indexDB = self.pathNameCB.GetSelection()
 		self.dbConfig.saveConfig()
 

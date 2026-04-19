@@ -25,7 +25,7 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_("""SIRA (an acronym in Portuguese for Sistema Interno de Ramais e Anotações) is an add-on designed to improve internal communication and the recording of essential information within the Health Department."""),
 	# version
-	addon_version="2026.2.3",
+	addon_version="2026.2.5",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
 	addon_changelog=_("""Fixed an issue where formatting was not correctly applied when pasting numbers into a phone field without an area code."""),
@@ -38,7 +38,7 @@ addon_info = AddonInfo(
 	# Documentation file name
 	addon_docFileName="readme.html",
 	# Minimum NVDA version supported (e.g. "2019.3.0", minor version is optional)
-	addon_minimumNVDAVersion="2023.3.4",
+	addon_minimumNVDAVersion="2025.1.0",
 	# Last NVDA version supported/tested (e.g. "2024.4.0", ideally more recent than minimum version)
 	addon_lastTestedNVDAVersion="2026.1.0",
 	# Add-on update channel (default is None, denoting stable releases,

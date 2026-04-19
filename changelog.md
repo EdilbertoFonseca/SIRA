@@ -1,14 +1,19 @@
 # Changelog
 
-- Convert SIRA, GeneralMessage, MessageForTransport, and MedicalDischarge dialogs to singletons.
-- Add EVTWINDOWDESTROY handlers to clear references, preventing duplicate windows and leaked objects.
-- Replace legacy menu popup handlers with NVDA script bindings that call a new GlobalPlugin.displayDialog helper.
-- This helper uses wx.CallAfter for safe window restoration, minimization, and focusing.
-- It also binds cleanup via partial to the onDestroy event.
+This commit updates the SIRA addon to utilize `globalVars.appArgs.configPath` for database storage, ensuring that the database and its necessary directories are correctly managed within the application's configuration path.
 
-Minor main.py cleanup:
+Changes:
 
-- Removed queueHandler usage.
-- Adjusted imports.
+- `configPanel`: Sets `DatabaseConfig.defaultPath` to `<configPath>/SIRADB/database.db`.
+- `dbConfig`: `getCurrentDatabasePath` now returns the primary DB path if the selected path is empty, preventing potential errors.
 
-Bump add-on version to 2026.2.3 and update changelog/buildVars accordingly.
+`model`:
+
+- Builds `ADDONDATADIR` from `globalVars.appArgs.configPath`.
+- Defines `DEFAULTDBPATH`.
+- Creates the database directory on `Section.enter` before connecting to the database.
+
+`buildVars`:
+
+-Bumps the addon version to `2026.2.5`.
+- Raises the minimum NVDA version requirement to `2025.1.0`.

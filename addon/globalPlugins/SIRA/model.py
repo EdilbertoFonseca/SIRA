@@ -24,16 +24,23 @@ import globalVars
 from .dbConfig import DatabaseConfig
 from .sqlLoader import sql
 
-config_path = getattr(globalVars.appArgs, "configPath", "")
+# 1. First we define where the data lives
+# We force conversion to string to avoid Optional[str]
+config_path = str(getattr(globalVars.appArgs, "configPath", ""))
 ADDON_DATA_DIR = os.path.join(config_path, "SIRA")
 
 if not os.path.isdir(ADDON_DATA_DIR):
 	os.makedirs(ADDON_DATA_DIR)
 
+# 2. We set the default path
 DEFAULT_DB_PATH = os.path.join(
 	ADDON_DATA_DIR,
 	"database.db",
 )
+
+# If line 106 is something like os.path.dirname(DEFAULT_DB_PATH)
+# Make sure the argument is unambiguous:
+base_dir = os.path.dirname(str(DEFAULT_DB_PATH))
 
 db = DatabaseConfig(DEFAULT_DB_PATH)
 db.loadConfig()
@@ -99,8 +106,15 @@ class Section:
 
 	def __enter__(self):
 		"""Método de entrada para o gerenciador de contexto."""
-		self.connect = sql.connect(db.getCurrentDatabasePath())
-		self.connect.row_factory = self.dict_factory  # Adicionado aqui para consistência
+		db_path = db.getCurrentDatabasePath()
+
+		# Garantir que a pasta do arquivo existe
+		db_dir = os.path.dirname(db_path)
+		if db_dir and not os.path.exists(db_dir):
+			os.makedirs(db_dir)
+
+		self.connect = sql.connect(db_path)
+		self.connect.row_factory = self.dict_factory
 		self.cursor = self.connect.cursor()
 		self.connected = True
 		return self
