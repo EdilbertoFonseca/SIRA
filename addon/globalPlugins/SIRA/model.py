@@ -24,18 +24,24 @@ import globalVars
 from .dbConfig import DatabaseConfig
 from .sqlLoader import sql
 
-# 1. Primeiro definimos onde os dados ficam
-config_path = getattr(globalVars.appArgs, "configPath", "")
+# 1. First we define where the data lives
+# We force conversion to string to avoid Optional[str]
+config_path = str(getattr(globalVars.appArgs, "configPath", ""))
 ADDON_DATA_DIR = os.path.join(config_path, "SIRA")
 
 if not os.path.isdir(ADDON_DATA_DIR):
 	os.makedirs(ADDON_DATA_DIR)
 
-# 2. Definimos o caminho padrão (A variável que estava a dar erro)
+# 2. We set the default path
 DEFAULT_DB_PATH = os.path.join(
 	ADDON_DATA_DIR,
 	"database.db",
 )
+
+# If line 106 is something like os.path.dirname(DEFAULT_DB_PATH)
+# Make sure the argument is unambiguous:
+base_dir = os.path.dirname(str(DEFAULT_DB_PATH))
+
 db = DatabaseConfig(DEFAULT_DB_PATH)
 db.loadConfig()
 

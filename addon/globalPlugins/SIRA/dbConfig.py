@@ -25,9 +25,15 @@ from .varsConfig import ADDON_NAME
 
 
 class DatabaseConfig(object):
-	def __init__(self, defaultPath):
+	# Defining attribute types for Pyright
+	defaultPath: str
+	firstDatabase: str
+	altDatabase: str
+	indexDB: int
+
+	def __init__(self, defaultPath: str):
 		super().__init__()
-		self.defaultPath = defaultPath
+		self.defaultPath = str(defaultPath)
 		self.firstDatabase = defaultPath
 		self.altDatabase = ""
 		self.indexDB = 0
@@ -45,8 +51,8 @@ class DatabaseConfig(object):
 		self.indexDB = int(conf.get("databaseIndex", 0))
 
 		# Always load both paths if they exist in the config
-		self.firstDatabase = conf.get("path", self.defaultPath)
-		self.altDatabase = conf.get("altPath", "")
+		self.firstDatabase = str(conf.get("path", self.defaultPath))
+		self.altDatabase = str(conf.get("altPath", ""))
 
 	def saveConfig(self):
 		"""
@@ -65,12 +71,11 @@ class DatabaseConfig(object):
 
 	def getCurrentDatabasePath(self):
 		"""
-		Retorna o caminho da base de dados atual. 
-		Se o caminho estiver vazio, retorna o padrão para evitar erros.
-		"""
+		Returns the current database path.
+				If the path is empty, returns the default to avoid errors."""
 		path = self.firstDatabase if self.indexDB == 0 else self.altDatabase
 
-		# Se o caminho alternativo estiver vazio, volta para o primeiro
+		# If the alternative path is empty, go back to the first
 		if not path or path.strip() == "":
 			return self.firstDatabase
 
