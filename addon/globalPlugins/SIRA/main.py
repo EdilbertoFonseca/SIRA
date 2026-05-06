@@ -39,21 +39,23 @@ class SIRA(wx.Dialog):
 	_instance = None
 
 	def __new__(cls, *args, **kwargs):
-		# Make this a singleton.
-		if SIRA._instance is None:
-			return super(SIRA, cls).__new__(cls, *args, **kwargs)
-		return SIRA._instance
+		if cls._instance is None:
+			cls._instance = super(SIRA, cls).__new__(cls)
+		return cls._instance
 
 	def __init__(self, parent, title):
-		if SIRA._instance is not None:
+		if getattr(self, "_initialized", False):
 			return
-		SIRA._instance = self
 
-		# Title of Extension Registration System dialog.
+		super().__init__(
+			parent,
+			title=title,
+			size=(800, 400),
+			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
+		)
+
+		self._initialized = True
 		self.title = title
-
-		WIDTH = 800
-		HEIGHT = 400
 
 		try:
 			self.contactResults = core.getAllRecords()
@@ -63,7 +65,6 @@ class SIRA(wx.Dialog):
 		super(SIRA, self).__init__(
 			parent,
 			title=title,
-			size=(WIDTH, HEIGHT),
 			style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
 		)
 		self.Bind(wx.EVT_WINDOW_DESTROY, self._onInternalDestroy)

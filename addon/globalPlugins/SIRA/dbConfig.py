@@ -25,15 +25,9 @@ from .varsConfig import ADDON_NAME
 
 
 class DatabaseConfig(object):
-	# Defining attribute types for Pyright
-	defaultPath: str
-	firstDatabase: str
-	altDatabase: str
-	indexDB: int
-
-	def __init__(self, defaultPath: str):
+	def __init__(self, defaultPath):
 		super().__init__()
-		self.defaultPath = str(defaultPath)
+		self.defaultPath = defaultPath
 		self.firstDatabase = defaultPath
 		self.altDatabase = ""
 		self.indexDB = 0
@@ -51,8 +45,8 @@ class DatabaseConfig(object):
 		self.indexDB = int(conf.get("databaseIndex", 0))
 
 		# Always load both paths if they exist in the config
-		self.firstDatabase = str(conf.get("path", self.defaultPath))
-		self.altDatabase = str(conf.get("altPath", ""))
+		self.firstDatabase = conf.get("path", self.defaultPath)
+		self.altDatabase = conf.get("altPath", "")
 
 	def saveConfig(self):
 		"""
@@ -69,17 +63,20 @@ class DatabaseConfig(object):
 		# save the settings
 		config.conf.save()
 
-	def getCurrentDatabasePath(self):
+	def getCurrentDatabasePath(self) -> str:
 		"""
-		Returns the current database path.
-				If the path is empty, returns the default to avoid errors."""
+		Retorna o caminho da base de dados atual.
+		Se o caminho estiver vazio, retorna o padrão para evitar erros.
+		"""
 		path = self.firstDatabase if self.indexDB == 0 else self.altDatabase
 
-		# If the alternative path is empty, go back to the first
-		if not path or path.strip() == "":
-			return self.firstDatabase
+		if path and path.strip():
+			return str(path)
 
-		return path
+		if self.firstDatabase and self.firstDatabase.strip():
+			return str(self.firstDatabase)
+
+		raise ValueError("Nenhum caminho de banco de dados válido definido")
 
 	def reload(self):
 		"""
