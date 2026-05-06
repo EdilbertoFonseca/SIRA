@@ -17,13 +17,16 @@ All AI-generated code was manually reviewed and tested by the author.
 Created on: 25/02/2025
 """
 
-import os
 from functools import partial
 
 import addonHandler
+import core
 import globalPluginHandler
 import globalVars
 import gui
+import inputCore
+import tones
+import ui
 import wx
 from logHandler import log
 from scriptHandler import script
@@ -35,7 +38,7 @@ from .medicalDischarge import MedicalDischarge
 from .messageForTransport import MessageForTransport
 from .model import Section
 from .updateManager import UpdateManager
-from .varsConfig import ADDON_NAME, ADDON_SUMMARY, ADDON_VERSION, initConfiguration
+from .varsConfig import ADDON_NAME, ADDON_SUMMARY, ADDON_DESCRIPTION, ADDON_VERSION, initConfiguration
 
 # Initialize translation support
 addonHandler.initTranslation()
@@ -73,11 +76,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		self._registerSettingsPanel()
 		self._createMenu()
+		self.isLayerActive = False
 
-	# =========================
 	# Settings panel
-	# =========================
-
 	def _registerSettingsPanel(self):
 		classes = gui.settingsDialogs.NVDASettingsDialog.categoryClasses
 		if SIRASystemSettingsPanel not in classes:
@@ -150,63 +151,133 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		wx.CallAfter(_open_settings)
 
 	def _onHelp(self, event):
-		wx.LaunchDefaultBrowser(
-			addonHandler.Addon(
-				os.path.join(os.path.dirname(__file__), "..", ".."),
-			).getDocFilePath(),
-		)
+		try:
+			addon = addonHandler.getCodeAddon()
 
-	# NVDA scripts (keyboard)
+			if not addon:
+				log.warning("Addon not found for help")
+				ui.message(_("Help not available"))
+				return
+
+			docPath = addon.getDocFilePath()
+
+			if not docPath:
+				log.warning("Documentation file not found")
+				ui.message(_("Help not available"))
+				return
+
+			wx.LaunchDefaultBrowser(docPath)
+
+		except Exception as e:
+			log.error(f"Error opening help: {e}")
+			ui.message(_("Error opening help"))
+
+	# Layer Logic (Layered Gestures)
 
 	@script(
-		gesture="kb:Alt+numpad1",
-		description=_(
-			"{addon} - Opens the list of registered extensions.",
-		).format(addon=ADDON_NAME),
+		gesture="kb:nvda+shift+r",
+		description="{addon}".format(addon=ADDON_DESCRIPTION),
 		category=ADDON_SUMMARY,
 	)
+	def script_siraLayer(self, gesture):
+		if self.isLayerActive:
+			return
+
+		self.isLayerActive = True
+		tones.beep(880, 100)
+
+		# Capture the next key
+		inputCore.manager._captureFunc = self._handleLayerInput  # pyright: ignore[reportPrivateUsage]
+
+		# 5 second timeout
+		core.callLater(5000, self._cancelLayer)
+
+	def _handleLayerInput(self, gesture):
+		try:
+			key = gesture.mainKeyName
+
+			if not key:
+				return False
+
+			key = key.lower()
+
+			if key == "l":
+				wx.CallAfter(self.script_openList, None)
+
+			elif key == "t":
+				wx.CallAfter(self.script_openTransport, None)
+
+			elif key == "m":
+				wx.CallAfter(self.script_openMedical, None)
+
+			elif key == "g":
+				wx.CallAfter(self.script_openGeneral, None)
+
+			elif key == "u":
+				wx.CallAfter(self.script_update, None)
+
+			elif key == "h":
+				wx.CallAfter(self.script_help, None)
+
+			elif key == "c":
+				wx.CallAfter(self.script_siraConfig, None)
+
+			elif key == "escape":
+				ui.message(_("Canceled layer"))
+
+			else:
+				ui.message(_("Key {} not defined").format(key))
+
+		except Exception as e:
+			log.error(f"Layer error: {e}")
+
+		finally:
+			self._finishLayer()
+
+		return False
+
+	def _cancelLayer(self):
+		"""Cancels the layer due to timeout."""
+		if self.isLayerActive:
+			ui.message(_("Expired layer"))
+			self._finishLayer()
+
+	def _finishLayer(self):
+		"""Finishes the layer safely."""
+		inputCore.manager._captureFunc = None  # pyright: ignore[reportPrivateUsage]
+		self.isLayerActive = False
+		tones.beep(440, 50)
+
 	def script_openList(self, gesture):
 		wx.CallAfter(self.displayDialog, SIRA, "dlgSIRA", _("Lists of registered extensions"))
 
-	@script(
-		gesture="kb:Alt+numpad2",
-		description=_(
-			"{addon} - Opens the message for transport dialog.",
-		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY,
-	)
 	def script_openTransport(self, gesture):
 		wx.CallAfter(self.displayDialog, MessageForTransport, "dlgTransport", _("Message for transport"))
 
-	@script(
-		gesture="kb:Alt+numpad3",
-		description=_(
-			"{addon} - Opens the medical discharge register.",
-		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY,
-	)
 	def script_openMedical(self, gesture):
 		wx.CallAfter(self.displayDialog, MedicalDischarge, "dlgMedical", _("Medical discharge register"))
 
-	@script(
-		gesture="kb:Alt+numpad4",
-		description=_(
-			"{addon} - Opens the general message dialog.",
-		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY,
-	)
 	def script_openGeneral(self, gesture):
 		wx.CallAfter(self.displayDialog, GeneralMessage, "dlgGeneral", _("General message"))
 
-	@script(
-		gesture="kb:Alt+numpad5",
-		description=_(
-			"{addon} - Check for updates.",
-		).format(addon=ADDON_NAME),
-		category=ADDON_SUMMARY,
-	)
 	def script_update(self, gesture):
 		self._onCheckUpdates(None)
+
+	def script_help(self, gesture):
+		self._onHelp(None)
+
+	def script_siraConfig(self, gesture):
+		def _open_settings():
+			method = getattr(gui.mainFrame, "popupSettingsDialog", None)
+			if callable(method):
+				method(
+					gui.settingsDialogs.NVDASettingsDialog,
+					SIRASystemSettingsPanel,
+				)
+			else:
+				log.warning("popupSettingsDialog not available")
+
+		wx.CallAfter(_open_settings)
 
 	def _onDestroy(self, e: wx.Event, attrName: str) -> None:
 		self.onGenericClosed(e, attrName)

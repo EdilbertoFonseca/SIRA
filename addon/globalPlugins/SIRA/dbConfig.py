@@ -63,18 +63,20 @@ class DatabaseConfig(object):
 		# save the settings
 		config.conf.save()
 
-	def getCurrentDatabasePath(self):
+	def getCurrentDatabasePath(self) -> str:
 		"""
-		Retorna o caminho da base de dados atual. 
+		Retorna o caminho da base de dados atual.
 		Se o caminho estiver vazio, retorna o padrão para evitar erros.
 		"""
 		path = self.firstDatabase if self.indexDB == 0 else self.altDatabase
 
-		# Se o caminho alternativo estiver vazio, volta para o primeiro
-		if not path or path.strip() == "":
-			return self.firstDatabase
+		if path and path.strip():
+			return str(path)
 
-		return path
+		if self.firstDatabase and self.firstDatabase.strip():
+			return str(self.firstDatabase)
+
+		raise ValueError("Nenhum caminho de banco de dados válido definido")
 
 	def reload(self):
 		"""

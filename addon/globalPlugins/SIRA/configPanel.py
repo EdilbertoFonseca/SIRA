@@ -19,6 +19,7 @@ Created on: 25/02/2025
 
 import os
 from typing import Any, cast
+from pathlib import Path
 
 import addonHandler
 import config
@@ -47,7 +48,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 
 		# Inicializa a configuração da base de dados
 		self.dbConfig = DatabaseConfig(
-			defaultPath=os.path.join(globalVars.appArgs.configPath, "SIRA_DB", "database.db"),
+			defaultPath=Path(globalVars.appArgs.configPath) / "SIRA_DB" / "database.db",
 		)
 		self.dbConfig.loadConfig()
 
