@@ -1,19 +1,16 @@
 # Changelog
 
-This commit updates the SIRA addon to utilize `globalVars.appArgs.configPath` for database storage, ensuring that the database and its necessary directories are correctly managed within the application's configuration path.
+- Introduces support for custom speech dictionaries (SpeechDictionaries) across buildVars, sconstruct, sitescons manifests, and typings. Adds explanatory comments for configuration.
 
-Changes:
+- Revamps CI/workflow:
+Restructures .github/workflows/buildaddon.yml with template guards and simplified steps.
+Implements uv caching for faster builds.
+Separates artifact uploads.
+Adjusts artifact download/merge and release steps.
 
-- `configPanel`: Sets `DatabaseConfig.defaultPath` to `<configPath>/SIRADB/database.db`.
-- `dbConfig`: `getCurrentDatabasePath` now returns the primary DB path if the selected path is empty, preventing potential errors.
+- Updates pre-commit config to align with NVDA repo conventions:
+Adjusts hooks and runs pyright via uv.
+Tightens pyright/pyproject settings and NVDA/wxPython workarounds to reduce false positives.
+Removes pyright ignore comments in addon/globalPlugins/SIRA (init.py).
 
-`model`:
-
-- Builds `ADDONDATADIR` from `globalVars.appArgs.configPath`.
-- Defines `DEFAULTDBPATH`.
-- Creates the database directory on `Section.enter` before connecting to the database.
-
-`buildVars`:
-
--Bumps the addon version to `2026.2.5`.
-- Raises the minimum NVDA version requirement to `2025.1.0`.
+- Bumps several tooling packages in uv.lock.
