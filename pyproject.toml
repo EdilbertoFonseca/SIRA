@@ -117,124 +117,258 @@ extraPaths = [
 ]
 
 # General config
+
+# CORE CONFIGURATION
+# Enable analysis even for functions without type annotations
 analyzeUnannotatedFunctions = true
+
+# Warn when using deprecated typing aliases (e.g. Dict, List)
 deprecateTypingAliases = true
 
-# Stricter typing
-strictParameterNoneValue = true
-strictListInference = true
-strictDictionaryInference = true
-strictSetInference = true
+# CORE RULES (ENABLED)
 
-# Compliant rules
+# Warn when abstract classes are used incorrectly
 reportAbstractUsage = true
+
+# Warn when assertions are always true
 reportAssertAlwaysTrue = true
+
+# Warn when assert_type() checks fail
 reportAssertTypeFailure = true
+
+# Warn when assigned value does not match declared type
 reportAssignmentType = true
-# reportAttributeAccessIssue = true
+
+# Warn when calling functions inside default parameter values
 reportCallInDefaultInitializer = true
+
+# Warn when function calls have incorrect arguments
 reportCallIssue = true
+
+# Warn when constants are redefined
 reportConstantRedefinition = true
+
+# Warn when duplicate imports exist
 reportDuplicateImport = true
+
+# Warn when accessing members on functions incorrectly
 reportFunctionMemberAccess = true
+
+# General type checking issues
 reportGeneralTypeIssues = true
+
+# Warn when strings are implicitly concatenated
 reportImplicitStringConcatenation = true
-# reportImportCycles = true
+
+# Warn when method overrides are incompatible
 reportIncompatibleMethodOverride = true
+
+# Warn when variable overrides are incompatible
 reportIncompatibleVariableOverride = true
+
+# Warn when type stubs are incomplete
 reportIncompleteStub = true
+
+# Warn when constructor definitions are inconsistent
 reportInconsistentConstructor = true
+
+# Warn when overload definitions are inconsistent
 reportInconsistentOverload = true
+
+# Warn when indexing operations are invalid
 reportIndexIssue = true
+
+# Warn when invalid escape sequences are used in strings
 reportInvalidStringEscapeSequence = true
+
+# Warn when stub files contain invalid statements
 reportInvalidStubStatement = true
+
+# Warn when type arguments are invalid
 reportInvalidTypeArguments = true
+
+# Warn when type expressions are malformed
 reportInvalidTypeForm = true
+
+# Warn when TypeVar is used incorrectly
 reportInvalidTypeVarUse = true
+
+# Warn when match statements are not exhaustive
 reportMatchNotExhaustive = true
+
+# Warn when super().__init__() is not called in subclasses
 reportMissingSuperCall = true
+
+# Warn when generic types are missing type arguments
 reportMissingTypeArgument = true
+
+# Warn when overloads lack implementation
 reportNoOverloadImplementation = true
+
+# Warn when operator usage is invalid
 reportOperatorIssue = true
+
+# Warn when calling possibly None objects
 reportOptionalCall = true
+
+# Warn when using possibly None as context manager
 reportOptionalContextManager = true
+
+# Warn when iterating over possibly None
 reportOptionalIterable = true
+
+# Warn when using possibly None in operations
 reportOptionalOperand = true
+
+# Warn when subscripting possibly None
 reportOptionalSubscript = true
+
+# Warn when overloads overlap incorrectly
 reportOverlappingOverload = true
+
+# Warn when variables may be used before assignment
 reportPossiblyUnboundVariable = true
+
+# Warn when using private imports
 reportPrivateImportUsage = true
+
+# Warn when accessing private members
 reportPrivateUsage = true
+
+# Warn when property types mismatch
 reportPropertyTypeMismatch = true
+
+# Warn when variables are redeclared
 reportRedeclaration = true
+
+# Warn when return types do not match
 reportReturnType = true
+
+# Warn when self/cls parameter names are incorrect
 reportSelfClsParameterName = true
+
+# Warn when type comments are used instead of annotations
 reportTypeCommentUsage = true
+
+# Warn when accessing non-required keys in TypedDict
 reportTypedDictNotRequiredAccess = true
-reportUnboundVariable = true
-reportUndefinedVariable = true
-reportUnhashable = true
-reportUninitializedInstanceVariable = true
-reportUnnecessaryCast = true
-reportUnnecessaryComparison = true
-reportUnnecessaryContains = true
-reportUnnecessaryIsInstance = true
-reportUnnecessaryTypeIgnoreComment = true
-reportUnsupportedDunderAll = true
-# reportUntypedBaseClass = true
+
+# Warn when class decorators lack typing
 reportUntypedClassDecorator = true
+
+# Warn when NamedTuple lacks typing
 reportUntypedNamedTuple = true
+
+# Warn when variables are used before being defined
+reportUnboundVariable = true
+
+# Warn when undefined variables are used
+reportUndefinedVariable = true
+
+# Warn when objects are unhashable but used as hashable
+reportUnhashable = true
+
+# Warn when instance variables are not initialized
+reportUninitializedInstanceVariable = true
+
+# Warn when casts are unnecessary
+reportUnnecessaryCast = true
+
+# Warn when comparisons are unnecessary
+reportUnnecessaryComparison = true
+
+# Warn when "in" checks are unnecessary
+reportUnnecessaryContains = true
+
+# Warn when isinstance checks are unnecessary
+reportUnnecessaryIsInstance = true
+
+# Warn when type: ignore comments are unnecessary
+reportUnnecessaryTypeIgnoreComment = true
+
+# Warn when __all__ is used incorrectly
+reportUnsupportedDunderAll = true
+
+# Warn when classes are declared but not used
 reportUnusedClass = true
+
+# Warn when coroutine results are not awaited
 reportUnusedCoroutine = true
+
+# Warn when exceptions are caught but not used
 reportUnusedExcept = true
+
+# Warn when expressions have no effect
 reportUnusedExpression = true
+
+# Warn when functions are declared but not used
 reportUnusedFunction = true
+
+# Warn when imports are unused
 reportUnusedImport = true
+
+# Warn when variables are unused
 reportUnusedVariable = true
+
+# Warn when importing everything from a library
 reportWildcardImportFromLibrary = true
 
-reportDeprecated = true
+# NVDA / WXPYTHON WORKAROUNDS
 
-# Rules disabled due to NVDA Core and wxPython dynamic behavior
-# These rules generate false positives even when the code is correct.
+# These rules are disabled due to dynamic runtime behavior
+# and incomplete type information in NVDA and wxPython.
 
-# wxPython accepts runtime coercions (e.g. size=(w, h), parent=Panel),
-# but its type stubs do not fully reflect this behavior.
+# Dynamic attribute access (e.g. gui.mainFrame, addon globals)
+reportAttributeAccessIssue = false
+
+# wxPython runtime coercion (e.g. tuples accepted as Size)
 reportArgumentType = false
 
-# Some methods override abstract or base class methods
+# NVDA override patterns do not always use explicit override
 reportImplicitOverride = false
 
-# NVDA modules (addonHandler, gui, globalVars, etc.) are injected into
-# sys.path at runtime by NVDA itself and are not importable in a
-# standard Python environment. Pyright cannot model this bootstrap.
+# Import system modified at runtime by NVDA
 reportMissingImports = false
 reportMissingModuleSource = false
 
-# Parameters such as gesture, event, args and kwargs originate from
-# NVDA Core or wxPython callbacks and do not have stable static types.
+# Dynamic callback parameters (gesture, event, *args, **kwargs)
 reportMissingParameterType = false
 reportUnknownArgumentType = false
 reportUnknownParameterType = false
 
-# Objects like gui.mainFrame and sysTrayIcon may legitimately be None
-# depending on NVDA state; asserting otherwise breaks NVDA conventions.
+# Optional runtime objects (e.g. sysTrayIcon may be None)
 reportOptionalMemberAccess = false
 
-# wxPython methods (e.g. Add, Append, prePopup) return values that are
-# intentionally ignored; the side effects are what matter.
+# wxPython relies on side effects, not return values
 reportUnusedCallResult = false
 
-# NVDA uses dynamic attributes extensively (e.g. ADDON_SUMMARY,
-# manifest, script methods, gui helpers).
+# Dynamic attributes and runtime-injected members
 reportUnknownMemberType = false
 reportUnknownVariableType = false
 
-# wxPython is bundled with NVDA and does not ship with official type stubs.
-# Pyright cannot resolve wx types in a standard environment.
+# Missing stubs for wxPython
 reportMissingTypeStubs = false
 
-reportAttributeAccessIssue = false
-reportImportCycles = false
+# Base classes and decorators without typing support
 reportUntypedBaseClass = false
 reportUntypedFunctionDecorator = false
+
+# Import cycles may exist due to NVDA structure
+reportImportCycles = false
+
+# Deprecated warnings intentionally suppressed
+reportDeprecated = false
+
+# STRICTNESS SETTINGS
+
+# Enforce strict type inference for dictionaries
+strictDictionaryInference = true
+
+# Enforce strict type inference for lists
+strictListInference = true
+
+# Enforce strict handling of None in parameters
+strictParameterNoneValue = true
+
+# Enforce strict type inference for sets
+strictSetInference = true

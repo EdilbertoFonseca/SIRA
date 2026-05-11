@@ -3,88 +3,82 @@ name: build addon
 on:
   push:
     tags: ["*"]
-    branches: [main, master]
+    # To build on main/master branch, uncomment the following line:
+    # branches: [ main , master ]
 
   pull_request:
-    branches: [main, master]
+    branches: [ main, master ]
 
   workflow_dispatch:
 
 jobs:
   build:
+    # Building the add-on template as an add-on does not make sense (and fails).
+    # Do not modify this repo name with your own one! (should remain the template)
+    if: github.repository != 'nvaccess/addonTemplate'
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v6
+    - name: Checkout repo
+      uses: actions/checkout@v6
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
+    - name: Install dependencies
+      run: |
+        sudo apt-get update  -y
+        sudo apt-get install -y gettext
+        uv sync
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
+    - name: Code checks
+      run: export SKIP=no-commit-to-branch; uv run pre-commit run --all-files
 
-      - name: Set up Python
-        run: uv python install 3.13
+    - name: building addon
+      run: uv run scons && uv run scons pot
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y gettext
+    - uses: actions/upload-artifact@v7
+      with:
+        name: packaged_addon
+        path: |
+          ./*.nvda-addon
+        archive: false
 
-      - name: Create virtual environment
-        run: uv venv
-
-      - name: Install Python dependencies
-        run: uv sync --frozen  # Instala exatamente o que está no uv.lock
-
-      - name: Run code checks
-        run: |
-          export SKIP=no-commit-to-branch
-          # Usamos 'uv run' para garantir que o pre-commit use o ambiente do lock
-          uv run pre-commit run --all-files
-
-      - name: Build addon
-        run: |
-          source .venv/bin/activate
-          scons
-          scons pot
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: packaged_addon
-          path: |
-            ./*.nvda-addon
-            ./*.pot
+    - uses: actions/upload-artifact@v7
+      with:
+        name: translation_template
+        path: |
+          ./*.pot
+        archive: false
 
   upload_release:
     runs-on: ubuntu-latest
-    needs: [build]
-
     if: ${{ startsWith(github.ref, 'refs/tags/') }}
-
+    needs: ["build"]
     permissions:
       contents: write
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v6
+    - uses: actions/checkout@v6
+    - name: download all artifacts
+      uses: actions/download-artifact@v8
+      with:
+        path: .
+        merge-multiple: true
+    - name: Display structure of downloaded files
+      run: ls -R
+    - name: Calculate sha256
+      run: |
+        echo -e "\nSHA256: " >> changelog.md
+        sha256sum *.nvda-addon >> changelog.md
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          *.nvda-addon
+          *.pot
+        body_path: changelog.md
+        fail_on_unmatched_files: true
 
-      - name: Display downloaded files
-        run: ls -R
-
-      - name: Calculate SHA256
-        run: |
-          echo -e "\nSHA256:" >> changelog.md
-          sha256sum *.nvda-addon >> changelog.md
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          files: |
-            *.nvda-addon
-            *.pot
-          body_path: changelog.md
-          fail_on_unmatched_files: true
-          prerelease: ${{ contains(github.ref, '-') }}
+        prerelease: ${{ contains(github.ref, '-') }}

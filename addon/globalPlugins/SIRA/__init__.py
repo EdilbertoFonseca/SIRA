@@ -187,7 +187,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		tones.beep(880, 100)
 
 		# Capture the next key
-		inputCore.manager._captureFunc = self._handleLayerInput  # pyright: ignore[reportPrivateUsage]
+		inputCore.manager._captureFunc = self._handleLayerInput
 
 		# 5 second timeout
 		core.callLater(5000, self._cancelLayer)
@@ -244,7 +244,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def _finishLayer(self):
 		"""Finishes the layer safely."""
-		inputCore.manager._captureFunc = None  # pyright: ignore[reportPrivateUsage]
+		inputCore.manager._captureFunc = None
 		self.isLayerActive = False
 		tones.beep(440, 50)
 
