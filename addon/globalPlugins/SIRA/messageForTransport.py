@@ -275,6 +275,7 @@ class MessageForTransport(wx.Dialog):
 				wx.OK | wx.ICON_INFORMATION,
 			)
 			self.onClean(event)
+			self.onCancel(event)
 
 	def _areRequiredFieldsEmpty(self, name, subject, patient, city):
 		"""

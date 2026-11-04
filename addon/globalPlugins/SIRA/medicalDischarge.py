@@ -374,6 +374,7 @@ class MedicalDischarge(wx.Dialog):
 				wx.OK | wx.ICON_INFORMATION,
 			)
 			self.onClean(event)
+			self.onCancel(event)
 
 	def _areRequiredFieldsEmpty(self, variables):
 		emptyFields = [field for field, value in variables.items() if not value]
