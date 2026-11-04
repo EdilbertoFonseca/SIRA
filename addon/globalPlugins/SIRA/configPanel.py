@@ -52,7 +52,7 @@ class SIRASystemSettingsPanel(SettingsPanel):
 		)
 		self.dbConfig.loadConfig()
 
-		# --- GRUPO 1: Máscaras de Telefone ---
+		# GRUPO 1: Máscaras de Telefone
 		phoneBoxSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Phone field masks:"))
 		phoneGrid = wx.FlexGridSizer(cols=2, vgap=10, hgap=10)
 

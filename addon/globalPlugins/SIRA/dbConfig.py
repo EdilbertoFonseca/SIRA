@@ -76,7 +76,7 @@ class DatabaseConfig(object):
 		if self.firstDatabase and self.firstDatabase.strip():
 			return str(self.firstDatabase)
 
-		raise ValueError("Nenhum caminho de banco de dados válido definido")
+		raise ValueError("No valid database path defined.")
 
 	def reload(self):
 		"""

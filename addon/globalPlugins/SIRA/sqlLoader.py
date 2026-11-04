@@ -25,7 +25,7 @@ from logHandler import log
 
 from .varsConfig import ADDON_PATH, IS64
 
-libFolder = "lib64" if IS64 else "lib"
+libFolder = "lib64"
 libPath = os.path.join(ADDON_PATH, libFolder)
 
 # Adding library path to sys.path
@@ -36,21 +36,7 @@ if os.path.isdir(libPath) and libPath not in sys.path:
 sql: Any = None
 
 try:
-	if sys.version_info >= (3, 11):
-		try:
-			import sqlite311 as sql
-
-			log.info("Loaded sqlite311 custom module.")
-		except ImportError:
-			import sqlite3 as sql
-
-			log.warning("Fallback to builtin sqlite3 (3.11+).")
-	else:
-		# Python 3.7
-		import sqlite3 as sql
-
-		log.info("Loaded builtin sqlite3 (3.7).")
-
+	import sqlite3 as sql
 except ImportError as e:
 	log.error(f"Failed to load any sqlite module: {e}", exc_info=True)
 	raise
