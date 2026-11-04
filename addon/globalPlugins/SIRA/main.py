@@ -436,7 +436,7 @@ class SIRA(wx.Dialog):
 		filteredItem = self.contactResults
 
 		# Check if the item was found
-		if not filtered_item:
+		if not filteredItem:
 			self.showMessage("No results found to save.", "Warning")
 			return
 
@@ -451,7 +451,7 @@ class SIRA(wx.Dialog):
 		if dlg.ShowModal() == wx.ID_OK:
 			try:
 				mypath = dlg.GetPath()
-				core.saveCsv(filtered_item, mypath)
+				core.saveCsv(filteredItem, mypath)
 				self.showMessage(_("File exported successfully!"), _("Attention"))
 				self.contactList.SetFocus()
 			except Exception as e:

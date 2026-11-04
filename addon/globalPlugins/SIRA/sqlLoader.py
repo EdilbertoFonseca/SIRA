@@ -23,7 +23,7 @@ from typing import Any
 
 from logHandler import log
 
-from .varsConfig import ADDON_PATH, IS64
+from .varsConfig import ADDON_PATH
 
 LIB_FOLDER = "lib64"
 LIB_PATH = os.path.join(ADDON_PATH, LIB_FOLDER)
