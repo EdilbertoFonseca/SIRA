@@ -28,11 +28,11 @@ from .sqlLoader import sql
 from .varsConfig import ADDON_PATH, IS64
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if IS64 else "lib"
-libPath = os.path.join(ADDON_PATH, libFolder)
+LIB_FOLDER = "lib64" if IS64 else "lib"
+LIB_PATH = os.path.join(ADDON_PATH, LIB_FOLDER)
 
-if os.path.isdir(libPath) and libPath not in sys.path:
-	sys.path.insert(0, libPath)
+if os.path.isdir(LIB_PATH) and LIB_PATH not in sys.path:
+	sys.path.insert(0, LIB_PATH)
 
 try:
 	import csv
@@ -177,7 +177,7 @@ def searchRecords(filterChoice, keyword):
 	return convertResults(results)
 
 
-def editRecord(ID, row):
+def editRecord(id, row):
 	"""
 	Function to update records in the database.
 
@@ -205,7 +205,7 @@ def editRecord(ID, row):
 				row["extension"],
 				row["cell"],
 				row["email"],
-				ID,
+				id,
 			),
 		)
 		trans.persist()
@@ -436,14 +436,14 @@ def findDuplicateRecords():
 				return []
 
 			# Find duplicates
-			sql_find_duplicates = """
+			sqlFindDuplicates = """
 			SELECT
 				group_concat(id) AS ids, secretaryOffice, landline, sector, responsible, extension, cell, email
 			FROM contacts
 			GROUP BY secretaryOffice, landline, sector, extension
 			HAVING count(*) > 1
 			"""
-			trans.execute(sql_find_duplicates)
+			trans.execute(sqlFindDuplicates)
 
 			duplicateGroups = trans.cursor.fetchall()
 

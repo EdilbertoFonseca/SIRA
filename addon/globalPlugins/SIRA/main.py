@@ -73,10 +73,10 @@ class SIRA(wx.Dialog):
 		# Creating the screen objects.
 		panel = wx.Panel(self)
 		self.contactList = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-		self._create_columns()
+		self._createColumns()
 		self.contactList.Bind(wx.EVT_CHAR_HOOK, self.whenPressingLetters)
 		self._itemMap = {}
-		self.initialize_contact_list()
+		self.initializeContactList()
 		self.contactList.SetFocus()
 
 		# Selected line viewing field
@@ -116,7 +116,7 @@ class SIRA(wx.Dialog):
 		self.buttonExport = wx.Button(panel, -1, label=_("E&xport csv..."))
 		self.buttonResetRecords = wx.Button(panel, -1, label=_("&Delete all records."))
 		self.buttonExit = wx.Button(panel, wx.ID_CANCEL, label=_("Exi&t"))
-		self.set_config()
+		self.setConfig()
 
 		# Creating the layout and adding it to the panel.
 		boxSizer = wx.BoxSizer(wx.VERTICAL)
@@ -160,7 +160,7 @@ class SIRA(wx.Dialog):
 		self.buttonResetRecords.Bind(wx.EVT_BUTTON, self.onReset, self.buttonResetRecords)
 		self.buttonExit.Bind(wx.EVT_BUTTON, self.onClose, self.buttonExit)
 
-	def _create_columns(self):
+	def _createColumns(self):
 		columns = [
 			(_("Secretary office"), 150),
 			(_("Landline"), 100),
@@ -175,7 +175,7 @@ class SIRA(wx.Dialog):
 			self.contactList.InsertColumn(i, label)
 			self.contactList.SetColumnWidth(i, width)
 
-	def initialize_contact_list(self):
+	def initializeContactList(self):
 		self.contactList.DeleteAllItems()
 
 		self._itemMap = {}
@@ -186,7 +186,7 @@ class SIRA(wx.Dialog):
 				record.secretaryOffice,
 			)
 
-			record_values = (
+			recordValues = (
 				record.landline,
 				record.sector,
 				record.responsible,
@@ -195,7 +195,7 @@ class SIRA(wx.Dialog):
 				record.email,
 			)
 
-			for colIndex, value in enumerate(record_values, start=1):
+			for colIndex, value in enumerate(recordValues, start=1):
 				self.contactList.SetItem(index, colIndex, value)
 
 			self._itemMap[index] = record
@@ -208,11 +208,11 @@ class SIRA(wx.Dialog):
 		dlg.ShowModal()
 		dlg.Destroy()
 		gui.mainFrame.postPopup
-		self._refresh_and_focus()
+		self._refreshAndFocus()
 
 	def onEdit(self, event):
 		"""Edit a selected record."""
-		selectedRow = self.get_selected_record()
+		selectedRow = self.getSelectedRecord()
 		if selectedRow is None:
 			self.showMessage(_("No records selected!"), _("Error"))
 			return
@@ -227,7 +227,7 @@ class SIRA(wx.Dialog):
 		dlg.ShowModal()
 		dlg.Destroy()
 		gui.mainFrame.postPopup
-		self._refresh_and_focus()
+		self._refreshAndFocus()
 
 	def onDelete(self, event):
 		"""
@@ -236,7 +236,7 @@ class SIRA(wx.Dialog):
 		Args:
 			event (wx.Event): The event that triggered this function.
 		"""
-		selectedRow = self.get_selected_record()
+		selectedRow = self.getSelectedRecord()
 		if selectedRow is None:
 			self.showMessage(_("No records selected!"), _("Error"))
 			return
@@ -244,12 +244,12 @@ class SIRA(wx.Dialog):
 		message = _("Do you want to delete the selected record?")
 		caption = _("Attention")
 
-		user_response = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
-		if user_response == wx.YES:
+		userResponse = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
+		if userResponse == wx.YES:
 			try:
 				core.delete(selectedRow.id)
 				self.showMessage(_("Record deleted!"), _("Success"))
-				self._refresh_and_focus()
+				self._refreshAndFocus()
 			except Exception as e:
 				self.showMessage(_("Error deleting record: {}").format(str(e)), _("Error"))
 				return
@@ -278,7 +278,7 @@ class SIRA(wx.Dialog):
 				self.search.SetFocus()
 			else:
 				# Otherwise, update the contact list in the graphical interface
-				self.initialize_contact_list()
+				self.initializeContactList()
 
 				# Clear the search field after searching
 				self.search.Clear()
@@ -304,7 +304,7 @@ class SIRA(wx.Dialog):
 				mypath = dlg.GetPath()
 				core.importCsvToDb(mypath)
 				self.showMessage(_("File imported successfully!"), _("Attention"))
-				self._refresh_and_focus()
+				self._refreshAndFocus()
 			except Exception as e:
 				msg = _(
 					"""It was not possible to import the file! {}""".format(str(e)),
@@ -350,16 +350,16 @@ class SIRA(wx.Dialog):
 		"""
 
 		# 1. Obtains the counting of records safely.
-		record_count = core.countRecords()
+		recordCount = core.countRecords()
 
 		# 2. Checks the three possible scenarios: failure, empty list or list with records.
-		if record_count is None:
+		if recordCount is None:
 			# If Record Count for None, there was an error in the database.
 			# The error message is already displayed internally by the Core.COUNT Records function.
 			self.showMessage(_("An error occurred while counting records. Check the logs."), _("Error"))
 			return
 
-		elif record_count == 0:
+		elif recordCount == 0:
 			# If Record Count for 0, the agenda is already empty.
 			self.showMessage(_("The agenda is already empty!"), _("Attention"))
 			return
@@ -368,20 +368,20 @@ class SIRA(wx.Dialog):
 		message = _("This operation erases all phonebook entries. Do you wish to continue?")
 		caption = _("Attention")
 
-		user_response = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
-		if user_response == wx.YES:
+		userResponse = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
+		if userResponse == wx.YES:
 			try:
 				core.resetRecord()
 				self.showMessage(_("Agenda deleted!"), _("Success"))
-				self._refresh_and_focus()
+				self._refreshAndFocus()
 			except Exception as e:
 				self.showMessage(_("Error deleting records: {}").format(str(e)), _("Error"))
 				return
 
 		# 4. Refreshes the list and sets focus, encapsulating repeated calls.
-		self._refresh_and_focus()
+		self._refreshAndFocus()
 
-	def set_config(self):
+	def setConfig(self):
 		"""
 		Apply configurations specific to the add-on
 		"""
@@ -433,7 +433,7 @@ class SIRA(wx.Dialog):
 		"""
 
 		# We extracted the item using the Getobject method
-		filtered_item = self.contactResults
+		filteredItem = self.contactResults
 
 		# Check if the item was found
 		if not filtered_item:
@@ -518,37 +518,37 @@ class SIRA(wx.Dialog):
 		"""
 		self.Destroy()
 
-	def get_selected_record(self):
+	def getSelectedRecord(self):
 		idx = self.contactList.GetFirstSelected()
 		if idx == -1:
 			return None
 		return self._itemMap.get(idx)
 
-	def show_all_records(self):
+	def showAllRecords(self):
 		self.contactResults = core.getAllRecords()
-		self.initialize_contact_list()
+		self.initializeContactList()
 
-	def _refresh_and_focus(self):
+	def _refreshAndFocus(self):
 		"""
 		Refreshes the contact list and sets the focus to it.
 		"""
 
-		self.show_all_records()
+		self.showAllRecords()
 		self.visualizationField.SetValue("")
 		self.contactList.SetFocus()
 
 	def onToUpdate(self, event):
-		self._refresh_and_focus()
+		self._refreshAndFocus()
 		ui.message(_("Updated records!"))
 
 	def onSelectLine(self, event):
 		# Check if there is a line selected in the list
-		selected_idx = self.contactList.GetFirstSelected()
-		if selected_idx == -1:
+		selectedIdx = self.contactList.GetFirstSelected()
+		if selectedIdx == -1:
 			return
 
 		data = [
-			f"{self.contactList.GetColumn(i).GetText()}: {self.contactList.GetItem(selected_idx, i).GetText()}"
+			f"{self.contactList.GetColumn(i).GetText()}: {self.contactList.GetItem(selectedIdx, i).GetText()}"
 			for i in range(self.contactList.GetColumnCount())
 		]
 		lineComplete = " \n\n ".join(data)

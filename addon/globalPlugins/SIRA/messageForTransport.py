@@ -30,11 +30,11 @@ from logHandler import log
 from .varsConfig import ADDON_NAME, ADDON_PATH, IS64, MASK_DATE, MASK_PHONE, MASK_TIME
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if IS64 else "lib"
-libPath = os.path.join(ADDON_PATH, libFolder)
+LIB_FOLDER = "lib64" if IS64 else "lib"
+LIB_PATH = os.path.join(ADDON_PATH, LIB_FOLDER)
 
-if os.path.isdir(libPath) and libPath not in sys.path:
-	sys.path.insert(0, libPath)
+if os.path.isdir(LIB_PATH) and LIB_PATH not in sys.path:
+	sys.path.insert(0, LIB_PATH)
 
 try:
 	from maskedTextCtrl import MaskedTextCtrl
@@ -195,7 +195,7 @@ class MessageForTransport(wx.Dialog):
 
 		# Botão para Salvar o recado
 		self.saveButton = wx.Button(panel, label=_("Save & message"))
-		self.saveButton.Bind(wx.EVT_BUTTON, self.OnSave)
+		self.saveButton.Bind(wx.EVT_BUTTON, self.onSave)
 		viewButtonBox.Add(
 			self.saveButton,
 			flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM,
@@ -229,7 +229,7 @@ class MessageForTransport(wx.Dialog):
 		# Aplicando o sizer principal no painel
 		panel.SetSizerAndFit(mainSizer)
 
-	def OnSave(self, event):
+	def onSave(self, event):
 		"""
 		Salva a mensagem digitada em um arquivo de texto na pasta "Documentos" do usuário.
 

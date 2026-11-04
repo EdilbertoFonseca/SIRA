@@ -141,14 +141,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.updateManager.checkForUpdates(silent=False)
 
 	def _onOpenSettings(self, event):
-		def _open_settings():
+		def _openSettings():
 			method = getattr(gui.mainFrame, "popupSettingsDialog", None)
 			if callable(method):
 				method(gui.settingsDialogs.NVDASettingsDialog, SIRASystemSettingsPanel)
 			else:
 				log.warning("popupSettingsDialog not available on mainFrame")
 
-		wx.CallAfter(_open_settings)
+		wx.CallAfter(_openSettings)
 
 	def _onHelp(self, event):
 		try:
@@ -267,7 +267,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self._onHelp(None)
 
 	def script_siraConfig(self, gesture):
-		def _open_settings():
+		def _openSettings():
 			method = getattr(gui.mainFrame, "popupSettingsDialog", None)
 			if callable(method):
 				method(
@@ -277,7 +277,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			else:
 				log.warning("popupSettingsDialog not available")
 
-		wx.CallAfter(_open_settings)
+		wx.CallAfter(_openSettings)
 
 	def _onDestroy(self, e: wx.Event, attrName: str) -> None:
 		self.onGenericClosed(e, attrName)

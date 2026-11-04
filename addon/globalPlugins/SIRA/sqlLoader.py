@@ -25,12 +25,12 @@ from logHandler import log
 
 from .varsConfig import ADDON_PATH, IS64
 
-libFolder = "lib64"
-libPath = os.path.join(ADDON_PATH, libFolder)
+LIB_FOLDER = "lib64"
+LIB_PATH = os.path.join(ADDON_PATH, LIB_FOLDER)
 
 # Adding library path to sys.path
-if os.path.isdir(libPath) and libPath not in sys.path:
-	sys.path.insert(0, libPath)
+if os.path.isdir(LIB_PATH) and LIB_PATH not in sys.path:
+	sys.path.insert(0, LIB_PATH)
 
 # We initialize the sql variable to None to help the linter
 sql: Any = None

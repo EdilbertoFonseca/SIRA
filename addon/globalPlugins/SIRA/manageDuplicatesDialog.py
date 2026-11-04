@@ -126,9 +126,9 @@ class ManageDuplicatesDialog(wx.Dialog):
 		if userResponse == wx.YES:
 			deletedCount = 0
 			for index in selectedIndices:
-				record_id = self.listMap.get(index)
-				if record_id:
-					if core.delete(record_id):
+				recordId = self.listMap.get(index)
+				if recordId:
+					if core.delete(recordId):
 						deletedCount += 1
 
 			gui.messageBox(

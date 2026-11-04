@@ -31,11 +31,11 @@ from . import controller as core
 from .varsConfig import ADDON_NAME, ADDON_PATH, EMAIL_REGEX, IS64
 
 # Add the lib/ folder to sys.path (only once)
-libFolder = "lib64" if IS64 else "lib"
-libPath = os.path.join(ADDON_PATH, libFolder)
+LIB_FOLDER = "lib64" if IS64 else "lib"
+LIB_PATH = os.path.join(ADDON_PATH, LIB_FOLDER)
 
-if os.path.isdir(libPath) and libPath not in sys.path:
-	sys.path.insert(0, libPath)
+if os.path.isdir(LIB_PATH) and LIB_PATH not in sys.path:
+	sys.path.insert(0, LIB_PATH)
 
 try:
 	from masked.textctrl import TextCtrl
@@ -248,8 +248,8 @@ class AddEditRecDialog(wx.Dialog):
 		if success:
 			message = _("Contact added, want to add a new contact?")
 			caption = _("Success")
-			user_response = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
-			if user_response == wx.YES:
+			userResponse = gui.messageBox(message, caption, style=wx.ICON_QUESTION | wx.YES_NO)
+			if userResponse == wx.YES:
 				self.clearForm()
 			else:
 				self.Destroy()
@@ -279,7 +279,7 @@ class AddEditRecDialog(wx.Dialog):
 		Args:
 			field_name (str): Name of the field to be focused.
 		"""
-		focus_mapping = {
+		focusMapping = {
 			"secretaryOffice": self.textSecretaryOffice,
 			"landline": self.textLandline,
 			"sector": self.textSector,
@@ -288,8 +288,8 @@ class AddEditRecDialog(wx.Dialog):
 			"cell": self.textCell,
 			"email": self.textEmail,
 		}
-		if fieldName in focus_mapping:
-			focus_mapping[fieldName].SetFocus()
+		if fieldName in focusMapping:
+			focusMapping[fieldName].SetFocus()
 
 	def onEdit(self):
 		"""

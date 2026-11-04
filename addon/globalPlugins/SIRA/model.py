@@ -26,8 +26,8 @@ from .sqlLoader import sql
 
 # 1. First we define where the data lives
 # We force conversion to string to avoid Optional[str]
-config_path = str(getattr(globalVars.appArgs, "configPath", ""))
-ADDON_DATA_DIR = os.path.join(config_path, "SIRA")
+CONFIG_PATH = str(getattr(globalVars.appArgs, "configPath", ""))
+ADDON_DATA_DIR = os.path.join(CONFIG_PATH, "SIRA")
 
 if not os.path.isdir(ADDON_DATA_DIR):
 	os.makedirs(ADDON_DATA_DIR)
@@ -40,10 +40,10 @@ DEFAULT_DB_PATH = os.path.join(
 
 # If line 106 is something like os.path.dirname(DEFAULT_DB_PATH)
 # Make sure the argument is unambiguous:
-base_dir = os.path.dirname(str(DEFAULT_DB_PATH))
+BASE_DIR = os.path.dirname(str(DEFAULT_DB_PATH))
 
-db = DatabaseConfig(DEFAULT_DB_PATH)
-db.loadConfig()
+DB = DatabaseConfig(DEFAULT_DB_PATH)
+DB.loadConfig()
 
 
 class ObjectExtensionRegistrationSystem(object):
@@ -105,31 +105,31 @@ class Section:
 	connected = False
 
 	def __enter__(self):
-		"""Método de entrada para o gerenciador de contexto."""
-		db_path = db.getCurrentDatabasePath()
+		"""Input method for the context manager."""
+		DB_PATH = DB.getCurrentDatabasePath()
 
-		# Garantir que a pasta do arquivo existe
-		db_dir = os.path.dirname(db_path)
-		if db_dir and not os.path.exists(db_dir):
-			os.makedirs(db_dir)
+		# Ensure that the file folder exists.
+		DB_DIR = os.path.dirname(DB_PATH)
+		if DB_DIR and not os.path.exists(DB_DIR):
+			os.makedirs(DB_DIR)
 
-		self.connect = sql.connect(db_path)
-		self.connect.row_factory = self.dict_factory
+		self.connect = sql.connect(DB_PATH)
+		self.connect.row_factory = self.dictFactory
 		self.cursor = self.connect.cursor()
 		self.connected = True
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
-		"""Método de saída para o gerenciador de contexto."""
+		"""Exit method for the context manager."""
 		if self.connect:
 			self.connect.close()
 		self.connected = False
 		return False
 
-	# Métodos connection e disconnect foram removidos.
+	# The `connect` and `disconnect` methods have been removed.
 
 	def execute(self, sql, parms=None):
-		"""Executa uma consulta SQL no banco de dados."""
+		"""Executes an SQL query on the database."""
 		if self.connected:
 			if parms is None:
 				self.cursor.execute(sql)
@@ -139,7 +139,7 @@ class Section:
 		return False
 
 	def executemany(self, sql, parms=None):
-		"""Executa várias consultas SQL no banco de dados."""
+		"""Executes multiple SQL queries on the database."""
 		if self.connected:
 			if parms is None:
 				self.cursor.executemany(sql)
@@ -148,17 +148,17 @@ class Section:
 			return True
 		return False
 
-	def dict_factory(self, cursor, row):
-		"""Converte o resultado de uma consulta em um dicionário."""
+	def dictFactory(self, cursor, row):
+		"""Converts the result of a query into a dictionary."""
 		return {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
 
 	def fetchall(self):
-		"""Recupera todas as linhas do resultado de uma consulta."""
+		"""Retrieves all rows from the result of a query."""
 		# A linha self.connect.row_factory = self.dict_factory foi movida para o __enter__
 		return self.cursor.fetchall()
 
 	def persist(self):
-		"""Confirma as alterações feitas em uma transação de banco de dados."""
+		"""Confirms the changes made in a database transaction."""
 		if self.connected:
 			self.connect.commit()
 			return True
