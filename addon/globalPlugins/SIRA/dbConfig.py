@@ -17,69 +17,90 @@ All AI-generated code was manually reviewed and tested by the author.
 Created on: 09/01/2026
 """
 
-from typing import Any, cast
+from pathlib import Path
+from typing import Union
 
-import config
+from .varsConfig import (
+	getDatabaseIndex,
+	getDatabasePath,
+	getAlternativeDatabasePath,
+	setDatabaseIndex,
+	setDatabasePath,
+	setAlternativeDatabasePath,
+)
 
-from .varsConfig import ADDON_NAME
 
+class DatabaseConfig:
+	def __init__(self, defaultPath: Union[str, Path]):
+		"""
+		Initialize the database configuration manager.
 
-class DatabaseConfig(object):
-	def __init__(self, defaultPath):
+		Args:
+			defaultPath: Default path to the primary database.
+		"""
 		super().__init__()
-		self.defaultPath = defaultPath
-		self.firstDatabase = defaultPath
+		self.defaultPath = str(defaultPath)
+		self.firstDatabase = self.defaultPath
 		self.altDatabase = ""
 		self.indexDB = 0
 
 	def loadConfig(self):
 		"""
-		Reads settings from the configuration file.
-		Improvement: Loads all paths to avoid stale data in memory.
+		Load database settings from the add-on configuration.
 		"""
-		conf = config.conf.get(ADDON_NAME)
-		if conf is None:
-			return
+		configuredPath = getDatabasePath()
+		alternativePath = getAlternativeDatabasePath()
 
-		# Loads the current index (0 for main, 1 for alternative)
-		self.indexDB = int(conf.get("databaseIndex", 0))
+		# Use the default path when the primary path is not configured.
+		self.firstDatabase = (
+			str(configuredPath) if configuredPath and str(configuredPath).strip() else self.defaultPath
+		)
 
-		# Always load both paths if they exist in the config
-		self.firstDatabase = conf.get("path", self.defaultPath)
-		self.altDatabase = conf.get("altPath", "")
+		self.altDatabase = str(alternativePath) if alternativePath and str(alternativePath).strip() else ""
+
+		# Only the primary and alternative database indexes are valid.
+		try:
+			index = int(getDatabaseIndex())
+		except (TypeError, ValueError):
+			index = 0
+
+		self.indexDB = index if index in (0, 1) else 0
 
 	def saveConfig(self):
 		"""
-		Stores the current settings in the global configuration dictionary.
+		Save database settings to the add-on configuration.
 		"""
-		if ADDON_NAME not in config.conf:
-			config.conf[ADDON_NAME] = {}
+		setDatabasePath(self.firstDatabase)
+		setAlternativeDatabasePath(self.altDatabase)
+		setDatabaseIndex(self.indexDB)
 
-		conf = cast(dict[str, Any], config.conf[ADDON_NAME])
+		# Persist all pending configuration changes.
+		from config import conf
 
-		conf["path"] = self.firstDatabase
-		conf["altPath"] = self.altDatabase
-		conf["databaseIndex"] = self.indexDB
-		# save the settings
-		config.conf.save()
+		conf.save()
 
 	def getCurrentDatabasePath(self) -> str:
 		"""
-		Retorna o caminho da base de dados atual.
-		Se o caminho estiver vazio, retorna o padrão para evitar erros.
+		Return the path of the currently selected database.
+
+		If the selected database path is empty, use the primary
+		database path as a fallback.
+
+		Raises:
+			ValueError: If no valid database path is available.
 		"""
 		path = self.firstDatabase if self.indexDB == 0 else self.altDatabase
 
 		if path and path.strip():
-			return str(path)
+			return path
 
 		if self.firstDatabase and self.firstDatabase.strip():
-			return str(self.firstDatabase)
+			return self.firstDatabase
 
 		raise ValueError("No valid database path defined.")
 
 	def reload(self):
 		"""
-		Reloads the paths from the configuration.
+		Reload database settings from the add-on configuration.
 		"""
 		self.loadConfig()

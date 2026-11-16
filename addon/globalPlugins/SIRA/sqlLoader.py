@@ -28,19 +28,67 @@ from .varsConfig import ADDON_PATH
 LIB_FOLDER = "lib64"
 LIB_PATH = os.path.join(ADDON_PATH, LIB_FOLDER)
 
-# Adding library path to sys.path
+# Add the library path to sys.path when available.
 if os.path.isdir(LIB_PATH) and LIB_PATH not in sys.path:
 	sys.path.insert(0, LIB_PATH)
 
-# We initialize the sql variable to None to help the linter
+# Initialize the SQL module.
 sql: Any = None
 
 try:
 	import sqlite3 as sql
-except ImportError as e:
-	log.error(f"Failed to load any sqlite module: {e}", exc_info=True)
+except ImportError as error:
+	log.error(
+		f"Failed to load the SQLite module: {error}",
+		exc_info=True,
+	)
 	raise
 
-# Security check (optional)
 if sql is None:
-	raise ImportError("Sqlite module could not be initialized.")
+	raise ImportError("SQLite module could not be initialized.")
+
+
+def initializeDatabase(dbPath: str):
+	"""
+	Initialize the database and create the required tables.
+
+	Args:
+		dbPath: Full path to the database file.
+	"""
+
+	dbDir = os.path.dirname(dbPath)
+
+	# Create the database directory when necessary.
+	if dbDir:
+		os.makedirs(dbDir, exist_ok=True)
+
+	connection = None
+
+	try:
+		connection = sql.connect(dbPath)
+
+		connection.execute(
+			"""
+			CREATE TABLE IF NOT EXISTS contacts(
+				id INTEGER PRIMARY KEY,
+				secretaryOffice TEXT,
+				landline TEXT,
+				sector TEXT,
+				responsible TEXT,
+				extension TEXT,
+				cell TEXT,
+				email TEXT
+			)
+			""",
+		)
+
+		connection.commit()
+
+	except sql.Error:
+		if connection:
+			connection.rollback()
+		raise
+
+	finally:
+		if connection:
+			connection.close()

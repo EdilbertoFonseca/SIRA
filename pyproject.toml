@@ -13,13 +13,14 @@ requires-python = ">=3.13,<3.14"
 classifiers = [
 	"Development Status :: 5 - Production/Stable",
 	"Intended Audience :: End Users/Desktop",
-	"License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+	# "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
 	"Operating System :: Microsoft :: Windows",
 	"Programming Language :: Python :: 3",
 	"Topic :: Accessibility",
 ]
 readme = "readme.md"
-license = {file = "COPYING.TXT"}
+license = "GPL-2.0-or-later"
+# license = {file = "COPYING.TXT"}
 dependencies = [
 	# Build add-on
 	"scons==4.10.1",
@@ -372,3 +373,6 @@ strictParameterNoneValue = true
 
 # Enforce strict type inference for sets
 strictSetInference = true
+
+[tool.setuptools]
+py-modules = []

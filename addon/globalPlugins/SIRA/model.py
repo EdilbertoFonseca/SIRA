@@ -22,26 +22,15 @@ import os
 import globalVars
 
 from .dbConfig import DatabaseConfig
-from .sqlLoader import sql
+from .sqlLoader import sql, initializeDatabase
 
-# 1. First we define where the data lives
-# We force conversion to string to avoid Optional[str]
+
+# Define the default database location.
 CONFIG_PATH = str(getattr(globalVars.appArgs, "configPath", ""))
 ADDON_DATA_DIR = os.path.join(CONFIG_PATH, "SIRA")
+DEFAULT_DB_PATH = os.path.join(ADDON_DATA_DIR, "database.db")
 
-if not os.path.isdir(ADDON_DATA_DIR):
-	os.makedirs(ADDON_DATA_DIR)
-
-# 2. We set the default path
-DEFAULT_DB_PATH = os.path.join(
-	ADDON_DATA_DIR,
-	"database.db",
-)
-
-# If line 106 is something like os.path.dirname(DEFAULT_DB_PATH)
-# Make sure the argument is unambiguous:
-BASE_DIR = os.path.dirname(str(DEFAULT_DB_PATH))
-
+# Initialize the database configuration.
 DB = DatabaseConfig(DEFAULT_DB_PATH)
 DB.loadConfig()
 
@@ -59,19 +48,19 @@ class ObjectExtensionRegistrationSystem(object):
 		email="",
 	):
 		"""
-		Initializes a new contact with the provided details.
+		Initialize a new contact with the provided details.
 
 		Args:
 			id (str): Unique contact identifier.
 			secretaryOffice (str): Name of the secretariat.
 			landline (str): Secretariat contact.
 			sector (str): Sector linked to the secretariat.
-			responsible(str): Name of person responsible for the sector.
+			responsible (str): Name of the person responsible for the sector.
 			extension (str): Sector extension.
 			cell (str): Contact's cell phone number.
 			email (str): Contact email address.
 		"""
-		super().__init__()  # calls the init of the parent class (silences linters and maintains compatibility)
+		super().__init__()
 		self.id = id
 		self.secretaryOffice = secretaryOffice
 		self.landline = landline
@@ -83,10 +72,10 @@ class ObjectExtensionRegistrationSystem(object):
 
 	def __repr__(self):
 		"""
-		Returns a formatted string that represents the NVDA Extension Registration System contact.
+		Return a formatted representation of the contact.
 
 		Returns:
-			str: A formatted string with the contact's secretary, sector, landline, responsible, extension, cell, and email.
+			str: A formatted string containing the contact information.
 		"""
 		return (
 			f"SecretaryOffice: {self.secretaryOffice}, "
@@ -99,83 +88,94 @@ class ObjectExtensionRegistrationSystem(object):
 		)
 
 
-class Section:
-	connect = None
-	cursor = None
-	connected = False
+class Section(object):
+	def __init__(self):
+		"""Initialize the database connection state."""
+		super().__init__()
+		self.connect = None
+		self.cursor = None
+		self.connected = False
 
 	def __enter__(self):
-		"""Input method for the context manager."""
-		DB_PATH = DB.getCurrentDatabasePath()
+		"""Open a database connection and prepare the cursor."""
 
-		# Ensure that the file folder exists.
-		DB_DIR = os.path.dirname(DB_PATH)
-		if DB_DIR and not os.path.exists(DB_DIR):
-			os.makedirs(DB_DIR)
+		# Reload the configuration to use the latest settings.
+		DB.reload()
 
-		self.connect = sql.connect(DB_PATH)
+		dbPath = DB.getCurrentDatabasePath()
+
+		# Ensure that the database and its required tables exist.
+		initializeDatabase(dbPath)
+
+		# Establish the database connection.
+		self.connect = sql.connect(dbPath)
 		self.connect.row_factory = self.dictFactory
 		self.cursor = self.connect.cursor()
 		self.connected = True
+
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
-		"""Exit method for the context manager."""
-		if self.connect:
-			self.connect.close()
-		self.connected = False
-		return False
+		"""Close the database connection."""
 
-	# The `connect` and `disconnect` methods have been removed.
+		try:
+			if self.connect:
+				self.connect.close()
+		finally:
+			self.connect = None
+			self.cursor = None
+			self.connected = False
+
+		return False
 
 	def execute(self, sql, parms=None):
-		"""Executes an SQL query on the database."""
-		if self.connected:
-			if parms is None:
-				self.cursor.execute(sql)
-			else:
-				self.cursor.execute(sql, parms)
-			return True
-		return False
+		"""Execute an SQL query."""
+
+		if not self.connected:
+			return False
+
+		if parms is None:
+			self.cursor.execute(sql)
+		else:
+			self.cursor.execute(sql, parms)
+
+		return True
 
 	def executemany(self, sql, parms=None):
-		"""Executes multiple SQL queries on the database."""
-		if self.connected:
-			if parms is None:
-				self.cursor.executemany(sql)
-			else:
-				self.cursor.executemany(sql, parms)
-			return True
-		return False
+		"""Execute an SQL query with multiple parameter sets."""
+
+		if not self.connected:
+			return False
+
+		if parms is None:
+			self.cursor.executemany(sql)
+		else:
+			self.cursor.executemany(sql, parms)
+
+		return True
 
 	def dictFactory(self, cursor, row):
-		"""Converts the result of a query into a dictionary."""
-		return {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
+		"""Convert a database row into a dictionary."""
+
+		return {column[0]: row[index] for index, column in enumerate(cursor.description)}
 
 	def fetchall(self):
-		"""Retrieves all rows from the result of a query."""
-		# A linha self.connect.row_factory = self.dict_factory foi movida para o __enter__
+		"""Retrieve all rows from the executed query."""
+
 		return self.cursor.fetchall()
 
 	def persist(self):
-		"""Confirms the changes made in a database transaction."""
-		if self.connected:
-			self.connect.commit()
-			return True
-		return False
+		"""Commit the current database transaction."""
+
+		if not self.connected:
+			return False
+
+		self.connect.commit()
+		return True
 
 	@classmethod
 	def initDB(cls):
-		"""Checks the existence of the database and creates the contact table if it does not exist."""
-		with cls() as trans:
-			sqlCommand = """CREATE TABLE IF NOT EXISTS contacts(
-				id INTEGER PRIMARY KEY,
-				secretaryOffice TEXT,
-				landline TEXT,
-				sector TEXT,
-				responsible TEXT,
-				extension TEXT,
-				cell TEXT,
-				email TEXT)"""
-			trans.execute(sqlCommand)
-			trans.persist()
+		"""Initialize the database and create its required tables."""
+
+		DB.reload()
+		initializeDatabase(DB.getCurrentDatabasePath())

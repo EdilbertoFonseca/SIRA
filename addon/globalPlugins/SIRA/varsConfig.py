@@ -19,16 +19,17 @@ Created on: 08/01/2025.
 
 import os
 import struct
+from typing import Any, Dict, cast
 
 import addonHandler
 import config
 
-# Constantes
+# Constants
 MASK_DATE = "XX/XX/XXXX"
 MASK_TIME = "XX:XX"
 MASK_PHONE = "(XX) XXXXX-XXXX"
 
-# Global Constants for Regex
+# Global constants for regex
 EMAIL_REGEX = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$"
 
 # Get the path to the root of the current add-on
@@ -37,18 +38,20 @@ ADDON_PATH = os.path.dirname(__file__)
 # Detect architecture
 IS64 = struct.calcsize("P") * 8 == 64
 
-# Config# Get the add-on summary contained in the manifest.
-ADDON_SUMMARY = addonHandler.getCodeAddon().manifest["summary"]
-ADDON_DESCRIPTION = addonHandler.getCodeAddon().manifest["description"]
-ADDON_VERSION = addonHandler.getCodeAddon().manifest["version"]
+# Add-on information
+addonHandler.initTranslation()
 
 _addon = addonHandler.getCodeAddon()
+
 ADDON_NAME = _addon.name
+ADDON_SUMMARY = _addon.manifest["summary"]
+ADDON_DESCRIPTION = _addon.manifest["description"]
+ADDON_VERSION = _addon.manifest["version"]
 
 
 def initConfiguration():
 	"""
-	Initializes the configuration specification for the Contacts Manager for NVDA add-on.
+	Initialize the configuration specification for the SIRA add-on.
 	"""
 	confspec = {
 		"formatLandline": 'string(default="(##) ####-####")',
@@ -61,11 +64,98 @@ def initConfiguration():
 		"altPath": 'string(default="")',
 		"databaseIndex": "integer(default=0)",
 	}
+
 	config.conf.spec[ADDON_NAME] = confspec
 
 	if ADDON_NAME not in config.conf:
 		config.conf[ADDON_NAME] = {}
 
 
-# Ensure configuration is initialized
+def _getSection() -> Dict[str, Any]:
+	"""
+	Return the configuration section corresponding to the add-on.
+	"""
+	addon = addonHandler.getCodeAddon()
+	return cast(Dict[str, Any], config.conf[addon.name])
+
+
+# GETTERS
+
+
+def getFormatLandline() -> str:
+	return _getSection().get("formatLandline", "(##) ####-####")
+
+
+def getFormatCellPhone() -> str:
+	return _getSection().get("formatCellPhone", "(##) #####-####")
+
+
+def getRemoveConfigOnUninstall() -> bool:
+	return _getSection().get("removeConfigOnUninstall", False)
+
+
+def getResetRecords() -> bool:
+	return _getSection().get("resetRecords", True)
+
+
+def getImportCSV() -> bool:
+	return _getSection().get("importCSV", True)
+
+
+def getExportCSV() -> bool:
+	return _getSection().get("exportCSV", True)
+
+
+def getDatabasePath() -> str:
+	return _getSection().get("path", "")
+
+
+def getAlternativeDatabasePath() -> str:
+	return _getSection().get("altPath", "")
+
+
+def getDatabaseIndex() -> int:
+	return _getSection().get("databaseIndex", 0)
+
+
+# SETTERS
+
+
+def setFormatLandline(value: str):
+	_getSection()["formatLandline"] = value or ""
+
+
+def setFormatCellPhone(value: str):
+	_getSection()["formatCellPhone"] = value or ""
+
+
+def setRemoveConfigOnUninstall(value: bool):
+	_getSection()["removeConfigOnUninstall"] = bool(value)
+
+
+def setResetRecords(value: bool):
+	_getSection()["resetRecords"] = bool(value)
+
+
+def setImportCSV(value: bool):
+	_getSection()["importCSV"] = bool(value)
+
+
+def setExportCSV(value: bool):
+	_getSection()["exportCSV"] = bool(value)
+
+
+def setDatabasePath(path: str):
+	_getSection()["path"] = path or ""
+
+
+def setAlternativeDatabasePath(path: str):
+	_getSection()["altPath"] = path or ""
+
+
+def setDatabaseIndex(index: int):
+	_getSection()["databaseIndex"] = int(index)
+
+
+# Initialize the configuration
 initConfiguration()
