@@ -24,7 +24,6 @@ import core
 import globalPluginHandler
 import globalVars
 import gui
-import inputCore
 import tones
 import ui
 import wx
@@ -74,9 +73,22 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			addonNameForFile=ADDON_NAME,
 		)
 
+		self.isLayerActive = False
+		self._layerGeneration = 0
+		self._layerGestures = (
+			"kb:l",
+			"kb:t",
+			"kb:m",
+			"kb:g",
+			"kb:u",
+			"kb:h",
+			"kb:c",
+			"kb:d",
+			"kb:escape",
+		)
+
 		self._registerSettingsPanel()
 		self._createMenu()
-		self.isLayerActive = False
 
 	# Settings panel
 	def _registerSettingsPanel(self):
@@ -174,78 +186,114 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	# Layer Logic (Layered Gestures)
 
+	# Layer Logic (Layered Gestures)
+
 	@script(
 		gesture="kb:nvda+shift+r",
 		description="{addon}".format(addon=ADDON_DESCRIPTION),
 		category=ADDON_SUMMARY,
 	)
 	def script_siraLayer(self, gesture):
+		"""Activates the temporary command layer."""
 		if self.isLayerActive:
 			return
 
 		self.isLayerActive = True
-		tones.beep(880, 100)
+		self._layerGeneration += 1
+		generation = self._layerGeneration
 
-		# Capture the next key
-		inputCore.manager._captureFunc = self._handleLayerInput
-
-		# 5 second timeout
-		core.callLater(5000, self._cancelLayer)
-
-	def _handleLayerInput(self, gesture):
 		try:
-			key = gesture.mainKeyName
+			for gestureIdentifier in self._layerGestures:
+				self.bindGesture(gestureIdentifier, "layerCommand")
 
-			if not key:
-				return False
+			tones.beep(880, 100)
+			core.callLater(
+				5000,
+				partial(self._cancelLayer, generation),
+			)
 
-			key = key.lower()
-
-			if key == "l":
-				wx.CallAfter(self.script_openList, None)
-
-			elif key == "t":
-				wx.CallAfter(self.script_openTransport, None)
-
-			elif key == "m":
-				wx.CallAfter(self.script_openMedical, None)
-
-			elif key == "g":
-				wx.CallAfter(self.script_openGeneral, None)
-
-			elif key == "u":
-				wx.CallAfter(self.script_update, None)
-
-			elif key == "h":
-				wx.CallAfter(self.script_help, None)
-
-			elif key == "c":
-				wx.CallAfter(self.script_siraConfig, None)
-
-			elif key == "escape":
-				ui.message(_("Canceled layer"))
-
-			else:
-				ui.message(_("Key {} not defined").format(key))
-
-		except Exception as e:
-			log.error(f"Layer error: {e}")
-
-		finally:
+		except Exception:
+			log.exception("Failed to activate command layer")
 			self._finishLayer()
+			ui.message(_("Unable to activate command layer"))
 
-		return False
+	def script_layerCommand(self, gesture):
+		"""Processes a command received while the layer is active."""
+		if not self.isLayerActive:
+			return
 
-	def _cancelLayer(self):
-		"""Cancels the layer due to timeout."""
-		if self.isLayerActive:
-			ui.message(_("Expired layer"))
-			self._finishLayer()
+		key = gesture.mainKeyName
+
+		if not key:
+			return
+
+		key = key.lower()
+
+		commands = {
+			"l": self.script_openList,
+			"t": self.script_openTransport,
+			"m": self.script_openMedical,
+			"g": self.script_openGeneral,
+			"u": self.script_update,
+			"c": self.script_siraConfig,
+			"d": self.script_help,
+		}
+
+		# Finish the layer before executing the selected command.
+		self._finishLayer()
+
+		if key == "escape":
+			ui.message(_("Canceled layer"))
+			return
+
+		if key == "h":
+			msg = _("""Press L to open the registered extensions list.
+Press T to save a message for transport.
+Press M to save a medical discharge record.
+Press G to save a general message.
+Press U to check for updates.
+Press C to open settings.
+Press D to open the documentation.
+Press H to open the shortcut help.
+Press Escape to cancel the layer.""")
+
+			ui.browseableMessage(
+				msg,
+				_("Command layer help. "),
+				closeButton=True,
+			)
+			return
+
+		command = commands.get(key)
+
+		if command:
+			wx.CallAfter(command, None)
+
+	def _cancelLayer(self, generation):
+		"""Cancels the layer if its timeout has expired."""
+		if not self.isLayerActive:
+			return
+
+		if generation != self._layerGeneration:
+			return
+
+		self._finishLayer()
+		ui.message(_("Expired layer"))
 
 	def _finishLayer(self):
-		"""Finishes the layer safely."""
-		inputCore.manager._captureFunc = None
+		"""Removes temporary gesture bindings and finishes the layer."""
+		if not self.isLayerActive:
+			return
+
+		for gestureIdentifier in self._layerGestures:
+			try:
+				self.removeGestureBinding(gestureIdentifier)
+			except LookupError:
+				pass
+
 		self.isLayerActive = False
+		self._layerGeneration += 1
+
 		tones.beep(440, 50)
 
 	def script_openList(self, gesture):
@@ -317,6 +365,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""Handles the closure of generic dialogs."""
 		setattr(self, attrName, None)
 		evt.Skip()
+
+	def captureFunc(self):
+		# Lógica ou apenas o retorno da função interna
+		return self._captureFunc()
 
 	def terminate(self):
 		"""Terminates the SIRA addon."""

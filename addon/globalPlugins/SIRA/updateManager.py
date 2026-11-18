@@ -89,7 +89,9 @@ class UpdateManager:
 			if self._compareVersions(self.latestVersion, self.currentVersion) <= 0:
 				if not silent:
 					# translators: Message shown when the user checks for updates but is already running the latest version of the add-on.
-					msg = _("You are already running the latest version of SIRA.")
+					msg = _("You are already running the latest version of SIRA at {version}!").format(
+						version=self.currentVersion,
+					)
 					wx.CallAfter(ui.message, msg)
 				return
 
@@ -150,16 +152,15 @@ class UpdateManager:
 			addon=self.addonNameForFile,
 		)
 
-		message = _(
-			"A new version of {addon} ({version}) is available.\n\n"
-			+ "Changes:\n{changes}\n\n"
-			+ "Do you want to download and install it now?",
-		).format(
+		message = _("""A new version of {addon} ({version}) is available.
+
+{changes}
+
+Do you want to download and install it now?""").format(
 			addon=self.addonNameForFile,
 			version=version,
 			changes=changes,
 		)
-
 		if gui.messageBox(message, title, wx.YES | wx.NO | wx.ICON_INFORMATION) == wx.YES:
 			threading.Thread(
 				target=self._downloadInstallThread,
